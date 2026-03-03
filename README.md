@@ -1,2 +1,2 @@
 # ChatGPT
-Testing ai.
+Testing ai and git.
