@@ -3,8 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AI Fundamentals — Module 1 Companion</title>
-  <meta name="description" content="Companion site for AI Fundamentals (Module 1): definitions, capabilities, examples, and resources." />
+  <title>AI Training Companion</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
@@ -13,413 +12,54 @@
       <div class="brand">
         <div class="brand__mark">AI</div>
         <div class="brand__text">
-          <div class="brand__title">AI Fundamentals</div>
-          <div class="brand__subtitle">Module 1 Companion Site</div>
+          <div class="brand__title">AI Training Companion</div>
+          <div class="brand__subtitle">Windham Brannon — Modules & Resources</div>
         </div>
       </div>
-
-      <nav class="nav" aria-label="Primary">
-        <a href="#overview">Overview</a>
-        <a href="#capabilities">Capabilities</a>
-        <a href="#types">Types</a>
-        <a href="#automation">AI vs Automation</a>
-        <a href="#examples">Examples</a>
-        <a href="#workplace">Workplace</a>
+      <nav class="nav">
+        <a href="./modules/module-1.html">Module 1</a>
         <a href="#resources">Resources</a>
       </nav>
-
-      <button class="nav__toggle" id="navToggle" aria-expanded="false" aria-controls="mobileNav">
-        Menu
-      </button>
-    </div>
-
-    <div class="mobileNav" id="mobileNav" hidden>
-      <a href="#overview">Overview</a>
-      <a href="#capabilities">Capabilities</a>
-      <a href="#types">Types</a>
-      <a href="#automation">AI vs Automation</a>
-      <a href="#examples">Examples</a>
-      <a href="#workplace">Workplace</a>
-      <a href="#resources">Resources</a>
     </div>
   </header>
 
-  <main>
-    <section class="hero">
-      <div class="container hero__grid">
-        <div>
-          <h1>Introduction to Artificial Intelligence</h1>
-          <p class="lead">
-            A quick, interactive companion to the Windham Brannon AI Fundamentals Module 1 deck —
-            built for easy review and group discussion.
-          </p>
+  <main class="section">
+    <div class="container">
+      <h1>Welcome</h1>
+      <p class="lead">
+        Use this site alongside the AI Initiatives training modules. Each module includes key concepts,
+        examples, and a quick knowledge check.
+      </p>
 
-          <div class="ctaRow">
-            <a class="btn btn--primary" href="#overview">Start here</a>
-            <a class="btn" href="#quiz">Take the 2-minute quiz</a>
-          </div>
-
-          <div class="callouts">
-            <div class="callout">
-              <div class="callout__title">Core definition</div>
-              <div class="callout__text">
-                AI is designing systems capable of <strong>perception</strong>, <strong>reasoning</strong>,
-                <strong>decision-making</strong>, and <strong>learning</strong>. <span class="muted">(Module 1)</span>
-              </div>
-            </div>
-            <div class="callout">
-              <div class="callout__title">Reality check</div>
-              <div class="callout__text">
-                AI is <strong>not sentient</strong>, not magic, and not a replacement for human judgment. <span class="muted">(Module 1)</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <aside class="panel">
-          <h2 class="panel__title">Quick controls</h2>
-          <div class="panel__row">
-            <label class="switch">
-              <input type="checkbox" id="toggleDefinitions" checked />
-              <span>Show definitions</span>
-            </label>
-          </div>
-          <div class="panel__row">
-            <label class="switch">
-              <input type="checkbox" id="toggleBusiness" checked />
-              <span>Show business angle</span>
-            </label>
-          </div>
-          <div class="panel__row">
-            <button class="btn btn--small" id="expandAll">Expand all</button>
-            <button class="btn btn--small" id="collapseAll">Collapse all</button>
-          </div>
-
-          <div class="panel__note">
-            Tip: Use this live site in the session. It’s easier than flipping slides when someone asks “what was that again?”
-          </div>
-        </aside>
-      </div>
-    </section>
-
-    <section id="overview" class="section">
-      <div class="container">
-        <div class="section__head">
-          <h2>AI at a glance</h2>
-          <p>
-            AI refers to computer systems that perform tasks that normally require human intelligence:
-            understanding language, recognizing patterns, learning from experience, making predictions, and generating content. :contentReference[oaicite:1]{index=1}
-          </p>
-        </div>
-
-        <div class="grid2">
-          <div class="card definable">
-            <h3>What AI is</h3>
-            <ul>
-              <li><strong>Understanding language</strong> (NLP)</li>
-              <li><strong>Recognizing patterns</strong> in data</li>
-              <li><strong>Learning</strong> from examples (machine learning)</li>
-              <li><strong>Predicting</strong> outcomes</li>
-              <li><strong>Generating</strong> new content (GenAI)</li>
-            </ul>
-          </div>
-
-          <div class="card definable">
-            <h3>What AI is not</h3>
-            <ul>
-              <li>Not sentient</li>
-              <li>Not “magic” or fully autonomous</li>
-              <li>Not a replacement for human judgment</li>
-            </ul>
-            <p class="muted">
-              Best results come from <strong>human + AI collaboration</strong>. :contentReference[oaicite:2]{index=2}
-            </p>
-          </div>
-        </div>
-
-        <details class="accordion businessable" open>
-          <summary><span>Why AI matters today</span></summary>
-          <div class="accordion__body">
-            <ul>
-              <li>AI is transforming industries (including public accounting) and everyday experiences.</li>
-              <li>AI literacy helps professionals stay competitive, compliant, and innovative.</li>
-            </ul>
-            <p class="muted">Examples listed in Module 1 include voice assistants, recommendations, and automated support. :contentReference[oaicite:3]{index=3}</p>
-          </div>
-        </details>
-      </div>
-    </section>
-
-    <section id="capabilities" class="section section--alt">
-      <div class="container">
-        <div class="section__head">
-          <h2>Core AI capabilities</h2>
-          <p>Four “buckets” from the deck. Click each to expand. :contentReference[oaicite:4]{index=4}</p>
-        </div>
-
-        <div class="grid2">
-          <details class="accordion definable" open>
-            <summary><span>1) Natural Language Processing (NLP)</span></summary>
-            <div class="accordion__body">
-              <p>Understanding and generating human language (text, sometimes speech).</p>
-              <div class="tagRow">
-                <span class="tag">summarization</span>
-                <span class="tag">Q&amp;A</span>
-                <span class="tag">drafting</span>
-              </div>
-            </div>
-          </details>
-
-          <details class="accordion definable" open>
-            <summary><span>2) Pattern Recognition</span></summary>
-            <div class="accordion__body">
-              <p>Finding trends, anomalies, similarities, and signals in data.</p>
-              <div class="tagRow">
-                <span class="tag">anomaly detection</span>
-                <span class="tag">classification</span>
-                <span class="tag">clustering</span>
-              </div>
-            </div>
-          </details>
-
-          <details class="accordion definable" open>
-            <summary><span>3) Machine Learning &amp; Prediction</span></summary>
-            <div class="accordion__body">
-              <p>Learning from past data to predict likely future outcomes.</p>
-              <div class="tagRow">
-                <span class="tag">forecasting</span>
-                <span class="tag">risk scoring</span>
-                <span class="tag">recommendations</span>
-              </div>
-            </div>
-          </details>
-
-          <details class="accordion definable" open>
-            <summary><span>4) Generative AI</span></summary>
-            <div class="accordion__body">
-              <p>Creating new content (text, images, code) based on learned patterns.</p>
-              <div class="tagRow">
-                <span class="tag">emails</span>
-                <span class="tag">meeting notes</span>
-                <span class="tag">draft deliverables</span>
-              </div>
-              <p class="muted">Generative AI is highlighted in Module 1 as a key modern capability. :contentReference[oaicite:5]{index=5}</p>
-            </div>
-          </details>
-        </div>
-      </div>
-    </section>
-
-    <section id="types" class="section">
-      <div class="container">
-        <div class="section__head">
-          <h2>Types of AI</h2>
-          <p>Narrow AI exists today; General and Super AI are theoretical/hypothetical. :contentReference[oaicite:6]{index=6}</p>
-        </div>
-
-        <div class="grid3">
-          <div class="card definable">
-            <h3>Narrow AI (today)</h3>
-            <p>Designed for specific tasks (chatbots, image recognition, fraud detection).</p>
-          </div>
-          <div class="card definable">
-            <h3>General AI (theoretical)</h3>
-            <p>Would match human intelligence across a wide range of tasks.</p>
-          </div>
-          <div class="card definable">
-            <h3>Super AI (hypothetical)</h3>
-            <p>Would surpass human intelligence.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="automation" class="section section--alt">
-      <div class="container">
-        <div class="section__head">
-          <h2>AI vs Automation</h2>
-          <p>Automation follows rules; AI learns/adapts from data. :contentReference[oaicite:7]{index=7}</p>
-        </div>
-
-        <div class="grid2">
-          <div class="card businessable">
-            <h3>Automation</h3>
-            <ul>
-              <li>Rule-based</li>
-              <li>Consistent, predictable steps</li>
-              <li>Great for repetitive processes</li>
-            </ul>
-          </div>
-          <div class="card businessable">
-            <h3>AI</h3>
-            <ul>
-              <li>Data-driven</li>
-              <li>Can learn patterns</li>
-              <li>Can handle variability and ambiguity</li>
-            </ul>
-          </div>
-        </div>
-
-        <details class="accordion businessable" open>
-          <summary><span>Where RPA fits</span></summary>
-          <div class="accordion__body">
-            <p>
-              Module 1 notes RPA is not AI, but can be enhanced by AI for more complex work. :contentReference[oaicite:8]{index=8}
-            </p>
-          </div>
-        </details>
-      </div>
-    </section>
-
-    <section id="examples" class="section">
-      <div class="container">
-        <div class="section__head">
-          <h2>Everyday and workplace examples</h2>
-          <p>Examples in Module 1 include chat responses, research, email drafting, meeting summaries, and document summarization. :contentReference[oaicite:9]{index=9}</p>
-        </div>
-
-        <div class="grid3">
-          <div class="card">
-            <h3>Personal</h3>
-            <ul>
-              <li>Voice assistants</li>
-              <li>Predictive text</li>
-              <li>Recommendations</li>
-            </ul>
-          </div>
-          <div class="card">
-            <h3>Professional</h3>
-            <ul>
-              <li>Research assistance</li>
-              <li>Email drafting</li>
-              <li>Meeting summaries</li>
-            </ul>
-          </div>
-          <div class="card">
-            <h3>Accounting</h3>
-            <ul>
-              <li>Document analysis</li>
-              <li>Client comms assistance</li>
-              <li>Regulation monitoring support</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="workplace" class="section section--alt">
-      <div class="container">
-        <div class="section__head">
-          <h2>AI in the workplace</h2>
-          <p>Opportunities, challenges, and the need for responsible use. :contentReference[oaicite:10]{index=10}</p>
-        </div>
-
-        <div class="grid2">
-          <details class="accordion businessable" open>
-            <summary><span>Opportunities</span></summary>
-            <div class="accordion__body">
-              <ul>
-                <li>Efficiency and speed</li>
-                <li>Improved accuracy</li>
-                <li>New service possibilities</li>
-              </ul>
-            </div>
-          </details>
-
-          <details class="accordion businessable" open>
-            <summary><span>Challenges</span></summary>
-            <div class="accordion__body">
-              <ul>
-                <li>Data quality</li>
-                <li>Change management</li>
-                <li>Ethical use &amp; governance</li>
-              </ul>
-            </div>
-          </details>
-        </div>
-
-        <div class="card takeaway">
-          <h3>Key takeaways</h3>
-          <ol>
-            <li>AI is a powerful tool, not a replacement for humans.</li>
-            <li>AI literacy is essential for modern professionals.</li>
-            <li>Responsible, ethical use is critical.</li>
-          </ol>
-          <p class="muted">Directly aligned with the Module 1 closing slides. :contentReference[oaicite:11]{index=11}</p>
-        </div>
-      </div>
-    </section>
-
-    <section id="quiz" class="section">
-      <div class="container">
-        <div class="section__head">
-          <h2>2-minute knowledge check</h2>
-          <p>Use this live in the room (or share after). It’s intentionally lightweight.</p>
+      <div class="grid2">
+        <div class="card">
+          <h3>Module 1 — AI Fundamentals</h3>
+          <p>Definitions, capabilities, AI vs automation, workplace examples, and a short quiz.</p>
+          <a class="btn btn--primary" href="./modules/module-1.html">Open Module 1</a>
         </div>
 
         <div class="card">
-          <div id="quizRoot" class="quiz"></div>
-          <div class="quiz__actions">
-            <button class="btn btn--primary" id="startQuiz">Start quiz</button>
-            <button class="btn" id="resetQuiz" disabled>Reset</button>
-          </div>
+          <h3>Next up</h3>
+          <p class="muted">Module 2 link will go here once published.</p>
+          <a class="btn" href="./modules/module-1.html#resources">View resources</a>
         </div>
       </div>
-    </section>
 
-    <section id="resources" class="section section--alt">
-      <div class="container">
-        <div class="section__head">
-          <h2>Recommended free resources</h2>
-          <p>Links are pulled from your Module 1 deck. :contentReference[oaicite:12]{index=12}</p>
+      <section id="resources" class="section">
+        <h2>Shared Resources</h2>
+        <div class="card">
+          <ul class="linkList">
+            <li><a target="_blank" rel="noreferrer" href="https://sloanreview.mit.edu/top-artificial-intelligence-articles/">MIT Sloan Management Review — AI</a></li>
+            <li><a target="_blank" rel="noreferrer" href="https://www.scientificamerican.com/artificial-intelligence/">Scientific American — AI</a></li>
+            <li><a target="_blank" rel="noreferrer" href="https://builtin.com/artificial-intelligence/ai-basics">Built In — AI Basics</a></li>
+          </ul>
         </div>
+      </section>
 
-        <div class="grid2">
-          <div class="card">
-            <h3>Videos / courses</h3>
-            <ul class="linkList">
-              <li><a href="https://www.youtube.com/watch?v=m8o2GrbR3d8" target="_blank" rel="noreferrer">Simplest Explanation of AI (Science Simplified)</a></li>
-              <li><a href="https://www.youtube.com/watch?v=Zsfi5YxTe48" target="_blank" rel="noreferrer">Artificial Intelligence Full Course (Intellipaat)</a></li>
-              <li><a href="https://aibeginner.net/ai-videos" target="_blank" rel="noreferrer">AI Beginner Video Library</a></li>
-              <li><a href="https://www.udacity.com/course/ai-fundamentals--ud099" target="_blank" rel="noreferrer">AI Fundamentals (Udacity)</a></li>
-            </ul>
-          </div>
-
-          <div class="card">
-            <h3>Reading / ethics</h3>
-            <ul class="linkList">
-              <li><a href="https://www.poynter.org/ai-ethics-journalism/ai-ethics-guidelines/" target="_blank" rel="noreferrer">Poynter AI Ethics Guidelines</a></li>
-              <li><a href="https://sloanreview.mit.edu/top-artificial-intelligence-articles/" target="_blank" rel="noreferrer">MIT Sloan Management Review: Top AI Articles</a></li>
-              <li><a href="https://www.scientificamerican.com/artificial-intelligence/" target="_blank" rel="noreferrer">Scientific American – AI Section</a></li>
-              <li><a href="https://builtin.com/artificial-intelligence/ai-basics" target="_blank" rel="noreferrer">Built In: AI Basics</a></li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="card contact">
-          <h3>Contacts</h3>
-          <p class="muted">From the deck closing slide. :contentReference[oaicite:13]{index=13}</p>
-          <div class="contact__grid">
-            <div>
-              <div class="contact__name">Patrick Terry</div>
-              <div class="contact__role">Principal, Innovative Solutions Leader</div>
-              <a href="mailto:pterry@windhambrannon.com">pterry@windhambrannon.com</a>
-            </div>
-            <div>
-              <div class="contact__name">Jacob Herrmann</div>
-              <div class="contact__role">Solution Engineer</div>
-              <a href="mailto:jherrmann@windhambrannon.com">jherrmann@windhambrannon.com</a>
-            </div>
-          </div>
-        </div>
-
-        <footer class="footer">
-          <div class="muted">© Windham Brannon — AI Fundamentals Module 1 Companion</div>
-        </footer>
-      </div>
-    </section>
+      <footer class="footer">
+        <div class="muted">Tip: Bookmark this page. New modules will appear here.</div>
+      </footer>
+    </div>
   </main>
-
-  <script src="./app.js"></script>
 </body>
 </html>
