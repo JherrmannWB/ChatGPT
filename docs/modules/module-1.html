@@ -4,123 +4,425 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Module 1 — AI Fundamentals</title>
-
-  <!-- IMPORTANT: go up one folder -->
+  <meta name="description" content="Module 1: AI Fundamentals — definitions, capabilities, types, AI vs automation, and a knowledge check." />
   <link rel="stylesheet" href="../styles.css" />
 </head>
 
-<body>
-  <header class="header">
-    <div class="container header__inner">
-      <div class="brand">
-        <div class="brand__mark">AI</div>
-        <div class="brand__text">
-          <div class="brand__title">AI Training Companion</div>
-          <div class="brand__subtitle">Module 1 — AI Fundamentals</div>
+<body class="layout" data-module="module-1">
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="container topbar__inner">
+      <a class="brandLink" href="../index.html" aria-label="Back to home">
+        <div class="brandMark">AI</div>
+        <div>
+          <div class="brandTitle">AI Training Companion</div>
+          <div class="brandSub">Module 1 — AI Fundamentals</div>
         </div>
-      </div>
+      </a>
 
-      <nav class="nav">
-        <a href="../index.html">Home</a>
-        <a href="#definitions">Definitions</a>
-        <a href="#capabilities">Capabilities</a>
-        <a href="#types">Types</a>
-        <a href="#quiz">Quiz</a>
-      </nav>
+      <div class="topbar__actions">
+        <button class="btn btn--small" id="presenterToggle" type="button">Presenter mode</button>
+        <button class="btn btn--small" id="glossaryToggle" type="button">Glossary</button>
+      </div>
     </div>
   </header>
 
-  <main class="section">
-    <div class="container">
+  <div class="container shell">
+    <!-- Sidebar -->
+    <aside class="sidebar" aria-label="Module navigation">
+      <div class="sidebar__title">On this page</div>
 
-      <h1>AI Fundamentals</h1>
-      <p class="lead">
-        This module introduces artificial intelligence, what it is, what it is not,
-        and how it applies to modern professional services.
-      </p>
+      <nav class="sideNav" id="sideNav">
+        <a href="#intro" class="sideNav__link">Overview</a>
+        <a href="#definitions" class="sideNav__link">Definition + Non-Definition</a>
+        <a href="#capabilities" class="sideNav__link">Core Capabilities</a>
+        <a href="#types" class="sideNav__link">Types of AI</a>
+        <a href="#automation" class="sideNav__link">AI vs Automation</a>
+        <a href="#examples" class="sideNav__link">Examples</a>
+        <a href="#workplace" class="sideNav__link">Workplace Reality</a>
+        <a href="#takeaways" class="sideNav__link">Key Takeaways</a>
+        <a href="#quiz" class="sideNav__link">Knowledge Check</a>
+        <a href="#resources" class="sideNav__link">Resources</a>
+      </nav>
 
-      <section id="definitions" class="section">
-        <h2>What is AI?</h2>
-        <div class="card">
-          <p>
-            Artificial Intelligence refers to systems capable of perception,
-            reasoning, decision-making, and learning from data.
-          </p>
-        </div>
+      <div class="sidebar__foot">
+        <a class="mutedLink" href="../index.html">← Back to series home</a>
+      </div>
+    </aside>
 
-        <div class="card">
-          <h3>What AI is NOT</h3>
-          <ul>
-            <li>Not sentient</li>
-            <li>Not magic</li>
-            <li>Not a replacement for human judgment</li>
-          </ul>
+    <!-- Main content -->
+    <main class="content">
+      <!-- Hero -->
+      <section id="intro" class="heroPro">
+        <div class="heroPro__kicker">Module 1</div>
+        <h1 class="heroPro__title">AI Fundamentals</h1>
+        <p class="heroPro__lead">
+          A practical baseline for understanding what modern AI is, what it is not, and how to talk about it clearly in a professional setting.
+        </p>
+
+        <div class="heroPro__cards">
+          <div class="miniCard">
+            <div class="miniCard__title">What you’ll be able to do</div>
+            <ul class="miniCard__list">
+              <li>Explain AI in one sentence</li>
+              <li>Describe core capabilities and limitations</li>
+              <li>Differentiate AI vs automation (and RPA)</li>
+              <li>Identify safe, high-value use cases</li>
+            </ul>
+          </div>
+
+          <div class="miniCard miniCard--accent">
+            <div class="miniCard__title">Presenter tip</div>
+            <div class="miniCard__text">
+              Use <strong>Presenter mode</strong> to increase font size and simplify the screen during the live session.
+            </div>
+          </div>
         </div>
       </section>
 
-      <section id="capabilities" class="section">
-        <h2>Core Capabilities</h2>
+      <!-- Definitions -->
+      <section id="definitions" class="sectionPro">
+        <div class="sectionPro__head">
+          <h2>Definition + Non-Definition</h2>
+          <p class="muted">Simple language people can repeat accurately.</p>
+        </div>
 
         <div class="grid2">
-          <div class="card">
-            <h3>Natural Language Processing</h3>
-            <p>Understanding and generating human language.</p>
+          <div class="cardPro">
+            <h3>What AI is</h3>
+            <p class="muted">
+              AI refers to systems capable of <strong>perception</strong>, <strong>reasoning</strong>,
+              <strong>decision-making</strong>, and <strong>learning</strong> from data.
+            </p>
+
+            <div class="pillRow">
+              <span class="pill">Perception</span>
+              <span class="pill">Reasoning</span>
+              <span class="pill">Decision-making</span>
+              <span class="pill">Learning</span>
+            </div>
+
+            <div class="calloutPro">
+              <div class="calloutPro__title">Say it like this</div>
+              <div class="calloutPro__text">
+                “AI is software that learns patterns from data to help interpret, predict, or generate outputs.”
+              </div>
+            </div>
           </div>
 
-          <div class="card">
-            <h3>Pattern Recognition</h3>
-            <p>Identifying trends and anomalies in data.</p>
-          </div>
+          <div class="cardPro">
+            <h3>What AI is not</h3>
+            <ul class="listPro">
+              <li><strong>Not sentient</strong> (no consciousness or intent)</li>
+              <li><strong>Not magic</strong> (outputs can be wrong)</li>
+              <li><strong>Not a replacement</strong> for professional judgment</li>
+            </ul>
 
-          <div class="card">
-            <h3>Machine Learning</h3>
-            <p>Learning from historical data to make predictions.</p>
-          </div>
-
-          <div class="card">
-            <h3>Generative AI</h3>
-            <p>Creating new content based on learned patterns.</p>
+            <div class="calloutPro calloutPro--warn">
+              <div class="calloutPro__title">Important</div>
+              <div class="calloutPro__text">
+                AI can accelerate work, but it does not remove accountability. Humans remain responsible for decisions and deliverables.
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <section id="types" class="section">
-        <h2>Types of AI</h2>
+      <!-- Capabilities -->
+      <section id="capabilities" class="sectionPro sectionPro--alt">
+        <div class="sectionPro__head">
+          <h2>Core Capabilities</h2>
+          <p class="muted">Four buckets that cover most “AI can do X” conversations.</p>
+        </div>
+
+        <div class="grid2">
+          <details class="accordionPro" open>
+            <summary>NLP (Language)</summary>
+            <div class="accordionPro__body">
+              <p class="muted">Understands and generates human language (text; sometimes speech).</p>
+              <div class="tagRow">
+                <span class="tag">summarization</span><span class="tag">drafting</span><span class="tag">Q&amp;A</span>
+              </div>
+            </div>
+          </details>
+
+          <details class="accordionPro" open>
+            <summary>Pattern Recognition</summary>
+            <div class="accordionPro__body">
+              <p class="muted">Finds trends, anomalies, similarities, and structure in data.</p>
+              <div class="tagRow">
+                <span class="tag">anomalies</span><span class="tag">classification</span><span class="tag">clustering</span>
+              </div>
+            </div>
+          </details>
+
+          <details class="accordionPro" open>
+            <summary>Machine Learning &amp; Prediction</summary>
+            <div class="accordionPro__body">
+              <p class="muted">Learns from examples to predict likely outcomes.</p>
+              <div class="tagRow">
+                <span class="tag">forecasting</span><span class="tag">risk scoring</span><span class="tag">recommendations</span>
+              </div>
+            </div>
+          </details>
+
+          <details class="accordionPro" open>
+            <summary>Generative AI</summary>
+            <div class="accordionPro__body">
+              <p class="muted">Creates new content (text, images, code) based on learned patterns.</p>
+              <div class="tagRow">
+                <span class="tag">emails</span><span class="tag">deliverable drafts</span><span class="tag">notes</span>
+              </div>
+              <div class="calloutPro">
+                <div class="calloutPro__title">Why it’s different</div>
+                <div class="calloutPro__text">
+                  GenAI produces fluent output quickly — you validate it like you would a first draft from a junior staff member.
+                </div>
+              </div>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <!-- Types -->
+      <section id="types" class="sectionPro">
+        <div class="sectionPro__head">
+          <h2>Types of AI</h2>
+          <p class="muted">Be precise about what exists today vs what is theoretical.</p>
+        </div>
 
         <div class="grid3">
-          <div class="card">
-            <h3>Narrow AI</h3>
-            <p>Task-specific systems (today’s reality).</p>
+          <div class="cardPro">
+            <h3>Narrow AI (today)</h3>
+            <p class="muted">Task-specific systems (chatbots, classification, anomaly detection, recommendations).</p>
           </div>
-
-          <div class="card">
-            <h3>General AI</h3>
-            <p>Theoretical human-level intelligence.</p>
+          <div class="cardPro">
+            <h3>General AI (theoretical)</h3>
+            <p class="muted">Human-level intelligence across a broad range of tasks.</p>
           </div>
-
-          <div class="card">
-            <h3>Super AI</h3>
-            <p>Hypothetical intelligence beyond humans.</p>
+          <div class="cardPro">
+            <h3>Super AI (hypothetical)</h3>
+            <p class="muted">Intelligence beyond humans.</p>
           </div>
         </div>
       </section>
 
-      <section id="quiz" class="section">
-        <h2>Quick Knowledge Check</h2>
+      <!-- AI vs Automation -->
+      <section id="automation" class="sectionPro sectionPro--alt">
+        <div class="sectionPro__head">
+          <h2>AI vs Automation</h2>
+          <p class="muted">This is where most confusion happens — so we make it explicit.</p>
+        </div>
 
-        <div class="card">
-          <div id="quizRoot"></div>
+        <div class="tableProWrap">
+          <table class="tablePro" role="table" aria-label="AI vs Automation table">
+            <thead>
+              <tr>
+                <th scope="col">Dimension</th>
+                <th scope="col">Automation</th>
+                <th scope="col">AI</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Logic</td>
+                <td>Rule-based (“if X then Y”)</td>
+                <td>Data-driven (learned patterns)</td>
+              </tr>
+              <tr>
+                <td>Best for</td>
+                <td>Repetitive, predictable steps</td>
+                <td>Ambiguity, variability, language, judgment-support</td>
+              </tr>
+              <tr>
+                <td>Change handling</td>
+                <td>Breaks when inputs change</td>
+                <td>Can adapt if trained/updated</td>
+              </tr>
+              <tr>
+                <td>Risk</td>
+                <td>Incorrect rules = consistent errors</td>
+                <td>Incorrect output = needs validation</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="calloutPro">
+          <div class="calloutPro__title">Where RPA fits</div>
+          <div class="calloutPro__text">
+            RPA is automation. It can be enhanced by AI (e.g., reading emails, classifying documents) to handle more complex work.
+          </div>
+        </div>
+      </section>
+
+      <!-- Examples -->
+      <section id="examples" class="sectionPro">
+        <div class="sectionPro__head">
+          <h2>Examples</h2>
+          <p class="muted">Practical examples that map to real work patterns.</p>
+        </div>
+
+        <div class="grid3">
+          <div class="cardPro">
+            <h3>Personal</h3>
+            <ul class="listPro">
+              <li>Voice assistants</li>
+              <li>Predictive text</li>
+              <li>Recommendations</li>
+            </ul>
+          </div>
+          <div class="cardPro">
+            <h3>Professional</h3>
+            <ul class="listPro">
+              <li>Research assistance</li>
+              <li>Email drafting</li>
+              <li>Meeting summaries</li>
+            </ul>
+          </div>
+          <div class="cardPro">
+            <h3>Accounting-adjacent</h3>
+            <ul class="listPro">
+              <li>Document analysis</li>
+              <li>Client comms first drafts</li>
+              <li>Variance/anomaly spotting</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Workplace -->
+      <section id="workplace" class="sectionPro sectionPro--alt">
+        <div class="sectionPro__head">
+          <h2>Workplace Reality</h2>
+          <p class="muted">A grounded view: opportunities + constraints.</p>
+        </div>
+
+        <div class="grid2">
+          <div class="cardPro">
+            <h3>Opportunities</h3>
+            <ul class="listPro">
+              <li>Speed: faster drafts + analysis</li>
+              <li>Consistency: structured outputs</li>
+              <li>New services: insights and automation accelerators</li>
+            </ul>
+          </div>
+
+          <div class="cardPro">
+            <h3>Challenges</h3>
+            <ul class="listPro">
+              <li>Data quality + confidentiality</li>
+              <li>Change management</li>
+              <li>Governance + review standards</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="calloutPro calloutPro--warn">
+          <div class="calloutPro__title">Professional standard</div>
+          <div class="calloutPro__text">
+            Treat AI output as a draft. Validate facts, citations, calculations, and client-specific details before use.
+          </div>
+        </div>
+      </section>
+
+      <!-- Takeaways -->
+      <section id="takeaways" class="sectionPro">
+        <div class="sectionPro__head">
+          <h2>Key Takeaways</h2>
+        </div>
+
+        <div class="cardPro">
+          <ol class="listPro">
+            <li><strong>AI is a tool</strong> — not a replacement for humans.</li>
+            <li><strong>AI literacy</strong> is now baseline professional capability.</li>
+            <li><strong>Responsible use</strong> (privacy, accuracy, governance) is critical.</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Quiz -->
+      <section id="quiz" class="sectionPro sectionPro--alt">
+        <div class="sectionPro__head">
+          <h2>Knowledge Check</h2>
+          <p class="muted">Short, low-pressure check for understanding.</p>
+        </div>
+
+        <div class="cardPro">
+          <div id="quizRoot" class="quiz"></div>
           <div class="quiz__actions">
             <button class="btn btn--primary" id="startQuiz">Start quiz</button>
             <button class="btn" id="resetQuiz" disabled>Reset</button>
           </div>
+          <div id="quizFeedback" class="muted" style="margin-top:10px;"></div>
         </div>
       </section>
 
-    </div>
-  </main>
+      <!-- Resources -->
+      <section id="resources" class="sectionPro">
+        <div class="sectionPro__head">
+          <h2>Resources</h2>
+          <p class="muted">Optional follow-up learning.</p>
+        </div>
 
-  <!-- IMPORTANT: go up one folder -->
+        <div class="grid2">
+          <div class="cardPro">
+            <h3>Reading</h3>
+            <ul class="linkList">
+              <li><a href="https://sloanreview.mit.edu/top-artificial-intelligence-articles/" target="_blank" rel="noreferrer">MIT Sloan — AI</a></li>
+              <li><a href="https://www.scientificamerican.com/artificial-intelligence/" target="_blank" rel="noreferrer">Scientific American — AI</a></li>
+              <li><a href="https://builtin.com/artificial-intelligence/ai-basics" target="_blank" rel="noreferrer">Built In — AI Basics</a></li>
+            </ul>
+          </div>
+
+          <div class="cardPro">
+            <h3>Next module</h3>
+            <p class="muted">When Module 2 is ready, add it to the series home and link it here.</p>
+            <a class="btn" href="../index.html">Return to home</a>
+          </div>
+        </div>
+
+        <footer class="footerPro">
+          <div class="muted">Tip: Presenter mode is ideal for screen-sharing during training.</div>
+        </footer>
+      </section>
+    </main>
+
+    <!-- Glossary drawer -->
+    <aside class="drawer" id="glossaryDrawer" aria-label="Glossary" hidden>
+      <div class="drawer__head">
+        <div>
+          <div class="drawer__title">Glossary</div>
+          <div class="drawer__sub">Quick definitions for live discussion</div>
+        </div>
+        <button class="btn btn--small" id="glossaryClose" type="button">Close</button>
+      </div>
+
+      <div class="drawer__body">
+        <div class="glossaryItem">
+          <div class="glossaryItem__term">NLP</div>
+          <div class="glossaryItem__def">Natural Language Processing — understanding and generating human language.</div>
+        </div>
+        <div class="glossaryItem">
+          <div class="glossaryItem__term">Machine Learning</div>
+          <div class="glossaryItem__def">Learning patterns from examples to make predictions or decisions.</div>
+        </div>
+        <div class="glossaryItem">
+          <div class="glossaryItem__term">Generative AI</div>
+          <div class="glossaryItem__def">AI that creates new content (text, images, code) from learned patterns.</div>
+        </div>
+        <div class="glossaryItem">
+          <div class="glossaryItem__term">Automation</div>
+          <div class="glossaryItem__def">Rule-based execution of steps; consistent, predictable, not “learning.”</div>
+        </div>
+        <div class="glossaryItem">
+          <div class="glossaryItem__term">RPA</div>
+          <div class="glossaryItem__def">Robotic Process Automation — automation of repetitive tasks; can be enhanced by AI.</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
   <script src="../app.js"></script>
 </body>
 </html>

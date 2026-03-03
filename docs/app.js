@@ -1,77 +1,49 @@
+// ===============================
+// AI Training Companion - app.js
+// ===============================
+
+// -------------------------------
+// Utility helpers
+// -------------------------------
 function qs(sel) { return document.querySelector(sel); }
 function qsa(sel) { return Array.from(document.querySelectorAll(sel)); }
 
-const state = {
-  showDefinitions: true,
-  showBusiness: true,
-};
-
-function setVisibility() {
-  qsa(".definable").forEach(el => {
-    el.style.display = state.showDefinitions ? "" : "none";
-  });
-  qsa(".businessable").forEach(el => {
-    el.style.display = state.showBusiness ? "" : "none";
-  });
-}
-
-function setAllAccordions(open) {
-  qsa("details.accordion").forEach(d => { d.open = open; });
-}
-
-function initNav() {
-  const btn = qs("#navToggle");
-  const menu = qs("#mobileNav");
-  if (!btn || !menu) return;
-
-  btn.addEventListener("click", () => {
-    const expanded = btn.getAttribute("aria-expanded") === "true";
-    btn.setAttribute("aria-expanded", String(!expanded));
-    menu.hidden = expanded;
-  });
-
-  // Close mobile menu after click
-  qsa("#mobileNav a").forEach(a => {
-    a.addEventListener("click", () => {
-      btn.setAttribute("aria-expanded", "false");
-      menu.hidden = true;
-    });
-  });
-}
-
-const quiz = [
+// -------------------------------
+// Quiz Data (Module 1)
+// -------------------------------
+const quizData = [
   {
-    q: "Which is the best definition of AI (per Module 1)?",
+    question: "Which best defines AI?",
     options: [
-      "A sentient computer brain that thinks like humans",
+      "A sentient computer that thinks like humans",
       "Systems capable of perception, reasoning, decision-making, and learning",
-      "Any automation that runs a workflow",
-      "A tool that always gives correct answers"
+      "Any automated workflow",
+      "A system that always produces correct answers"
     ],
     answer: 1
   },
   {
-    q: "Which statement is true?",
+    question: "Which statement is true?",
     options: [
-      "AI is fully autonomous and needs no oversight",
-      "AI replaces human judgment in complex work",
-      "AI is not sentient and works best with human collaboration",
-      "AI is magic"
+      "AI is fully autonomous and requires no oversight",
+      "AI replaces professional judgment",
+      "AI is not sentient and requires human validation",
+      "AI and automation are the same thing"
     ],
     answer: 2
   },
   {
-    q: "What’s a key difference between automation and AI?",
+    question: "What distinguishes AI from automation?",
     options: [
-      "Automation learns from data; AI follows strict rules",
-      "Automation follows defined rules; AI can learn/adapt from data",
-      "They’re the same thing",
-      "Automation is only for robots"
+      "Automation learns from data",
+      "AI follows strict if/then rules only",
+      "Automation follows rules; AI can learn from data",
+      "There is no difference"
     ],
-    answer: 1
+    answer: 2
   },
   {
-    q: "Which “type of AI” is common today?",
+    question: "Which type of AI exists today?",
     options: [
       "General AI",
       "Super AI",
@@ -82,49 +54,57 @@ const quiz = [
   }
 ];
 
-function renderQuiz(root, isLocked = false) {
+// -------------------------------
+// Quiz Rendering
+// -------------------------------
+function renderQuiz(root) {
   root.innerHTML = "";
-  quiz.forEach((item, idx) => {
-    const wrap = document.createElement("div");
-    wrap.className = "quiz__q";
 
-    const h = document.createElement("h4");
-    h.textContent = `${idx + 1}. ${item.q}`;
-    wrap.appendChild(h);
+  quizData.forEach((item, qIndex) => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "quiz__q";
 
-    const opts = document.createElement("div");
-    opts.className = "quiz__opts";
+    const title = document.createElement("h4");
+    title.textContent = `${qIndex + 1}. ${item.question}`;
+    wrapper.appendChild(title);
 
-    item.options.forEach((opt, oidx) => {
+    const optionsWrap = document.createElement("div");
+    optionsWrap.className = "quiz__opts";
+
+    item.options.forEach((option, oIndex) => {
       const label = document.createElement("label");
       label.className = "quiz__opt";
 
       const input = document.createElement("input");
       input.type = "radio";
-      input.name = `q${idx}`;
-      input.value = String(oidx);
-      input.disabled = isLocked;
+      input.name = `q${qIndex}`;
+      input.value = oIndex;
 
       const span = document.createElement("span");
-      span.textContent = opt;
+      span.textContent = option;
 
       label.appendChild(input);
       label.appendChild(span);
-      opts.appendChild(label);
+      optionsWrap.appendChild(label);
     });
 
-    wrap.appendChild(opts);
-    root.appendChild(wrap);
+    wrapper.appendChild(optionsWrap);
+    root.appendChild(wrapper);
   });
 }
 
 function scoreQuiz(root) {
   let score = 0;
-  quiz.forEach((item, idx) => {
-    const picked = root.querySelector(`input[name="q${idx}"]:checked`);
-    if (!picked) return;
-    if (Number(picked.value) === item.answer) score += 1;
+
+  quizData.forEach((item, qIndex) => {
+    const selected = root.querySelector(`input[name="q${qIndex}"]:checked`);
+    if (!selected) return;
+
+    if (Number(selected.value) === item.answer) {
+      score++;
+    }
   });
+
   return score;
 }
 
@@ -136,62 +116,109 @@ function initQuiz() {
   const root = qs("#quizRoot");
   const startBtn = qs("#startQuiz");
   const resetBtn = qs("#resetQuiz");
+  const feedback = qs("#quizFeedback");
+
   if (!root || !startBtn || !resetBtn) return;
 
-  let started = false;
-  renderQuiz(root, true);
+  renderQuiz(root);
 
   startBtn.addEventListener("click", () => {
-    if (!started) {
-      started = true;
-      renderQuiz(root, false);
-      startBtn.textContent = "Submit";
-      resetBtn.disabled = false;
-      return;
-    }
-
     const score = scoreQuiz(root);
     lockQuiz(root);
 
-    const result = document.createElement("div");
-    result.className = "quiz__score";
-    result.textContent = `Score: ${score} / ${quiz.length}`;
-    root.appendChild(result);
+    if (feedback) {
+      feedback.textContent = `Score: ${score} / ${quizData.length}`;
+    }
 
     startBtn.disabled = true;
+    resetBtn.disabled = false;
   });
 
   resetBtn.addEventListener("click", () => {
-    started = false;
+    renderQuiz(root);
+    if (feedback) feedback.textContent = "";
     startBtn.disabled = false;
-    startBtn.textContent = "Start quiz";
     resetBtn.disabled = true;
-    renderQuiz(root, true);
   });
 }
 
-function initControls() {
-  const def = qs("#toggleDefinitions");
-  const biz = qs("#toggleBusiness");
-  const expandAll = qs("#expandAll");
-  const collapseAll = qs("#collapseAll");
+// -------------------------------
+// Presenter Mode
+// -------------------------------
+function initPresenterMode() {
+  const presenterBtn = qs("#presenterToggle");
+  if (!presenterBtn) return;
 
-  if (def) def.addEventListener("change", (e) => {
-    state.showDefinitions = !!e.target.checked;
-    setVisibility();
+  presenterBtn.addEventListener("click", () => {
+    document.body.classList.toggle("presenter");
+
+    presenterBtn.textContent =
+      document.body.classList.contains("presenter")
+        ? "Exit presenter"
+        : "Presenter mode";
   });
-
-  if (biz) biz.addEventListener("change", (e) => {
-    state.showBusiness = !!e.target.checked;
-    setVisibility();
-  });
-
-  if (expandAll) expandAll.addEventListener("click", () => setAllAccordions(true));
-  if (collapseAll) collapseAll.addEventListener("click", () => setAllAccordions(false));
-
-  setVisibility();
 }
 
-initNav();
-initControls();
-initQuiz();
+// -------------------------------
+// Glossary Drawer
+// -------------------------------
+function initGlossary() {
+  const glossaryBtn = qs("#glossaryToggle");
+  const glossaryDrawer = qs("#glossaryDrawer");
+  const glossaryClose = qs("#glossaryClose");
+
+  if (!glossaryBtn || !glossaryDrawer) return;
+
+  glossaryBtn.addEventListener("click", () => {
+    glossaryDrawer.hidden = !glossaryDrawer.hidden;
+  });
+
+  if (glossaryClose) {
+    glossaryClose.addEventListener("click", () => {
+      glossaryDrawer.hidden = true;
+    });
+  }
+}
+
+// -------------------------------
+// Sidebar Active Section Highlight
+// -------------------------------
+function initActiveNav() {
+  const navLinks = qsa(".sideNav__link");
+  if (!navLinks.length) return;
+
+  const sections = navLinks
+    .map(link => {
+      const id = link.getAttribute("href").replace("#", "");
+      return { link, section: document.getElementById(id) };
+    })
+    .filter(x => x.section);
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+
+      sections.forEach(item => {
+        item.link.classList.toggle(
+          "is-active",
+          item.section.id === entry.target.id
+        );
+      });
+    });
+  }, {
+    threshold: 0.3,
+    rootMargin: "-20% 0px -60% 0px"
+  });
+
+  sections.forEach(item => observer.observe(item.section));
+}
+
+// -------------------------------
+// Initialize Everything
+// -------------------------------
+document.addEventListener("DOMContentLoaded", () => {
+  initQuiz();
+  initPresenterMode();
+  initGlossary();
+  initActiveNav();
+});
