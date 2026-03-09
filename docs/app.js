@@ -213,6 +213,53 @@ function initActiveNav() {
   sections.forEach(item => observer.observe(item.section));
 }
 
+
+
+// -------------------------------
+// Homepage guard (ensure Module 2 is always visible)
+// -------------------------------
+function initHomeModule2Guard() {
+  const isHome = !document.body.dataset.module;
+  if (!isHome) return;
+
+  const nav = qs('.nav');
+  if (nav && !nav.querySelector('a[href="./modules/module-2.html"]')) {
+    const resourcesLink = nav.querySelector('a[href="#resources"]');
+    const module2Link = document.createElement('a');
+    module2Link.href = './modules/module-2.html';
+    module2Link.textContent = 'Module 2';
+
+    if (resourcesLink) nav.insertBefore(module2Link, resourcesLink);
+    else nav.appendChild(module2Link);
+  }
+
+  const grid = qs('#homeModuleGrid') || qs('.grid2');
+  if (!grid) return;
+
+  let module2Card = Array.from(grid.querySelectorAll('.card')).find(card => {
+    const heading = card.querySelector('h3');
+    return heading && heading.textContent.toLowerCase().includes('module 2');
+  });
+
+  if (!module2Card) {
+    module2Card = document.createElement('div');
+    module2Card.className = 'card';
+    module2Card.innerHTML = `
+      <h3>Module 2 — The Rise of Artificial Intelligence</h3>
+      <p>A decade-by-decade timeline from the 1950s to the 2020s with AI winters, booms, and key take-aways.</p>
+      <a class="btn btn--primary" href="./modules/module-2.html">Open Module 2</a>
+    `;
+
+    const staleCard = Array.from(grid.querySelectorAll('.card')).find(card => {
+      const heading = card.querySelector('h3');
+      return heading && heading.textContent.trim().toLowerCase() === 'next up';
+    });
+
+    if (staleCard) staleCard.replaceWith(module2Card);
+    else grid.appendChild(module2Card);
+  }
+}
+
 // -------------------------------
 // Initialize Everything
 // -------------------------------
@@ -221,4 +268,5 @@ document.addEventListener("DOMContentLoaded", () => {
   initPresenterMode();
   initGlossary();
   initActiveNav();
+  initHomeModule2Guard();
 });
