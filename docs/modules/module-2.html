@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Module 2 — The Rise of Artificial Intelligence</title>
+  <meta name="description" content="Module 2: The rise of AI from the 1950s to the 2020s, including AI winters, breakthroughs, and key take-aways." />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body class="layout" data-module="module-2">
+  <header class="topbar">
+    <div class="container topbar__inner">
+      <a class="brandLink" href="../index.html" aria-label="Back to home">
+        <div class="brandMark">AI</div>
+        <div>
+          <div class="brandTitle">AI Training Companion</div>
+          <div class="brandSub">Module 2 — The Rise of Artificial Intelligence</div>
+        </div>
+      </a>
+
+      <div class="topbar__actions">
+        <button class="btn btn--small" id="presenterToggle" type="button">Presenter mode</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container shell">
+    <aside class="sidebar" aria-label="Module navigation">
+      <div class="sidebar__title">On this page</div>
+      <nav class="sideNav" id="sideNav">
+        <a href="#intro" class="sideNav__link">Overview</a>
+        <a href="#foundations" class="sideNav__link">1950s Foundations</a>
+        <a href="#rules" class="sideNav__link">1960s–70s Rule-Based Systems</a>
+        <a href="#winter1" class="sideNav__link">First AI Winter</a>
+        <a href="#expert" class="sideNav__link">1980s Expert Systems Boom</a>
+        <a href="#winter2" class="sideNav__link">Second AI Winter</a>
+        <a href="#ml" class="sideNav__link">1990s Machine Learning</a>
+        <a href="#bigdata" class="sideNav__link">2000s Big Data</a>
+        <a href="#deep" class="sideNav__link">2010s Deep Learning</a>
+        <a href="#genai" class="sideNav__link">2020s Generative AI</a>
+        <a href="#takeaways" class="sideNav__link">Key Take-Aways</a>
+        <a href="#resources" class="sideNav__link">Additional Resources</a>
+        <a href="#reading" class="sideNav__link">Further Reading</a>
+      </nav>
+
+      <div class="sidebar__foot">
+        <a class="mutedLink" href="../index.html">← Back to series home</a>
+      </div>
+    </aside>
+
+    <main class="content">
+      <section id="intro" class="heroPro">
+        <div class="heroPro__kicker">Module 2</div>
+        <h1 class="heroPro__title">The Rise of Artificial Intelligence</h1>
+        <p class="heroPro__lead">
+          From Turing machines to ChatGPT — 70+ years of AI progress through breakthroughs,
+          hype cycles, and two AI winters.
+        </p>
+
+        <div class="timelinePills" aria-label="AI timeline milestones">
+          <span>1950s</span>
+          <span>1960–70s</span>
+          <span>AI Winter I</span>
+          <span>1980s</span>
+          <span>AI Winter II</span>
+          <span>1990s</span>
+          <span>2000s</span>
+          <span>2010s</span>
+          <span>2020s</span>
+        </div>
+      </section>
+
+      <section id="foundations" class="sectionPro">
+        <div class="sectionPro__head sectionPro__head--withBadge">
+          <h2>Foundations</h2>
+          <span class="decadeBadge">1950s</span>
+        </div>
+
+        <div class="timelineList">
+          <article>
+            <strong>1950</strong>
+            <p>Alan Turing publishes <em>Computing Machinery and Intelligence</em> and proposes the Turing Test.</p>
+          </article>
+          <article>
+            <strong>1952</strong>
+            <p>Arthur Samuel develops one of the first self-learning checkers programs at IBM.</p>
+          </article>
+          <article>
+            <strong>1956</strong>
+            <p>Dartmouth Conference: John McCarthy coins the term <em>Artificial Intelligence</em>.</p>
+          </article>
+          <article>
+            <strong>1958</strong>
+            <p>McCarthy creates LISP, the primary AI programming language for decades.</p>
+          </article>
+          <article>
+            <strong>1959</strong>
+            <p>Rosenblatt's perceptron demonstrates early neural network classification.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="rules" class="sectionPro sectionPro--alt">
+        <div class="sectionPro__head sectionPro__head--withBadge">
+          <h2>Rule-Based Systems</h2>
+          <span class="decadeBadge">1960s–1970s</span>
+        </div>
+
+        <div class="grid3">
+          <article class="cardPro">
+            <h3>Key Programs</h3>
+            <ul class="listPro">
+              <li>ELIZA (1966): early chatbot that mimicked a therapist.</li>
+              <li>SHRDLU (1970): natural-language understanding in a blocks world.</li>
+            </ul>
+          </article>
+
+          <article class="cardPro">
+            <h3>Challenges</h3>
+            <ul class="listPro">
+              <li>Worked mainly in small and constrained environments.</li>
+              <li>Early machine translation efforts struggled.</li>
+              <li>Computers were expensive and limited.</li>
+            </ul>
+          </article>
+
+          <article class="cardPro">
+            <h3>Reality</h3>
+            <ul class="listPro">
+              <li>Most AI success remained inside research labs.</li>
+              <li>Real-world complexity was much harder than expected.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="winter1" class="sectionPro">
+        <div class="sectionPro__head sectionPro__head--withBadge">
+          <h2>The First AI Winter</h2>
+          <span class="decadeBadge">1974–1980</span>
+        </div>
+
+        <div class="grid2">
+          <article class="cardPro">
+            <h3>Why It Happened</h3>
+            <ul class="listPro">
+              <li>AI promises were too optimistic for available hardware.</li>
+              <li>Computers lacked enough power and memory.</li>
+              <li>Systems only handled narrow experiments.</li>
+            </ul>
+          </article>
+
+          <article class="cardPro">
+            <h3>What Happened</h3>
+            <ul class="listPro">
+              <li>Government funding was cut in the US and UK.</li>
+              <li>Many AI labs and projects shut down.</li>
+              <li>Researchers moved to other fields.</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="calloutPro">
+          <div class="calloutPro__title">What Survived</div>
+          <div class="calloutPro__text">Small groups kept neural network ideas alive. Progress slowed, but it never fully stopped.</div>
+        </div>
+      </section>
+
+      <section id="expert" class="sectionPro sectionPro--alt">
+        <div class="sectionPro__head sectionPro__head--withBadge">
+          <h2>Expert Systems Boom</h2>
+          <span class="decadeBadge">1980s</span>
+        </div>
+
+        <div class="statGrid">
+          <article class="statCard">
+            <span>$1 Billion</span>
+            <p>Annual spend on AI hardware (Lisp machines) by 1985.</p>
+          </article>
+          <article class="statCard">
+            <span>500+</span>
+            <p>Expert systems deployed in US companies by 1986.</p>
+          </article>
+          <article class="statCard">
+            <span>2/3</span>
+            <p>Fortune 500 companies using expert systems by 1988.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="winter2" class="sectionPro">
+        <div class="sectionPro__head sectionPro__head--withBadge">
+          <h2>The Second AI Winter</h2>
+          <span class="decadeBadge">1987–1993</span>
+        </div>
+
+        <div class="grid3">
+          <article class="cardPro">
+            <h3>1. Market Collapse</h3>
+            <p class="muted">Lisp machines were outperformed by cheaper general-purpose workstations.</p>
+          </article>
+          <article class="cardPro">
+            <h3>2. Maintenance Crisis</h3>
+            <p class="muted">Maintaining rule-based systems became costlier than their value.</p>
+          </article>
+          <article class="cardPro">
+            <h3>3–5. Failed Delivery + Funding Cuts</h3>
+            <p class="muted">Japan's 5th generation goals stalled, DARPA reduced support, and companies exited AI.</p>
+          </article>
+        </div>
+
+        <div class="calloutPro">
+          <div class="calloutPro__title">Seeds of the Future</div>
+          <div class="calloutPro__text">
+            Backpropagation, statistical methods, and Bayesian approaches survived and became the core of modern AI.
+          </div>
+        </div>
+      </section>
+
+      <section id="ml" class="sectionPro sectionPro--alt">
+        <div class="sectionPro__head sectionPro__head--withBadge">
+          <h2>Machine Learning Begins</h2>
+          <span class="decadeBadge">1990s</span>
+        </div>
+
+        <div class="timelineList">
+          <article>
+            <strong>1997</strong>
+            <p>Deep Blue defeats world chess champion Garry Kasparov.</p>
+          </article>
+          <article>
+            <strong>1995–1999</strong>
+            <p>Support Vector Machines and related methods improve classification and detection tasks.</p>
+          </article>
+          <article>
+            <strong>1998</strong>
+            <p>Neural networks begin practical handwritten ZIP code recognition.</p>
+          </article>
+          <article>
+            <strong>Late 1990s</strong>
+            <p>The internet generates web-scale data that becomes fuel for the next AI wave.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="bigdata" class="sectionPro">
+        <div class="sectionPro__head sectionPro__head--withBadge">
+          <h2>Big Data + Better Algorithms</h2>
+          <span class="decadeBadge">2000s</span>
+        </div>
+
+        <div class="grid3">
+          <article class="cardPro">
+            <h3>Data</h3>
+            <ul class="listPro">
+              <li>Digitization of books, records, and media.</li>
+              <li>Social network behavior data at massive scale.</li>
+              <li>ImageNet and other large labeled datasets.</li>
+            </ul>
+          </article>
+
+          <article class="cardPro">
+            <h3>Computing Power</h3>
+            <ul class="listPro">
+              <li>Multi-core CPUs broadened practical compute.</li>
+              <li>Cloud compute became accessible (AWS launch, 2006).</li>
+            </ul>
+          </article>
+
+          <article class="cardPro">
+            <h3>Real-World Applications</h3>
+            <ul class="listPro">
+              <li>Search and ranking improvements.</li>
+              <li>Email spam filtering.</li>
+              <li>Recommendation systems (e.g., media and commerce).</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="deep" class="sectionPro sectionPro--alt">
+        <div class="sectionPro__head sectionPro__head--withBadge">
+          <h2>Deep Learning Revolution</h2>
+          <span class="decadeBadge">2010s</span>
+        </div>
+
+        <div class="grid3">
+          <article class="cardPro">
+            <h3>2012 — AlexNet</h3>
+            <p class="muted">GPU-trained deep CNNs dramatically reduce ImageNet error rates.</p>
+          </article>
+          <article class="cardPro">
+            <h3>2014 — GANs</h3>
+            <p class="muted">Generative Adversarial Networks accelerate synthetic media research.</p>
+          </article>
+          <article class="cardPro">
+            <h3>2016 — AlphaGo</h3>
+            <p class="muted">Defeats Lee Sedol 4–1, showing stronger strategic pattern learning.</p>
+          </article>
+        </div>
+
+        <div class="grid2 module2-subgrid">
+          <article class="cardPro">
+            <h3>2018 — BERT &amp; GPT-1</h3>
+            <p class="muted">Transfer learning and pretraining transform modern NLP performance.</p>
+          </article>
+          <article class="cardPro">
+            <h3>2019 — GPT-2</h3>
+            <p class="muted">Large-scale language generation sparks mainstream awareness and safety discussions.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="genai" class="sectionPro">
+        <div class="sectionPro__head sectionPro__head--withBadge">
+          <h2>Generative AI Era</h2>
+          <span class="decadeBadge">2020s</span>
+        </div>
+
+        <div class="grid3">
+          <article class="cardPro">
+            <h3>Foundation Models</h3>
+            <ul class="listPro">
+              <li>GPT-3 showed major capability scaling effects.</li>
+              <li>AI can draft, summarize, translate, and generate code.</li>
+            </ul>
+          </article>
+          <article class="cardPro">
+            <h3>Generative Media</h3>
+            <ul class="listPro">
+              <li>DALL·E, Stable Diffusion, and Midjourney enter production workflows.</li>
+              <li>Text-to-video and voice cloning broaden synthetic media use.</li>
+            </ul>
+          </article>
+          <article class="cardPro">
+            <h3>Agents &amp; Reasoning</h3>
+            <ul class="listPro">
+              <li>Prompting and tool use improve planning and reasoning behavior.</li>
+              <li>AI coding assistants become everyday tools for software teams.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="takeaways" class="sectionPro sectionPro--alt">
+        <div class="sectionPro__head">
+          <h2>Key Take-Aways</h2>
+        </div>
+
+        <div class="cardPro">
+          <ol class="listPro">
+            <li>Hype cycles are built into AI's DNA.</li>
+            <li>Breakthroughs are seeds, not one-time events.</li>
+            <li>Scale changes what becomes possible.</li>
+            <li>Technology often advances faster than governance.</li>
+            <li>AI is brilliant for many narrow tasks but not generally intelligent.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section id="resources" class="sectionPro">
+        <div class="sectionPro__head">
+          <h2>Additional Resources</h2>
+        </div>
+
+        <div class="cardPro">
+          <ul class="linkList">
+            <li><a href="https://www.britannica.com/technology/history-of-artificial-intelligence" target="_blank" rel="noreferrer">Britannica — History of Artificial Intelligence</a></li>
+            <li><a href="https://www.coursera.org/articles/history-of-ai" target="_blank" rel="noreferrer">Coursera — The History of AI Timeline</a></li>
+            <li><a href="https://www.dataversity.net/a-brief-history-of-deep-learning/" target="_blank" rel="noreferrer">Dataversity — A Brief History of Deep Learning</a></li>
+            <li><a href="https://www.ibm.com/think/topics/artificial-intelligence-history" target="_blank" rel="noreferrer">IBM — The History of AI</a></li>
+            <li><a href="https://youtu.be/zjkBMFhNi_g?si=O-Gi0la5pW7ZBAtY" target="_blank" rel="noreferrer">Andrej Karpathy — Intro to Large Language Models</a></li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="reading" class="sectionPro">
+        <div class="sectionPro__head">
+          <h2>Further Reading — Articles &amp; Guides</h2>
+        </div>
+
+        <div class="cardPro">
+          <ul class="linkList">
+            <li><a href="https://www.britannica.com/technology/history-of-artificial-intelligence" target="_blank" rel="noreferrer">Britannica — History of Artificial Intelligence</a></li>
+            <li><a href="https://www.coursera.org/articles/history-of-ai" target="_blank" rel="noreferrer">Coursera — The History of AI Timeline</a></li>
+            <li><a href="https://arxiv.org/abs/2405.01406" target="_blank" rel="noreferrer">Schmidhuber (arXiv) — Annotated History of Modern AI &amp; Deep Learning</a></li>
+            <li><a href="https://www.worldhistoryjournal.com/history-of-artificial-intelligence" target="_blank" rel="noreferrer">WorldHistoryJournal — History of AI</a></li>
+            <li><a href="https://digitalocean.com/resources/articles/best-ai-books" target="_blank" rel="noreferrer">DigitalOcean — AI Books and Learning Picks</a></li>
+          </ul>
+        </div>
+      </section>
+
+      <footer class="footerPro">
+        <a class="btn" href="./module-1.html">← Review Module 1</a>
+      </footer>
+    </main>
+  </div>
+
+  <script src="../app.js"></script>
+</body>
+</html>
