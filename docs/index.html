@@ -3,6 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <title>AI Training Companion</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
@@ -13,11 +16,12 @@
         <div class="brand__mark">AI</div>
         <div class="brand__text">
           <div class="brand__title">AI Training Companion</div>
-          <div class="brand__subtitle">Windham Brannon — Modules & Resources</div>
+          <div class="brand__subtitle">Windham Brannon — Modules &amp; Resources</div>
         </div>
       </div>
       <nav class="nav">
         <a href="./modules/module-1.html">Module 1</a>
+        <a href="./modules/module-2.html">Module 2</a>
         <a href="#resources">Resources</a>
       </nav>
     </div>
@@ -25,41 +29,131 @@
 
   <main class="section">
     <div class="container">
-      <h1>Welcome</h1>
+      <h1>The Rise of AI Learning Series</h1>
       <p class="lead">
-        Use this site alongside the AI Initiatives training modules. Each module includes key concepts,
-        examples, and a quick knowledge check.
+        Explore practical AI foundations and the full historical arc from early experiments to modern generative systems.
       </p>
 
-      <div class="grid2">
+      <div class="grid2" id="homeModuleGrid">
         <div class="card">
           <h3>Module 1 — AI Fundamentals</h3>
           <p>Definitions, capabilities, AI vs automation, workplace examples, and a short quiz.</p>
-          <a class="btn btn--primary" href="./modules/module-1.html">Open Module 1</a>
+          <a class="btn" href="./modules/module-1.html">Open Module 1</a>
         </div>
 
         <div class="card">
-          <h3>Next up</h3>
-          <p class="muted">Module 2 link will go here once published.</p>
-          <a class="btn" href="./modules/module-1.html#resources">View resources</a>
+          <h3>Module 2 — The Rise of Artificial Intelligence</h3>
+          <p>A decade-by-decade timeline from the 1950s to the 2020s with AI winters, booms, and key take-aways.</p>
+          <a class="btn btn--primary" href="./modules/module-2.html">Open Module 2</a>
         </div>
       </div>
 
-      <section id="resources" class="section">
+
+
+      <section class="newsletter-section" id="ai-weekly-2026-03-08">
+        <div class="newsletter-shell">
+          <header class="newsletter-header">
+            <p class="newsletter-kicker">Weekly AI Brief</p>
+            <h2>AI Weekly Digest</h2>
+            <p class="newsletter-subtitle">The biggest artificial intelligence developments from March 2–8, 2026.</p>
+            <div class="newsletter-meta" aria-label="Newsletter issue details">
+              <span>Issue 01</span>
+              <span aria-hidden="true">•</span>
+              <time datetime="2026-03-08">March 8, 2026</time>
+              <span aria-hidden="true">•</span>
+              <span>5 key stories</span>
+            </div>
+          </header>
+
+          <section class="newsletter-lead" aria-label="Lead story">
+            <article class="lead-story">
+              <p class="story-tag">Lead Story</p>
+              <h3>OpenAI launches GPT-5.4 for professional and agentic workflows</h3>
+              <p class="story-summary">OpenAI introduced GPT-5.4, positioning it as a more capable and efficient model for professional work. The release emphasizes stronger coding, tool use, computer-use capabilities, and long-context performance, signaling another step toward AI systems that can complete more complex multi-step tasks.</p>
+              <div class="story-why-box">
+                <strong>Why it matters</strong>
+                <p>AI platforms are shifting from chat interfaces toward practical agent workflows that can search, plan, act, and verify.</p>
+              </div>
+            </article>
+          </section>
+
+          <section class="newsletter-grid" aria-label="Weekly AI stories">
+            <article class="news-card">
+              <p class="story-tag">Products</p>
+              <h3>ChatGPT adds Excel workflows and new financial data integrations</h3>
+              <p class="story-summary">OpenAI also announced ChatGPT for Excel and new financial data integrations, aimed at spreadsheet-heavy professional work. The update pushes AI deeper into analyst, operations, and reporting workflows where structured data matters most.</p>
+              <p class="story-takeaway">AI adoption is moving from general brainstorming into the everyday tools professionals already use.</p>
+            </article>
+
+            <article class="news-card">
+              <p class="story-tag">Models</p>
+              <h3>Google rolls out Gemini 3.1 Flash-Lite for high-volume, lower-cost tasks</h3>
+              <p class="story-summary">Google launched Gemini 3.1 Flash-Lite as a fast, cost-efficient model for workloads like translation, moderation, extraction, and repeatable production tasks.</p>
+              <p class="story-takeaway">Cost and speed are becoming as important as raw model intelligence for teams deploying AI at scale.</p>
+            </article>
+
+            <article class="news-card">
+              <p class="story-tag">Enterprise</p>
+              <h3>Microsoft expands Dragon Copilot’s role in clinical workflows</h3>
+              <p class="story-summary">At HIMSS 2026, Microsoft introduced new Dragon Copilot capabilities for healthcare, including broader workflow context, partner-built AI apps, and expanded role-based experiences for clinicians.</p>
+              <p class="story-takeaway">Industry-specific AI is becoming a major competitive frontier, especially in regulated sectors like healthcare.</p>
+            </article>
+
+            <article class="news-card">
+              <p class="story-tag">Security</p>
+              <h3>Anthropic partners with Mozilla on Firefox security</h3>
+              <p class="story-summary">Anthropic announced a partnership with Mozilla focused on improving Firefox security, extending frontier-model work into trust and defensive infrastructure use cases.</p>
+              <p class="story-takeaway">Security-focused AI partnerships are becoming visible proof points for practical enterprise value.</p>
+            </article>
+
+            <article class="news-card">
+              <p class="story-tag">Devices</p>
+              <h3>MWC 2026 highlights the rise of AI-first consumer hardware</h3>
+              <p class="story-summary">At Mobile World Congress, Lenovo showcased new AI laptops, tablets, and concept devices, underscoring how AI is becoming central to device positioning rather than just a software add-on.</p>
+              <p class="story-takeaway">AI is no longer just in the cloud; it is becoming a key selling point for the next wave of personal devices.</p>
+            </article>
+          </section>
+
+          <section class="newsletter-bottom" aria-label="Weekly takeaway">
+            <div class="newsletter-summary">
+              <h3>Weekly takeaway</h3>
+              <p>This week’s AI news points to a market splitting in three directions at once: more capable agent models, cheaper task-specific deployment models, and deeper integration into industry workflows and end-user devices.</p>
+            </div>
+          </section>
+        </div>
+      </section>
+
+<section id="resources" class="section">
         <h2>Shared Resources</h2>
-        <div class="card">
-          <ul class="linkList">
-            <li><a target="_blank" rel="noreferrer" href="https://sloanreview.mit.edu/top-artificial-intelligence-articles/">MIT Sloan Management Review — AI</a></li>
-            <li><a target="_blank" rel="noreferrer" href="https://www.scientificamerican.com/artificial-intelligence/">Scientific American — AI</a></li>
-            <li><a target="_blank" rel="noreferrer" href="https://builtin.com/artificial-intelligence/ai-basics">Built In — AI Basics</a></li>
-          </ul>
+        <div class="grid2">
+          <div class="card">
+            <h3>Module 1 references</h3>
+            <ul class="linkList">
+              <li><a target="_blank" rel="noreferrer" href="https://sloanreview.mit.edu/top-artificial-intelligence-articles/">MIT Sloan Management Review — AI</a></li>
+              <li><a target="_blank" rel="noreferrer" href="https://www.scientificamerican.com/artificial-intelligence/">Scientific American — AI</a></li>
+              <li><a target="_blank" rel="noreferrer" href="https://builtin.com/artificial-intelligence/ai-basics">Built In — AI Basics</a></li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Module 2 references</h3>
+            <ul class="linkList">
+              <li><a target="_blank" rel="noreferrer" href="https://www.ibm.com/think/topics/artificial-intelligence-history">IBM — History of AI</a></li>
+              <li><a target="_blank" rel="noreferrer" href="https://www.britannica.com/technology/history-of-artificial-intelligence">Britannica — History of Artificial Intelligence</a></li>
+              <li><a target="_blank" rel="noreferrer" href="https://www.coursera.org/articles/history-of-ai">Coursera — The History of AI Timeline</a></li>
+              <li><a target="_blank" rel="noreferrer" href="https://www.dataversity.net/a-brief-history-of-deep-learning/">Dataversity — A Brief History of Deep Learning</a></li>
+              <li><a target="_blank" rel="noreferrer" href="https://youtu.be/zjkBMFhNi_g?si=O-Gi0la5pW7ZBAtY">Andrej Karpathy — Intro to Large Language Models</a></li>
+            </ul>
+          </div>
         </div>
       </section>
 
       <footer class="footer">
-        <div class="muted">Tip: Bookmark this page. New modules will appear here.</div>
+        <div class="muted">Theme refreshed to match the deck style and color system across modules.</div>
       </footer>
     </div>
   </main>
+
+  <script src="./app.js?v=module2" defer></script>
 </body>
 </html>
