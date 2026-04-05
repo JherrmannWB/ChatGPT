@@ -1,272 +1,233 @@
-// ===============================
-// AI Training Companion - app.js
-// ===============================
-
-// -------------------------------
-// Utility helpers
-// -------------------------------
-function qs(sel) { return document.querySelector(sel); }
-function qsa(sel) { return Array.from(document.querySelectorAll(sel)); }
-
-// -------------------------------
-// Quiz Data (Module 1)
-// -------------------------------
-const quizData = [
+const slides = [
   {
-    question: "Which best defines AI?",
-    options: [
-      "A sentient computer that thinks like humans",
-      "Systems capable of perception, reasoning, decision-making, and learning",
-      "Any automated workflow",
-      "A system that always produces correct answers"
-    ],
-    answer: 1
+    type: "hero",
+    eyebrow: "Pitch Deck · 2026",
+    title: "PowerPoint was a product. AetherDeck is an experience.",
+    lead:
+      "This is what presentations look like when design systems, storytelling, and real-time interaction are built directly into the canvas.",
+    chips: ["Cinematic transitions", "Keyboard first", "Presenter intelligence", "Zero install"],
+    notes:
+      "Set the tone: this is not a clone. It is a category jump from static slides to an operating system for live communication.",
+    cues: ["Pause after the headline", "Gesture toward the progress rail", "Demo keyboard arrows"]
   },
   {
-    question: "Which statement is true?",
-    options: [
-      "AI is fully autonomous and requires no oversight",
-      "AI replaces professional judgment",
-      "AI is not sentient and requires human validation",
-      "AI and automation are the same thing"
+    type: "stats",
+    title: "Built to impress technical and executive audiences",
+    lead: "Every scene is optimized for clarity, pace, and emotional impact.",
+    stats: [
+      { value: "16:9", label: "True stage ratio with adaptive scaling" },
+      { value: "60fps", label: "Fluid transitions and micro-interactions" },
+      { value: "1 tap", label: "Fullscreen presenter launch" }
     ],
-    answer: 2
+    notes:
+      "Frame this as design + engineering excellence. It should feel premium before a single bullet point is read.",
+    cues: ["Land each stat deliberately", "Use autoplay toggle to show control"]
   },
   {
-    question: "What distinguishes AI from automation?",
-    options: [
-      "Automation learns from data",
-      "AI follows strict if/then rules only",
-      "Automation follows rules; AI can learn from data",
-      "There is no difference"
+    type: "split",
+    title: "Story architecture that keeps attention",
+    lead:
+      "Each deck becomes a sequence of visual chapters with built-in rhythm. The system handles pace so the speaker can focus on persuasion.",
+    leftTitle: "Why teams switch",
+    leftItems: [
+      "Beautiful by default, without template hunting",
+      "Slides that feel like product demos",
+      "Works from any browser—no plugin, no install",
+      "Data-rich moments can coexist with bold cinematic pages"
     ],
-    answer: 2
+    rightTitle: "Audience impact",
+    rightItems: [
+      "Higher retention through movement and hierarchy",
+      "Fewer cluttered slides, stronger narrative arc",
+      "Professional polish for client-facing moments",
+      "Presenter confidence with notes and cueing"
+    ],
+    notes:
+      "This is your business case slide. Contrast old 'bullet cemetery' decks with guided visual narratives.",
+    cues: ["Keep pace brisk", "Emphasize confidence and retention"]
   },
   {
-    question: "Which type of AI exists today?",
-    options: [
-      "General AI",
-      "Super AI",
-      "Narrow AI",
-      "Sentient AI"
-    ],
-    answer: 2
+    type: "quote",
+    title: "“If PowerPoint were invented today, this is what it would look like.”",
+    lead: "Designed for modern teams that expect software to feel intelligent, beautiful, and alive.",
+    notes:
+      "Close with conviction. Invite them to imagine their own keynote, sales deck, or board update in this format.",
+    cues: ["Slow down", "End with Present button click"]
   }
 ];
 
-// -------------------------------
-// Quiz Rendering
-// -------------------------------
-function renderQuiz(root) {
-  root.innerHTML = "";
+const state = {
+  index: 0,
+  autoplay: false,
+  autoplayTimer: null,
+  dark: true
+};
 
-  quizData.forEach((item, qIndex) => {
-    const wrapper = document.createElement("div");
-    wrapper.className = "quiz__q";
+const qs = (selector) => document.querySelector(selector);
 
-    const title = document.createElement("h4");
-    title.textContent = `${qIndex + 1}. ${item.question}`;
-    wrapper.appendChild(title);
+function renderSlide(slide) {
+  if (slide.type === "hero") {
+    return `
+      <div class="slide slide--hero">
+        <p class="eyebrow">${slide.eyebrow}</p>
+        <h1>${slide.title}</h1>
+        <p class="lead">${slide.lead}</p>
+        <div class="chipRow">${slide.chips.map((chip) => `<span>${chip}</span>`).join("")}</div>
+      </div>`;
+  }
 
-    const optionsWrap = document.createElement("div");
-    optionsWrap.className = "quiz__opts";
+  if (slide.type === "stats") {
+    return `
+      <div class="slide">
+        <h1>${slide.title}</h1>
+        <p class="lead">${slide.lead}</p>
+        <div class="statGrid">
+          ${slide.stats
+            .map(
+              (stat) => `
+            <article class="statCard">
+              <strong>${stat.value}</strong>
+              <p>${stat.label}</p>
+            </article>`
+            )
+            .join("")}
+        </div>
+      </div>`;
+  }
 
-    item.options.forEach((option, oIndex) => {
-      const label = document.createElement("label");
-      label.className = "quiz__opt";
+  if (slide.type === "split") {
+    return `
+      <div class="slide">
+        <h1>${slide.title}</h1>
+        <p class="lead">${slide.lead}</p>
+        <div class="splitGrid">
+          <section class="contentCard">
+            <h2>${slide.leftTitle}</h2>
+            <ul>${slide.leftItems.map((item) => `<li>${item}</li>`).join("")}</ul>
+          </section>
+          <section class="contentCard">
+            <h2>${slide.rightTitle}</h2>
+            <ul>${slide.rightItems.map((item) => `<li>${item}</li>`).join("")}</ul>
+          </section>
+        </div>
+      </div>`;
+  }
 
-      const input = document.createElement("input");
-      input.type = "radio";
-      input.name = `q${qIndex}`;
-      input.value = oIndex;
+  return `
+    <div class="slide slide--quote">
+      <h1>${slide.title}</h1>
+      <p class="lead">${slide.lead}</p>
+    </div>`;
+}
 
-      const span = document.createElement("span");
-      span.textContent = option;
+function renderThumbnails() {
+  const rail = qs("#thumbRail");
+  rail.innerHTML = slides
+    .map(
+      (slide, i) => `
+      <button class="thumb ${i === state.index ? "is-active" : ""}" data-index="${i}" type="button">
+        <span>${String(i + 1).padStart(2, "0")}</span>
+        <strong>${slide.title}</strong>
+      </button>`
+    )
+    .join("");
 
-      label.appendChild(input);
-      label.appendChild(span);
-      optionsWrap.appendChild(label);
+  rail.querySelectorAll(".thumb").forEach((thumb) => {
+    thumb.addEventListener("click", () => {
+      goToSlide(Number(thumb.dataset.index));
     });
-
-    wrapper.appendChild(optionsWrap);
-    root.appendChild(wrapper);
   });
 }
 
-function scoreQuiz(root) {
-  let score = 0;
+function renderNotes(slide) {
+  qs("#speakerNotes").textContent = slide.notes;
+  qs("#deliveryCues").innerHTML = slide.cues.map((cue) => `<li>${cue}</li>`).join("");
+}
 
-  quizData.forEach((item, qIndex) => {
-    const selected = root.querySelector(`input[name="q${qIndex}"]:checked`);
-    if (!selected) return;
+function syncMeta() {
+  qs("#slideCounter").textContent = `${state.index + 1} / ${slides.length}`;
+  qs("#progressFill").style.width = `${((state.index + 1) / slides.length) * 100}%`;
+}
 
-    if (Number(selected.value) === item.answer) {
-      score++;
+function goToSlide(index) {
+  state.index = (index + slides.length) % slides.length;
+
+  const stage = qs("#slideStage");
+  stage.classList.remove("is-entering");
+
+  requestAnimationFrame(() => {
+    stage.innerHTML = renderSlide(slides[state.index]);
+    stage.classList.add("is-entering");
+  });
+
+  renderNotes(slides[state.index]);
+  renderThumbnails();
+  syncMeta();
+}
+
+function setAutoplay(enabled) {
+  state.autoplay = enabled;
+  qs("#toggleAutoplay").textContent = enabled ? "Pause" : "Autoplay";
+
+  if (state.autoplayTimer) {
+    clearInterval(state.autoplayTimer);
+    state.autoplayTimer = null;
+  }
+
+  if (!enabled) return;
+
+  state.autoplayTimer = setInterval(() => {
+    goToSlide(state.index + 1);
+  }, 6000);
+}
+
+function initControls() {
+  qs("#nextSlide").addEventListener("click", () => goToSlide(state.index + 1));
+  qs("#prevSlide").addEventListener("click", () => goToSlide(state.index - 1));
+
+  qs("#toggleNotes").addEventListener("click", () => {
+    const panel = qs("#notesPanel");
+    panel.hidden = !panel.hidden;
+  });
+
+  qs("#toggleAutoplay").addEventListener("click", () => {
+    setAutoplay(!state.autoplay);
+  });
+
+  qs("#toggleTheme").addEventListener("click", () => {
+    state.dark = !state.dark;
+    document.body.classList.toggle("theme-light", !state.dark);
+  });
+
+  qs("#toggleFullscreen").addEventListener("click", async () => {
+    if (!document.fullscreenElement) {
+      await document.documentElement.requestFullscreen();
+      return;
+    }
+
+    await document.exitFullscreen();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowRight" || event.key === "PageDown") {
+      goToSlide(state.index + 1);
+    }
+
+    if (event.key === "ArrowLeft" || event.key === "PageUp") {
+      goToSlide(state.index - 1);
+    }
+
+    if (event.key.toLowerCase() === "f") {
+      qs("#toggleFullscreen").click();
+    }
+
+    if (event.key.toLowerCase() === "n") {
+      qs("#toggleNotes").click();
     }
   });
-
-  return score;
 }
 
-function lockQuiz(root) {
-  root.querySelectorAll("input").forEach(i => i.disabled = true);
-}
-
-function initQuiz() {
-  const root = qs("#quizRoot");
-  const startBtn = qs("#startQuiz");
-  const resetBtn = qs("#resetQuiz");
-  const feedback = qs("#quizFeedback");
-
-  if (!root || !startBtn || !resetBtn) return;
-
-  renderQuiz(root);
-
-  startBtn.addEventListener("click", () => {
-    const score = scoreQuiz(root);
-    lockQuiz(root);
-
-    if (feedback) {
-      feedback.textContent = `Score: ${score} / ${quizData.length}`;
-    }
-
-    startBtn.disabled = true;
-    resetBtn.disabled = false;
-  });
-
-  resetBtn.addEventListener("click", () => {
-    renderQuiz(root);
-    if (feedback) feedback.textContent = "";
-    startBtn.disabled = false;
-    resetBtn.disabled = true;
-  });
-}
-
-// -------------------------------
-// Presenter Mode
-// -------------------------------
-function initPresenterMode() {
-  const presenterBtn = qs("#presenterToggle");
-  if (!presenterBtn) return;
-
-  presenterBtn.addEventListener("click", () => {
-    document.body.classList.toggle("presenter");
-
-    presenterBtn.textContent =
-      document.body.classList.contains("presenter")
-        ? "Exit presenter"
-        : "Presenter mode";
-  });
-}
-
-// -------------------------------
-// Glossary Drawer
-// -------------------------------
-function initGlossary() {
-  const glossaryBtn = qs("#glossaryToggle");
-  const glossaryDrawer = qs("#glossaryDrawer");
-  const glossaryClose = qs("#glossaryClose");
-
-  if (!glossaryBtn || !glossaryDrawer) return;
-
-  glossaryBtn.addEventListener("click", () => {
-    glossaryDrawer.hidden = !glossaryDrawer.hidden;
-  });
-
-  if (glossaryClose) {
-    glossaryClose.addEventListener("click", () => {
-      glossaryDrawer.hidden = true;
-    });
-  }
-}
-
-// -------------------------------
-// Sidebar Active Section Highlight
-// -------------------------------
-function initActiveNav() {
-  const navLinks = qsa(".sideNav__link");
-  if (!navLinks.length) return;
-
-  const sections = navLinks
-    .map(link => {
-      const id = link.getAttribute("href").replace("#", "");
-      return { link, section: document.getElementById(id) };
-    })
-    .filter(x => x.section);
-
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-
-      sections.forEach(item => {
-        item.link.classList.toggle(
-          "is-active",
-          item.section.id === entry.target.id
-        );
-      });
-    });
-  }, {
-    threshold: 0.3,
-    rootMargin: "-20% 0px -60% 0px"
-  });
-
-  sections.forEach(item => observer.observe(item.section));
-}
-
-
-
-// -------------------------------
-// Homepage guard (ensure Module 2 is always visible)
-// -------------------------------
-function initHomeModule2Guard() {
-  const isHome = !document.body.dataset.module;
-  if (!isHome) return;
-
-  const nav = qs('.nav');
-  if (nav && !nav.querySelector('a[href="./modules/module-2.html"]')) {
-    const resourcesLink = nav.querySelector('a[href="#resources"]');
-    const module2Link = document.createElement('a');
-    module2Link.href = './modules/module-2.html';
-    module2Link.textContent = 'Module 2';
-
-    if (resourcesLink) nav.insertBefore(module2Link, resourcesLink);
-    else nav.appendChild(module2Link);
-  }
-
-  const grid = qs('#homeModuleGrid') || qs('.grid2');
-  if (!grid) return;
-
-  let module2Card = Array.from(grid.querySelectorAll('.card')).find(card => {
-    const heading = card.querySelector('h3');
-    return heading && heading.textContent.toLowerCase().includes('module 2');
-  });
-
-  if (!module2Card) {
-    module2Card = document.createElement('div');
-    module2Card.className = 'card';
-    module2Card.innerHTML = `
-      <h3>Module 2 — The Rise of Artificial Intelligence</h3>
-      <p>A decade-by-decade timeline from the 1950s to the 2020s with AI winters, booms, and key take-aways.</p>
-      <a class="btn btn--primary" href="./modules/module-2.html">Open Module 2</a>
-    `;
-
-    const staleCard = Array.from(grid.querySelectorAll('.card')).find(card => {
-      const heading = card.querySelector('h3');
-      return heading && heading.textContent.trim().toLowerCase() === 'next up';
-    });
-
-    if (staleCard) staleCard.replaceWith(module2Card);
-    else grid.appendChild(module2Card);
-  }
-}
-
-// -------------------------------
-// Initialize Everything
-// -------------------------------
 document.addEventListener("DOMContentLoaded", () => {
-  initQuiz();
-  initPresenterMode();
-  initGlossary();
-  initActiveNav();
-  initHomeModule2Guard();
+  initControls();
+  goToSlide(0);
 });
