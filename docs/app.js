@@ -1,420 +1,335 @@
-const slides = [
-  {
-    type: "hero",
-    title: "AetherDeck X",
-    eyebrow: "Category leap · 2026",
-    lead:
-      "This is what happens when presentations are treated like software products: live systems, dynamic pacing, and executive-grade visual storytelling.",
-    chips: ["Cinematic canvas", "Fragment reveals", "Presenter intelligence", "Command palette"],
-    notes:
-      "Set the hook. This is not a theme—it is a complete delivery system with controls engineered for persuasion.",
-    cues: ["Pause before saying 'software products'", "Point to top status bar", "Press right arrow once"],
-    track: [
-      "Problem: traditional slides are static and fragile.",
-      "Shift: real-time controls and adaptive flow.",
-      "Outcome: confidence, clarity, and control."
-    ]
-  },
-  {
-    type: "timeline",
-    title: "From deck file to presentation operating system",
-    lead: "AetherDeck X upgrades each part of the delivery loop.",
-    timeline: [
-      { year: "Then", text: "Static slide pages with little context awareness." },
-      { year: "Now", text: "Slides + fragments + pacing + live state sync." },
-      { year: "Next", text: "Presentations that adapt in real time to audience needs." }
-    ],
-    notes: "Show momentum. Emphasize this is a deliberate product trajectory, not a visual reskin.",
-    cues: ["Keep this under 30 seconds", "Use deliberate cadence"],
-    track: ["Then → now → next narrative", "Signal long-term roadmap confidence"]
-  },
-  {
-    type: "metrics",
-    title: "Engineered for the room, not just the screen",
-    lead: "Hard delivery features that speakers actually need during high-stakes moments.",
-    stats: [
-      { value: "∞", label: "Fragment steps per slide" },
-      { value: "⌘K", label: "Instant jump command palette" },
-      { value: "URL", label: "Deep-link to any slide" },
-      { value: "Live", label: "Runtime timer + mode status" }
-    ],
-    notes: "This is your confidence slide. Translate technical features into presenter outcomes.",
-    cues: ["Mention board meetings and keynotes", "Show timer in header"],
-    track: ["Reliable navigation", "Precise pacing", "Improved speaker control"]
-  },
-  {
-    type: "split",
-    title: "Multi-layer storytelling with progressive reveals",
-    lead:
-      "Each reveal can expose a new argument, proof point, or objection-handling line exactly when needed.",
-    leftTitle: "What your team gains",
-    leftItems: [
-      "Visual authority from the first slide",
-      "Clean narrative rhythm",
-      "Presenter confidence in live Q&A",
-      "No dependency on desktop slide software"
-    ],
-    rightTitle: "What your audience feels",
-    rightItems: [
-      "Less cognitive overload",
-      "Clearer takeaways",
-      "Higher trust in your message",
-      "A keynote-grade experience"
-    ],
-    fragments: [
-      "Reveal 1: frame the challenge",
-      "Reveal 2: show capability",
-      "Reveal 3: land business impact"
-    ],
-    notes: "Use fragment stepping here to visibly demonstrate progressive reveal behavior.",
-    cues: ["Tap Next Step multiple times", "Narrate each reveal"],
-    track: ["Challenge", "Capability", "Business impact"]
-  },
-  {
-    type: "quote",
-    title: "“If Microsoft reimagined PowerPoint from scratch for 2026, it would feel like this.”",
-    lead: "AetherDeck X turns every presentation into a modern product experience.",
-    notes: "Deliver this slowly. Then open command palette and jump back to any slide title instantly.",
-    cues: ["Strong finish", "Invite next step: deploy this as default template"],
-    track: ["Aspirational close", "Clear call to action"]
-  }
-];
+// -----------------------
+// Snake Rush
+// -----------------------
+const snakeCanvas = document.getElementById("snakeCanvas");
+const snakeCtx = snakeCanvas.getContext("2d");
+const snakeScoreEl = document.getElementById("snakeScore");
+const snakeBestEl = document.getElementById("snakeBest");
+const snakeStartBtn = document.getElementById("snakeStart");
 
-const state = {
-  slideIndex: 0,
-  fragmentIndex: 0,
-  autoplay: false,
-  autoplayTimer: null,
-  dark: true,
-  startedAt: null
+const snakeState = {
+  size: 18,
+  tile: snakeCanvas.width / 18,
+  snake: [{ x: 9, y: 9 }],
+  dir: { x: 1, y: 0 },
+  nextDir: { x: 1, y: 0 },
+  food: { x: 4, y: 4 },
+  score: 0,
+  speed: 130,
+  timer: null,
+  running: false,
+  best: Number(localStorage.getItem("arcadeSnakeBest") || 0)
 };
 
-const qs = (selector) => document.querySelector(selector);
+snakeBestEl.textContent = String(snakeState.best);
 
-function getHashSlideIndex() {
-  const match = location.hash.match(/slide-(\d+)/i);
-  if (!match) return 0;
+function drawSnake() {
+  snakeCtx.fillStyle = "#040918";
+  snakeCtx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
 
-  const candidate = Number(match[1]) - 1;
-  if (Number.isNaN(candidate)) return 0;
-  return Math.min(Math.max(candidate, 0), slides.length - 1);
-}
-
-function updateHash() {
-  const target = `slide-${state.slideIndex + 1}`;
-  if (location.hash !== `#${target}`) {
-    history.replaceState(null, "", `#${target}`);
-  }
-}
-
-function currentSlide() {
-  return slides[state.slideIndex];
-}
-
-function totalFragments(slide) {
-  return Array.isArray(slide.fragments) ? slide.fragments.length : 0;
-}
-
-function renderSlide(slide) {
-  if (slide.type === "hero") {
-    return `
-      <div class="slide slide--hero">
-        <p class="eyebrow">${slide.eyebrow}</p>
-        <h1>${slide.title}</h1>
-        <p class="lead">${slide.lead}</p>
-        <div class="chipRow">${slide.chips.map((chip) => `<span>${chip}</span>`).join("")}</div>
-      </div>`;
+  snakeCtx.strokeStyle = "rgba(120, 170, 255, 0.12)";
+  for (let i = 0; i < snakeState.size; i += 1) {
+    const pos = i * snakeState.tile;
+    snakeCtx.beginPath();
+    snakeCtx.moveTo(pos, 0);
+    snakeCtx.lineTo(pos, snakeCanvas.height);
+    snakeCtx.moveTo(0, pos);
+    snakeCtx.lineTo(snakeCanvas.width, pos);
+    snakeCtx.stroke();
   }
 
-  if (slide.type === "timeline") {
-    return `
-      <div class="slide">
-        <h1>${slide.title}</h1>
-        <p class="lead">${slide.lead}</p>
-        <div class="timelineGrid">
-          ${slide.timeline
-            .map(
-              (step) => `
-              <article class="timelineStep">
-                <strong>${step.year}</strong>
-                <p>${step.text}</p>
-              </article>`
-            )
-            .join("")}
-        </div>
-      </div>`;
-  }
+  snakeCtx.fillStyle = "#ff5fa2";
+  snakeCtx.beginPath();
+  snakeCtx.arc(
+    snakeState.food.x * snakeState.tile + snakeState.tile / 2,
+    snakeState.food.y * snakeState.tile + snakeState.tile / 2,
+    snakeState.tile * 0.32,
+    0,
+    Math.PI * 2
+  );
+  snakeCtx.fill();
 
-  if (slide.type === "metrics") {
-    return `
-      <div class="slide">
-        <h1>${slide.title}</h1>
-        <p class="lead">${slide.lead}</p>
-        <div class="statGrid">
-          ${slide.stats
-            .map(
-              (stat) => `
-              <article class="statCard">
-                <strong>${stat.value}</strong>
-                <p>${stat.label}</p>
-              </article>`
-            )
-            .join("")}
-        </div>
-      </div>`;
-  }
-
-  if (slide.type === "split") {
-    const revealCount = Math.min(state.fragmentIndex, totalFragments(slide));
-
-    return `
-      <div class="slide">
-        <h1>${slide.title}</h1>
-        <p class="lead">${slide.lead}</p>
-
-        <div class="splitGrid">
-          <section class="contentCard">
-            <h2>${slide.leftTitle}</h2>
-            <ul>${slide.leftItems.map((item) => `<li>${item}</li>`).join("")}</ul>
-          </section>
-          <section class="contentCard">
-            <h2>${slide.rightTitle}</h2>
-            <ul>${slide.rightItems.map((item) => `<li>${item}</li>`).join("")}</ul>
-          </section>
-        </div>
-
-        <div class="revealRail">
-          ${slide.fragments
-            .map(
-              (item, index) =>
-                `<div class="revealItem ${index < revealCount ? "is-on" : ""}">${item}</div>`
-            )
-            .join("")}
-        </div>
-      </div>`;
-  }
-
-  return `
-    <div class="slide slide--quote">
-      <h1>${slide.title}</h1>
-      <p class="lead">${slide.lead}</p>
-    </div>`;
-}
-
-function renderThumbnails() {
-  const rail = qs("#thumbRail");
-  rail.innerHTML = slides
-    .map(
-      (slide, index) => `
-      <button class="thumb ${index === state.slideIndex ? "is-active" : ""}" data-index="${index}" type="button">
-        <span>${String(index + 1).padStart(2, "0")}</span>
-        <strong>${slide.title}</strong>
-      </button>`
-    )
-    .join("");
-
-  rail.querySelectorAll(".thumb").forEach((thumb) => {
-    thumb.addEventListener("click", () => goToSlide(Number(thumb.dataset.index)));
+  snakeState.snake.forEach((seg, idx) => {
+    snakeCtx.fillStyle = idx === 0 ? "#5be6ff" : "#53ff9f";
+    snakeCtx.fillRect(
+      seg.x * snakeState.tile + 2,
+      seg.y * snakeState.tile + 2,
+      snakeState.tile - 4,
+      snakeState.tile - 4
+    );
   });
 }
 
-function renderNotes(slide) {
-  qs("#speakerNotes").textContent = slide.notes;
-  qs("#deliveryCues").innerHTML = slide.cues.map((cue) => `<li>${cue}</li>`).join("");
-  qs("#talkTrack").innerHTML = slide.track.map((step) => `<p>• ${step}</p>`).join("");
+function spawnFood() {
+  while (true) {
+    const x = Math.floor(Math.random() * snakeState.size);
+    const y = Math.floor(Math.random() * snakeState.size);
+    const overlap = snakeState.snake.some((seg) => seg.x === x && seg.y === y);
+    if (!overlap) {
+      snakeState.food = { x, y };
+      return;
+    }
+  }
 }
 
-function syncMeta() {
-  const slide = currentSlide();
-  const fragmentTotal = totalFragments(slide);
+function stepSnake() {
+  snakeState.dir = snakeState.nextDir;
+  const head = snakeState.snake[0];
+  const next = {
+    x: head.x + snakeState.dir.x,
+    y: head.y + snakeState.dir.y
+  };
 
-  qs("#slideCounter").textContent = `${state.slideIndex + 1} / ${slides.length}`;
-  qs("#progressFill").style.width = `${((state.slideIndex + 1) / slides.length) * 100}%`;
-  qs("#fragmentCounter").textContent =
-    fragmentTotal > 0 ? `Step ${Math.min(state.fragmentIndex + 1, fragmentTotal + 1)} of ${fragmentTotal + 1}` : "";
+  const out =
+    next.x < 0 || next.y < 0 ||
+    next.x >= snakeState.size || next.y >= snakeState.size;
+  const hitSelf = snakeState.snake.some((seg) => seg.x === next.x && seg.y === next.y);
 
-  qs("#nextFragment").textContent =
-    fragmentTotal > 0 && state.fragmentIndex < fragmentTotal ? "Next Reveal →" : "Next Slide →";
-}
-
-function renderStage() {
-  const stage = qs("#slideStage");
-  stage.classList.remove("is-entering");
-
-  requestAnimationFrame(() => {
-    stage.innerHTML = renderSlide(currentSlide());
-    stage.classList.add("is-entering");
-  });
-}
-
-function goToSlide(index, fragmentIndex = 0) {
-  state.slideIndex = (index + slides.length) % slides.length;
-  state.fragmentIndex = Math.max(fragmentIndex, 0);
-
-  renderStage();
-  renderNotes(currentSlide());
-  renderThumbnails();
-  syncMeta();
-  updateHash();
-}
-
-function goNext() {
-  const slide = currentSlide();
-  const fragmentTotal = totalFragments(slide);
-
-  if (fragmentTotal > 0 && state.fragmentIndex < fragmentTotal) {
-    state.fragmentIndex += 1;
-    renderStage();
-    syncMeta();
+  if (out || hitSelf) {
+    clearInterval(snakeState.timer);
+    snakeState.running = false;
+    snakeStartBtn.textContent = "Play Again";
     return;
   }
 
-  goToSlide(state.slideIndex + 1, 0);
+  snakeState.snake.unshift(next);
+
+  if (next.x === snakeState.food.x && next.y === snakeState.food.y) {
+    snakeState.score += 10;
+    snakeScoreEl.textContent = String(snakeState.score);
+    spawnFood();
+    snakeState.speed = Math.max(70, snakeState.speed - 3);
+    clearInterval(snakeState.timer);
+    snakeState.timer = setInterval(stepSnake, snakeState.speed);
+  } else {
+    snakeState.snake.pop();
+  }
+
+  if (snakeState.score > snakeState.best) {
+    snakeState.best = snakeState.score;
+    localStorage.setItem("arcadeSnakeBest", String(snakeState.best));
+    snakeBestEl.textContent = String(snakeState.best);
+  }
+
+  drawSnake();
 }
 
-function goPrev() {
-  if (state.fragmentIndex > 0) {
-    state.fragmentIndex -= 1;
-    renderStage();
-    syncMeta();
+function resetSnake() {
+  clearInterval(snakeState.timer);
+  snakeState.snake = [{ x: 9, y: 9 }];
+  snakeState.dir = { x: 1, y: 0 };
+  snakeState.nextDir = { x: 1, y: 0 };
+  snakeState.score = 0;
+  snakeState.speed = 130;
+  snakeState.running = true;
+  snakeScoreEl.textContent = "0";
+  spawnFood();
+  drawSnake();
+  snakeState.timer = setInterval(stepSnake, snakeState.speed);
+  snakeStartBtn.textContent = "Restart";
+}
+
+snakeStartBtn.addEventListener("click", resetSnake);
+document.addEventListener("keydown", (event) => {
+  const key = event.key.toLowerCase();
+  const map = {
+    arrowup: { x: 0, y: -1 }, w: { x: 0, y: -1 },
+    arrowdown: { x: 0, y: 1 }, s: { x: 0, y: 1 },
+    arrowleft: { x: -1, y: 0 }, a: { x: -1, y: 0 },
+    arrowright: { x: 1, y: 0 }, d: { x: 1, y: 0 }
+  };
+  const next = map[key];
+  if (!next) return;
+  const reverse = next.x === -snakeState.dir.x && next.y === -snakeState.dir.y;
+  if (!reverse) snakeState.nextDir = next;
+});
+
+drawSnake();
+
+// -----------------------
+// Memory Matrix
+// -----------------------
+const memoryGrid = document.getElementById("memoryGrid");
+const memoryMovesEl = document.getElementById("memoryMoves");
+const memoryMatchedEl = document.getElementById("memoryMatched");
+const memoryResetBtn = document.getElementById("memoryReset");
+
+const symbols = ["🎮", "🕹️", "⭐", "🚀", "👾", "💎", "🔥", "⚡"];
+const memoryState = {
+  cards: [],
+  open: [],
+  lock: false,
+  matched: 0,
+  moves: 0
+};
+
+function shuffle(list) {
+  const clone = [...list];
+  for (let i = clone.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [clone[i], clone[j]] = [clone[j], clone[i]];
+  }
+  return clone;
+}
+
+function renderMemory() {
+  memoryGrid.innerHTML = "";
+  memoryState.cards.forEach((card, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "memory-card";
+    button.textContent = card.symbol;
+    if (card.revealed) button.classList.add("is-revealed");
+    if (card.matched) button.classList.add("is-matched");
+    button.disabled = card.matched;
+    button.addEventListener("click", () => flipCard(index));
+    memoryGrid.appendChild(button);
+  });
+}
+
+function syncMemoryStats() {
+  memoryMovesEl.textContent = String(memoryState.moves);
+  memoryMatchedEl.textContent = String(memoryState.matched);
+}
+
+function flipCard(index) {
+  if (memoryState.lock) return;
+  const card = memoryState.cards[index];
+  if (card.revealed || card.matched) return;
+
+  card.revealed = true;
+  memoryState.open.push(index);
+  renderMemory();
+
+  if (memoryState.open.length < 2) return;
+
+  memoryState.moves += 1;
+  memoryState.lock = true;
+  syncMemoryStats();
+
+  const [a, b] = memoryState.open;
+  const first = memoryState.cards[a];
+  const second = memoryState.cards[b];
+
+  if (first.symbol === second.symbol) {
+    first.matched = true;
+    second.matched = true;
+    memoryState.matched += 1;
+    memoryState.open = [];
+    memoryState.lock = false;
+    syncMemoryStats();
+    renderMemory();
     return;
   }
 
-  goToSlide(state.slideIndex - 1, 0);
+  setTimeout(() => {
+    first.revealed = false;
+    second.revealed = false;
+    memoryState.open = [];
+    memoryState.lock = false;
+    renderMemory();
+  }, 700);
 }
 
-function setAutoplay(enabled) {
-  state.autoplay = enabled;
-  qs("#toggleAutoplay").textContent = enabled ? "Pause" : "Autoplay";
+function resetMemory() {
+  const board = shuffle([...symbols, ...symbols]).map((symbol) => ({
+    symbol,
+    revealed: false,
+    matched: false
+  }));
 
-  if (state.autoplayTimer) {
-    clearInterval(state.autoplayTimer);
-    state.autoplayTimer = null;
+  memoryState.cards = board;
+  memoryState.open = [];
+  memoryState.lock = false;
+  memoryState.matched = 0;
+  memoryState.moves = 0;
+  syncMemoryStats();
+  renderMemory();
+}
+
+memoryResetBtn.addEventListener("click", resetMemory);
+resetMemory();
+
+// -----------------------
+// Target Tap
+// -----------------------
+const targetArena = document.getElementById("targetArena");
+const targetDot = document.getElementById("targetDot");
+const targetOverlay = document.getElementById("targetOverlay");
+const targetStartBtn = document.getElementById("targetStart");
+const targetHitsEl = document.getElementById("targetHits");
+const targetTimeEl = document.getElementById("targetTime");
+const targetBestEl = document.getElementById("targetBest");
+
+const targetState = {
+  running: false,
+  hits: 0,
+  timeLeft: 30,
+  tickTimer: null,
+  hopTimer: null,
+  best: Number(localStorage.getItem("arcadeTargetBest") || 0)
+};
+
+targetBestEl.textContent = String(targetState.best);
+
+function moveTarget() {
+  const area = targetArena.getBoundingClientRect();
+  const maxX = Math.max(0, area.width - 46);
+  const maxY = Math.max(0, area.height - 46);
+  const x = Math.floor(Math.random() * maxX);
+  const y = Math.floor(Math.random() * maxY);
+  targetDot.style.left = `${x}px`;
+  targetDot.style.top = `${y}px`;
+}
+
+function stopTargetRound(message) {
+  targetState.running = false;
+  clearInterval(targetState.tickTimer);
+  clearInterval(targetState.hopTimer);
+  targetDot.style.display = "none";
+  targetOverlay.textContent = message;
+  targetOverlay.style.display = "grid";
+  targetStartBtn.textContent = "Play Again";
+
+  if (targetState.hits > targetState.best) {
+    targetState.best = targetState.hits;
+    localStorage.setItem("arcadeTargetBest", String(targetState.best));
+    targetBestEl.textContent = String(targetState.best);
   }
-
-  if (!enabled) return;
-
-  state.autoplayTimer = setInterval(() => {
-    goNext();
-  }, 5500);
 }
 
-function tickClock() {
-  if (!state.startedAt) state.startedAt = Date.now();
+function startTargetRound() {
+  targetState.running = true;
+  targetState.hits = 0;
+  targetState.timeLeft = 30;
+  targetHitsEl.textContent = "0";
+  targetTimeEl.textContent = "30";
+  targetOverlay.style.display = "none";
+  targetDot.style.display = "block";
+  targetStartBtn.textContent = "Running...";
 
-  const elapsed = Math.floor((Date.now() - state.startedAt) / 1000);
-  const minutes = String(Math.floor(elapsed / 60)).padStart(2, "0");
-  const seconds = String(elapsed % 60).padStart(2, "0");
-  qs("#statusTime").textContent = `${minutes}:${seconds}`;
-}
+  moveTarget();
+  clearInterval(targetState.tickTimer);
+  clearInterval(targetState.hopTimer);
 
-function updateModeStatus() {
-  const mode = document.fullscreenElement ? "Presenter View" : "Audience View";
-  qs("#statusMode").textContent = mode;
-}
-
-function renderSearchResults(filter = "") {
-  const results = qs("#searchResults");
-  const query = filter.trim().toLowerCase();
-
-  const matches = slides
-    .map((slide, index) => ({ slide, index }))
-    .filter(({ slide, index }) => {
-      if (!query) return true;
-      return slide.title.toLowerCase().includes(query) || String(index + 1) === query;
-    });
-
-  results.innerHTML = matches
-    .map(
-      ({ slide, index }) => `
-      <button class="palette__item" data-index="${index}" type="button">
-        <span>${String(index + 1).padStart(2, "0")}</span>
-        <strong>${slide.title}</strong>
-      </button>`
-    )
-    .join("");
-
-  results.querySelectorAll(".palette__item").forEach((item) => {
-    item.addEventListener("click", () => {
-      goToSlide(Number(item.dataset.index));
-      togglePalette(false);
-    });
-  });
-}
-
-function togglePalette(force) {
-  const palette = qs("#commandPalette");
-  const next = typeof force === "boolean" ? force : palette.hidden;
-
-  palette.hidden = !next;
-  if (next) {
-    renderSearchResults();
-    qs("#slideSearch").focus();
-    return;
-  }
-
-  qs("#slideSearch").value = "";
-}
-
-function initControls() {
-  qs("#prevSlide").addEventListener("click", goPrev);
-  qs("#nextFragment").addEventListener("click", goNext);
-
-  qs("#toggleNotes").addEventListener("click", () => {
-    const panel = qs("#notesPanel");
-    panel.hidden = !panel.hidden;
-  });
-
-  qs("#toggleAutoplay").addEventListener("click", () => {
-    setAutoplay(!state.autoplay);
-  });
-
-  qs("#toggleTheme").addEventListener("click", () => {
-    state.dark = !state.dark;
-    document.body.classList.toggle("theme-light", !state.dark);
-  });
-
-  qs("#toggleFullscreen").addEventListener("click", async () => {
-    if (!document.fullscreenElement) {
-      await document.documentElement.requestFullscreen();
-      return;
+  targetState.tickTimer = setInterval(() => {
+    targetState.timeLeft -= 1;
+    targetTimeEl.textContent = String(targetState.timeLeft);
+    if (targetState.timeLeft <= 0) {
+      stopTargetRound(`Time! Final score: ${targetState.hits}`);
     }
+  }, 1000);
 
-    await document.exitFullscreen();
-  });
-
-  qs("#toggleCommand").addEventListener("click", () => togglePalette());
-
-  qs("#slideSearch").addEventListener("input", (event) => {
-    renderSearchResults(event.target.value);
-  });
-
-  document.addEventListener("fullscreenchange", updateModeStatus);
-
-  document.addEventListener("keydown", (event) => {
-    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
-      event.preventDefault();
-      togglePalette();
-      return;
-    }
-
-    if (event.key === "Escape") {
-      togglePalette(false);
-      return;
-    }
-
-    if (!qs("#commandPalette").hidden) return;
-
-    if (event.key === "ArrowRight" || event.key === "PageDown" || event.key === " ") goNext();
-    if (event.key === "ArrowLeft" || event.key === "PageUp") goPrev();
-    if (event.key.toLowerCase() === "n") qs("#toggleNotes").click();
-    if (event.key.toLowerCase() === "f") qs("#toggleFullscreen").click();
-  });
+  targetState.hopTimer = setInterval(moveTarget, 650);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  initControls();
-  setInterval(tickClock, 1000);
-  goToSlide(getHashSlideIndex());
-  updateModeStatus();
+targetStartBtn.addEventListener("click", () => {
+  if (!targetState.running) startTargetRound();
+});
+
+targetDot.addEventListener("click", () => {
+  if (!targetState.running) return;
+  targetState.hits += 1;
+  targetHitsEl.textContent = String(targetState.hits);
+  moveTarget();
 });
