@@ -1,242 +1,97 @@
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
 body {
-  background:
-    radial-gradient(1200px 700px at 50% 120%, #0a1c44 0%, #030712 45%, #010205 100%),
-    #000;
+  background: radial-gradient(circle at top, #0e2a5f 0%, #05070f 55%, #020204 100%);
+  font-family: Arial, Helvetica, sans-serif;
+  color: #f5f7ff;
   overflow: hidden;
-  font-family: 'Courier New', Courier, monospace;
-  color: #fff;
-  cursor: none;
 }
 
 #canvas {
-  display: block;
   position: fixed;
   inset: 0;
+  display: block;
 }
 
-body.no-custom-cursor {
-  cursor: default;
-}
-
-/* ── HUD ── */
 #hud {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 18px 28px;
-  pointer-events: none;
-  z-index: 10;
-  background: linear-gradient(to bottom, rgba(5, 9, 20, 0.45), rgba(5, 9, 20, 0));
-}
-
-.hud-col { display: flex; flex-direction: column; gap: 8px; min-width: 180px; }
-.hud-col.right { align-items: flex-end; }
-
-.hud-center { text-align: center; }
-
-#title {
-  font-size: 26px;
-  font-weight: bold;
-  letter-spacing: 10px;
-  text-shadow: 0 0 20px rgba(160,120,255,0.9), 0 0 50px rgba(100,60,220,0.5);
-}
-
-#subtitle {
-  font-size: 11px;
-  letter-spacing: 5px;
-  color: #9977ff;
-  margin-top: 4px;
-  text-transform: uppercase;
-}
-
-#combo-pill {
-  margin-top: 8px;
-  display: inline-block;
-  font-size: 11px;
-  letter-spacing: 2px;
-  border: 1px solid rgba(255, 170, 90, 0.45);
-  border-radius: 999px;
-  padding: 4px 10px;
-  color: #ffbe7d;
-  background: rgba(20, 10, 5, 0.45);
-}
-
-.stat { display: flex; flex-direction: column; gap: 2px; }
-
-.label {
-  font-size: 9px;
-  letter-spacing: 3px;
-  color: #556;
-  text-transform: uppercase;
-}
-
-.value {
-  font-size: 16px;
-  letter-spacing: 1px;
-  text-shadow: 0 0 8px currentColor;
-}
-
-.green { color: #44ff88; }
-
-#mission-panel {
-  position: fixed;
-  top: 92px;
+  top: 14px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 11;
-  min-width: 320px;
-  max-width: min(92vw, 520px);
-  padding: 12px 14px;
+  width: min(960px, 94vw);
+  border: 1px solid rgba(163, 194, 255, 0.35);
   border-radius: 12px;
-  border: 1px solid rgba(130, 170, 255, 0.35);
-  background: rgba(4, 10, 26, 0.75);
+  background: rgba(5, 12, 28, 0.72);
+  padding: 12px 16px;
   backdrop-filter: blur(8px);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+  z-index: 5;
 }
 
-.mission-title-row {
+#hud h1 {
+  text-align: center;
+  letter-spacing: 3px;
+  font-size: clamp(14px, 2.1vw, 22px);
+  color: #a8c6ff;
+  margin-bottom: 8px;
+}
+
+.stats {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  justify-content: center;
+  font-size: clamp(12px, 1.7vw, 16px);
 }
 
-#mission-title {
-  font-size: 15px;
-  letter-spacing: 1px;
-  margin-top: 6px;
+.stats strong {
+  color: #fff2a0;
 }
 
-#mission-desc {
-  font-size: 12px;
-  color: #9cb4ff;
-  margin-top: 5px;
+.controls {
+  margin-top: 8px;
+  text-align: center;
+  color: #c6d3ff;
+  font-size: clamp(10px, 1.5vw, 14px);
 }
 
-#mission-status {
-  margin-top: 7px;
-  font-size: 11px;
-  letter-spacing: 2px;
-  color: #77ffaa;
-}
-
-#next-mission,
-#settings-toggle {
-  border: 1px solid rgba(255,255,255,0.25);
-  color: #d7e6ff;
-  background: rgba(18, 30, 60, 0.7);
-  border-radius: 8px;
-  padding: 3px 8px;
-  cursor: pointer;
-}
-
-#settings-toggle {
+#overlay {
   position: fixed;
-  right: 14px;
-  bottom: 104px;
-  z-index: 12;
-}
-
-#settings-panel {
-  position: fixed;
-  right: 14px;
-  bottom: 148px;
-  z-index: 12;
-  min-width: 220px;
-  border-radius: 10px;
-  border: 1px solid rgba(130,170,255,0.25);
-  background: rgba(4, 10, 26, 0.82);
-  padding: 10px;
+  inset: 0;
+  z-index: 8;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-}
-
-#settings-panel label {
-  font-size: 12px;
-  color: #d7e6ff;
-}
-
-.settings-title {
-  font-size: 11px;
-  letter-spacing: 2px;
-  color: #9cb4ff;
-}
-
-.settings-hint {
-  font-size: 11px;
-  color: #8090b4;
-}
-
-.hidden {
-  display: none !important;
-}
-
-/* ── POWER BAR ── */
-#powers {
-  position: fixed;
-  bottom: 28px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 10px;
-  background: rgba(5, 10, 24, 0.76);
-  border: 1px solid rgba(130,170,255,0.25);
-  border-radius: 60px;
-  padding: 10px 18px;
-  z-index: 10;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.45), inset 0 0 28px rgba(70,120,255,0.12);
-}
-
-.power {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.18);
-  background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.18), rgba(255,255,255,0.03));
-  cursor: pointer;
-  font-size: 20px;
-  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s, filter 0.15s;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  filter: saturate(1.05);
+  align-items: center;
+  gap: 16px;
+  background: rgba(3, 6, 14, 0.78);
 }
 
-.power:hover {
-  border-color: rgba(255,255,255,0.5);
-  transform: scale(1.12) translateY(-2px);
+#overlay.hidden {
+  display: none;
 }
 
-.power.active {
-  border-color: #ff8844;
-  background: rgba(255,140,60,0.18);
-  box-shadow: 0 0 18px rgba(255,140,60,0.55), inset 0 0 8px rgba(255,140,60,0.15);
+#overlay-text {
+  font-size: clamp(20px, 4vw, 44px);
+  color: #ffd86d;
+  text-shadow: 0 0 14px rgba(255, 216, 109, 0.4);
+  text-align: center;
+  padding: 0 16px;
 }
 
-.power.restore.active {
-  border-color: #44ff88;
-  background: rgba(60,255,140,0.18);
-  box-shadow: 0 0 18px rgba(60,255,140,0.55), inset 0 0 8px rgba(60,255,140,0.15);
+#restart {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  padding: 10px 20px;
+  background: rgba(38, 81, 179, 0.6);
+  color: #ffffff;
+  font-size: 16px;
+  cursor: pointer;
 }
 
-/* ── MOBILE ── */
-@media (max-width: 600px) {
-  #hud { padding: 12px; }
-  #title { font-size: 18px; letter-spacing: 6px; }
-  .hud-col { min-width: 120px; }
-  .value { font-size: 12px; }
-  .power { width: 40px; height: 40px; font-size: 16px; }
-  #powers { gap: 6px; padding: 8px 12px; }
-  #mission-panel {
-    top: 74px;
-    min-width: 280px;
-    padding: 10px;
-  }
+#restart:hover {
+  background: rgba(65, 118, 232, 0.8);
 }
