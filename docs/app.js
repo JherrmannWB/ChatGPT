@@ -33,7 +33,9 @@ const state = {
   cameraX: 0,
   particles: [],
   enemies: [],
+  obstacles: [],
   levelEndX: LEVEL_LENGTH,
+  clock: 0,
 };
 
 const player = {
@@ -46,14 +48,18 @@ const player = {
   health: 100,
   energy: 100,
   maxWalkSpeed: 290,
-  maxFlySpeed: 380,
+  maxFlySpeed: 390,
   accel: 1650,
-  airAccel: 1150,
+  airAccel: 1180,
   friction: 0.82,
   flyPower: 2000,
   onGround: false,
   facing: 1,
-  punchCooldown: 0,
+  attackCooldown: 0,
+  attackTimer: 0,
+  attackType: null,
+  runCycle: 0,
+  flightBlend: 0,
 };
 
 function clamp(value, min, max) {
@@ -97,12 +103,14 @@ function addParticles(x, y, color, count = 16, speedScale = 1) {
 
 function spawnLevel(level) {
   state.enemies.length = 0;
+  state.obstacles.length = 0;
+
   const startX = levelStartX(level);
   state.levelEndX = startX + LEVEL_LENGTH - 260;
 
-  const count = 5 + level * 2;
+  const count = 6 + level * 2;
   for (let i = 0; i < count; i += 1) {
-    const x = startX + 380 + Math.random() * (LEVEL_LENGTH - 560);
+    const x = startX + 360 + Math.random() * (LEVEL_LENGTH - 560);
     const baseY = groundYAt();
 
     state.enemies.push({
@@ -112,13 +120,32 @@ function spawnLevel(level) {
       vy: 0,
       width: 30,
       height: 62,
-      speed: 95 + level * 20 + Math.random() * 40,
-      hp: 32 + level * 12,
-      maxHp: 32 + level * 12,
-      touchDamage: 8 + Math.floor(level / 2),
-      jumpTimer: Math.random() * 2,
+      speed: 115 + level * 22 + Math.random() * 55,
+      hp: 45 + level * 16,
+      maxHp: 45 + level * 16,
+      touchDamage: 10 + Math.floor(level / 2),
+      jumpTimer: 0.6 + Math.random() * 1.4,
+      dodgeTimer: Math.random(),
       facing: -1,
-      isFlying: Math.random() < 0.28 + level * 0.03,
+      isFlying: Math.random() < 0.32 + level * 0.03,
+      attackCooldown: 0.5 + Math.random() * 0.8,
+      attackTimer: 0,
+      attackType: 'punch',
+      runCycle: Math.random() * Math.PI * 2,
+    });
+  }
+
+  const obstacleCount = 3 + Math.floor(level * 1.2);
+  for (let i = 0; i < obstacleCount; i += 1) {
+    const x = startX + 280 + Math.random() * (LEVEL_LENGTH - 460);
+    const kind = Math.random() < 0.5 ? 'barrier' : 'spike';
+    state.obstacles.push({
+      x,
+      y: groundYAt(),
+      width: kind === 'barrier' ? 36 : 28,
+      height: kind === 'barrier' ? 64 : 36,
+      damage: kind === 'barrier' ? 12 + level : 18 + level,
+      kind,
     });
   }
 }
@@ -130,6 +157,7 @@ function resetGame() {
   state.wave = 1;
   state.score = 0;
   state.cameraX = 0;
+  state.clock = 0;
   state.particles.length = 0;
 
   player.x = 120;
@@ -138,7 +166,11 @@ function resetGame() {
   player.vy = 0;
   player.health = 100;
   player.energy = 100;
-  player.punchCooldown = 0;
+  player.attackCooldown = 0;
+  player.attackTimer = 0;
+  player.attackType = null;
+  player.runCycle = 0;
+  player.flightBlend = 0;
   player.onGround = true;
   player.facing = 1;
 
@@ -147,30 +179,40 @@ function resetGame() {
   updateHud();
 }
 
-function burstPunch() {
-  if (player.punchCooldown > 0 || player.energy < 18) return;
-  player.punchCooldown = 0.75;
-  player.energy = clamp(player.energy - 18, 0, 100);
+function heroAttack(type) {
+  if (player.attackCooldown > 0) return;
 
-  const pulseRadius = 135;
+  const isKick = type === 'kick';
+  const energyCost = isKick ? 24 : 16;
+  if (player.energy < energyCost) return;
+
+  player.energy = clamp(player.energy - energyCost, 0, 100);
+  player.attackType = type;
+  player.attackTimer = isKick ? 0.33 : 0.22;
+  player.attackCooldown = isKick ? 0.65 : 0.45;
+
+  const reach = isKick ? 160 : 130;
+  const baseDamage = isKick ? 48 : 33;
   let hits = 0;
 
   for (const enemy of state.enemies) {
     const ex = enemy.x - player.x;
     const ey = (enemy.y - enemy.height * 0.5) - (player.y - player.height * 0.5);
     const dist = Math.hypot(ex, ey);
-    if (dist > pulseRadius) continue;
+    const frontCheck = Math.sign(ex || player.facing) === player.facing;
 
-    const power = (pulseRadius - dist) / pulseRadius;
-    enemy.hp -= 28 + power * 32;
-    enemy.vx += Math.sign(ex || player.facing) * (340 + power * 260);
-    enemy.vy -= 180 + power * 160;
+    if (dist > reach || !frontCheck) continue;
+
+    const power = (reach - dist) / reach;
+    enemy.hp -= baseDamage + power * 24;
+    enemy.vx += player.facing * (isKick ? 490 : 360);
+    enemy.vy -= isKick ? 220 : 140;
     hits += 1;
   }
 
   if (hits > 0) {
-    state.score += hits * 45;
-    addParticles(player.x, player.y - player.height * 0.5, '#9ec4ff', 28);
+    state.score += hits * (isKick ? 72 : 48);
+    addParticles(player.x + player.facing * 22, player.y - player.height * 0.58, '#9ec4ff', 24, 1.1);
   }
 }
 
@@ -201,8 +243,10 @@ function updatePlayer(dt) {
     player.vy -= player.flyPower * dt;
     player.energy = clamp(player.energy - 28 * dt, 0, 100);
     player.onGround = false;
+    player.flightBlend = clamp(player.flightBlend + dt * 4, 0, 1);
   } else {
     player.energy = clamp(player.energy + 14 * dt, 0, 100);
+    player.flightBlend = clamp(player.flightBlend - dt * 3, 0, 1);
   }
 
   player.vy += GRAVITY * dt;
@@ -226,7 +270,10 @@ function updatePlayer(dt) {
 
   state.cameraX = clamp(player.x - width * 0.33, levelStartX(state.wave), levelStartX(state.wave) + LEVEL_LENGTH - width);
 
-  player.punchCooldown = Math.max(0, player.punchCooldown - dt);
+  player.attackCooldown = Math.max(0, player.attackCooldown - dt);
+  player.attackTimer = Math.max(0, player.attackTimer - dt);
+  if (player.attackTimer === 0) player.attackType = null;
+  player.runCycle += Math.abs(player.vx) * dt * 0.045;
 }
 
 function rectHit(a, b) {
@@ -234,6 +281,32 @@ function rectHit(a, b) {
     Math.abs(a.x - b.x) * 2 < (a.width + b.width) &&
     Math.abs((a.y - a.height * 0.5) - (b.y - b.height * 0.5)) * 2 < (a.height + b.height)
   );
+}
+
+function updateObstacles(dt) {
+  const playerBox = {
+    x: player.x,
+    y: player.y,
+    width: player.width,
+    height: player.height,
+  };
+
+  for (const obstacle of state.obstacles) {
+    const box = {
+      x: obstacle.x,
+      y: obstacle.y,
+      width: obstacle.width,
+      height: obstacle.height,
+    };
+
+    if (!rectHit(playerBox, box)) continue;
+
+    player.health = clamp(player.health - obstacle.damage * dt * 4.5, 0, 100);
+    player.vx -= Math.sign(player.vx || player.facing) * 120 * dt;
+    if (obstacle.kind === 'spike') {
+      player.vy -= 120 * dt;
+    }
+  }
 }
 
 function updateEnemies(dt) {
@@ -251,23 +324,45 @@ function updateEnemies(dt) {
 
     enemy.facing = dx >= 0 ? 1 : -1;
 
-    if (distance < 620) {
+    if (distance < 760) {
       enemy.vx += enemy.facing * enemy.speed * dt;
     }
 
-    const maxEnemySpeed = enemy.isFlying ? 260 : 210;
+    enemy.dodgeTimer -= dt;
+    if (enemy.dodgeTimer <= 0 && distance < 200) {
+      enemy.vx -= enemy.facing * (160 + Math.random() * 190);
+      enemy.vy -= 200 + Math.random() * 120;
+      enemy.dodgeTimer = 1.4 + Math.random() * 1.4;
+    }
+
+    const maxEnemySpeed = enemy.isFlying ? 300 : 245;
     enemy.vx = clamp(enemy.vx, -maxEnemySpeed, maxEnemySpeed);
 
     enemy.jumpTimer -= dt;
-    if (enemy.isFlying && distance < 400) {
-      const targetY = player.y - 40;
-      enemy.vy += clamp((targetY - enemy.y) * 4.8, -300, 300) * dt;
+    if (enemy.isFlying && distance < 460) {
+      const targetY = player.y - 50;
+      enemy.vy += clamp((targetY - enemy.y) * 5.2, -340, 340) * dt;
     } else {
-      if (enemy.jumpTimer <= 0 && distance < 240) {
-        enemy.vy -= 530;
-        enemy.jumpTimer = 1.35 + Math.random() * 1.1;
+      if (enemy.jumpTimer <= 0 && distance < 280) {
+        enemy.vy -= 560;
+        enemy.jumpTimer = 0.9 + Math.random() * 1.1;
       }
       enemy.vy += GRAVITY * dt;
+    }
+
+    enemy.attackCooldown -= dt;
+    enemy.attackTimer = Math.max(0, enemy.attackTimer - dt);
+
+    if (enemy.attackCooldown <= 0 && distance < 92) {
+      enemy.attackType = Math.random() < 0.4 ? 'kick' : 'punch';
+      enemy.attackTimer = enemy.attackType === 'kick' ? 0.25 : 0.18;
+      enemy.attackCooldown = 0.6 + Math.random() * 0.7;
+
+      const damageScale = enemy.attackType === 'kick' ? 1.45 : 1;
+      player.health = clamp(player.health - enemy.touchDamage * damageScale, 0, 100);
+      player.vx += enemy.facing * (enemy.attackType === 'kick' ? 180 : 130);
+      player.vy -= enemy.attackType === 'kick' ? 90 : 45;
+      addParticles(player.x, player.y - player.height * 0.5, '#ffc9a7', 8, 0.7);
     }
 
     enemy.x += enemy.vx * dt;
@@ -281,7 +376,8 @@ function updateEnemies(dt) {
       }
     }
 
-    enemy.vx *= 0.92;
+    enemy.vx *= 0.93;
+    enemy.runCycle += Math.abs(enemy.vx) * dt * 0.055;
 
     const enemyBox = {
       x: enemy.x,
@@ -291,16 +387,13 @@ function updateEnemies(dt) {
     };
 
     if (rectHit(playerBox, enemyBox)) {
-      player.health = clamp(player.health - enemy.touchDamage * dt * 8, 0, 100);
-      const knock = 220;
-      player.vx -= enemy.facing * knock * dt;
-      if (!player.onGround) {
-        player.vy -= 130 * dt;
-      }
+      player.health = clamp(player.health - enemy.touchDamage * dt * 9, 0, 100);
+      player.vx -= enemy.facing * 220 * dt;
+      if (!player.onGround) player.vy -= 130 * dt;
     }
 
     if (enemy.hp <= 0) {
-      state.score += 130 + state.wave * 22;
+      state.score += 160 + state.wave * 28;
       addParticles(enemy.x, enemy.y - enemy.height * 0.5, '#ff7c7c', 20);
       state.enemies.splice(i, 1);
     }
@@ -325,7 +418,9 @@ function updateParticles(dt) {
 function updateGame(dt) {
   if (state.paused || state.gameOver || state.victory) return;
 
+  state.clock += dt;
   updatePlayer(dt);
+  updateObstacles(dt);
   updateEnemies(dt);
   updateParticles(dt);
 
@@ -335,19 +430,27 @@ function updateGame(dt) {
     overlay.classList.remove('hidden');
   }
 
-  if (!state.gameOver && player.x >= state.levelEndX && state.enemies.length === 0) {
-    if (state.wave >= LEVEL_COUNT) {
-      state.victory = true;
-      overlayText.textContent = `All 10 Levels Cleared! Final Score ${Math.floor(state.score)}`;
-      overlay.classList.remove('hidden');
-    } else {
-      state.wave += 1;
-      player.x = levelStartX(state.wave) + 120;
-      player.y = groundYAt();
-      player.vx = 0;
-      player.vy = 0;
-      spawnLevel(state.wave);
-      addParticles(player.x, player.y - 120, '#9fffd8', 36, 1.2);
+  if (!state.gameOver && player.x >= state.levelEndX) {
+    const blockingEnemies = state.enemies.filter((enemy) => Math.abs(enemy.x - player.x) < 520);
+    if (blockingEnemies.length === 0) {
+      if (state.enemies.length > 0) {
+        state.score += state.enemies.length * 40;
+        state.enemies.length = 0;
+      }
+
+      if (state.wave >= LEVEL_COUNT) {
+        state.victory = true;
+        overlayText.textContent = `All 10 Levels Cleared! Final Score ${Math.floor(state.score)}`;
+        overlay.classList.remove('hidden');
+      } else {
+        state.wave += 1;
+        player.x = levelStartX(state.wave) + 120;
+        player.y = groundYAt();
+        player.vx = 0;
+        player.vy = 0;
+        spawnLevel(state.wave);
+        addParticles(player.x, player.y - 120, '#9fffd8', 36, 1.2);
+      }
     }
   }
 
@@ -401,48 +504,97 @@ function drawCityBackdrop(levelStart) {
   ctx.fillRect(fx + 6, groundYAt() - 100, 34, 24);
 }
 
-function drawHumanCharacter(x, y, widthBody, heightBody, facing, palette, cape = false) {
-  const sx = x - state.cameraX;
+function poseForCharacter(entity, isPlayer = false) {
+  const speedNorm = clamp(Math.abs(entity.vx) / 250, 0, 1);
+  const phase = entity.runCycle || 0;
+  const runSway = Math.sin(phase) * 0.75 * speedNorm;
+  const onGround = Math.abs(entity.y - groundYAt()) < 2;
+  const flightLift = isPlayer ? player.flightBlend : (!onGround && entity.isFlying ? 0.8 : 0);
+
+  let leftLeg = runSway;
+  let rightLeg = -runSway;
+  let leftArm = -runSway * 0.9;
+  let rightArm = runSway * 0.9;
+  let tilt = runSway * 0.1;
+
+  if (!onGround) {
+    leftLeg = -0.3 - flightLift * 0.5;
+    rightLeg = 0.15 + flightLift * 0.3;
+    leftArm = -0.4 - flightLift * 0.4;
+    rightArm = 0.5 + flightLift * 0.3;
+    tilt = -0.2 * (flightLift || 1);
+  }
+
+  if (entity.attackType && entity.attackTimer > 0) {
+    if (entity.attackType === 'punch') {
+      rightArm = 1.2;
+      leftArm = -0.45;
+      tilt = 0.08;
+    } else {
+      rightLeg = 1.1;
+      leftLeg = -0.4;
+      rightArm = 0.5;
+      leftArm = -0.5;
+      tilt = 0.14;
+    }
+  }
+
+  return { leftLeg, rightLeg, leftArm, rightArm, tilt, flightLift };
+}
+
+function drawLimb(x, y, angle, length, widthLimb, color) {
   ctx.save();
-  ctx.translate(sx, y - heightBody);
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+  ctx.fillStyle = color;
+  ctx.fillRect(-widthLimb * 0.5, 0, widthLimb, length);
+  ctx.restore();
+}
+
+function drawHumanCharacter(x, y, facing, palette, pose, cape = false) {
+  const sx = x - state.cameraX;
+  const torsoTop = y - 54;
+
+  ctx.save();
+  ctx.translate(sx, torsoTop + 24);
   ctx.scale(facing, 1);
+  ctx.rotate(pose.tilt);
 
   if (cape) {
+    const flutter = Math.sin(state.clock * 12 + x * 0.02) * 7 + pose.flightLift * 10;
     ctx.fillStyle = palette.cape;
     ctx.beginPath();
-    ctx.moveTo(-10, 16);
-    ctx.quadraticCurveTo(-32, 54, -24, 92);
-    ctx.lineTo(2, 72);
+    ctx.moveTo(-9, -8);
+    ctx.quadraticCurveTo(-36, 26 + flutter, -24, 76 + flutter * 0.6);
+    ctx.lineTo(3, 56 + flutter * 0.45);
     ctx.closePath();
     ctx.fill();
   }
 
+  drawLimb(-10, -4, pose.leftArm, 24, 6, palette.skin);
+  drawLimb(10, -4, pose.rightArm, 24, 6, palette.skin);
+
+  ctx.fillStyle = palette.suit;
+  ctx.fillRect(-8, -6, 16, 28);
+
+  ctx.fillStyle = palette.accent;
+  ctx.fillRect(-8, 12, 16, 8);
+
+  drawLimb(-6, 20, pose.leftLeg, 26, 7, palette.boots);
+  drawLimb(6, 20, pose.rightLeg, 26, 7, palette.boots);
+
   ctx.fillStyle = palette.skin;
   ctx.beginPath();
-  ctx.arc(0, 12, 10, 0, Math.PI * 2);
+  ctx.arc(0, -16, 10, 0, Math.PI * 2);
   ctx.fill();
 
   ctx.fillStyle = palette.hair;
   ctx.beginPath();
-  ctx.arc(0, 7, 10, Math.PI, 0);
-  ctx.lineTo(10, 9);
-  ctx.lineTo(-10, 9);
+  ctx.arc(0, -20, 10, Math.PI, 0);
+  ctx.lineTo(10, -17);
+  ctx.lineTo(-10, -17);
   ctx.closePath();
   ctx.fill();
-
-  ctx.fillStyle = palette.suit;
-  ctx.fillRect(-8, 22, 16, 24);
-
-  ctx.fillStyle = palette.accent;
-  ctx.fillRect(-8, 42, 16, 6);
-
-  ctx.fillStyle = palette.skin;
-  ctx.fillRect(-14, 24, 6, 20);
-  ctx.fillRect(8, 24, 6, 20);
-
-  ctx.fillStyle = palette.boots;
-  ctx.fillRect(-8, 46, 6, 24);
-  ctx.fillRect(2, 46, 6, 24);
 
   ctx.restore();
 }
@@ -451,8 +603,6 @@ function drawPlayer() {
   drawHumanCharacter(
     player.x,
     player.y,
-    player.width,
-    player.height,
     player.facing,
     {
       skin: '#ffd1b3',
@@ -462,17 +612,18 @@ function drawPlayer() {
       boots: '#d82828',
       cape: '#d91a1a',
     },
+    poseForCharacter(player, true),
     true,
   );
 
-  if (player.punchCooldown > 0.6) {
-    const t = (0.75 - player.punchCooldown) / 0.15;
-    const cx = player.x - state.cameraX;
-    const cy = player.y - player.height * 0.5;
-    ctx.strokeStyle = `rgba(158, 196, 255, ${1 - t})`;
-    ctx.lineWidth = 4;
+  if (player.attackType && player.attackTimer > 0) {
+    const punchAlpha = clamp(player.attackTimer * 4, 0, 1);
+    const cx = player.x - state.cameraX + player.facing * 24;
+    const cy = player.y - player.height * 0.62;
+    ctx.strokeStyle = `rgba(158, 196, 255, ${punchAlpha})`;
+    ctx.lineWidth = player.attackType === 'kick' ? 6 : 4;
     ctx.beginPath();
-    ctx.arc(cx, cy, 85 + t * 42, 0, Math.PI * 2);
+    ctx.arc(cx, cy, player.attackType === 'kick' ? 40 : 30, 0, Math.PI * 2);
     ctx.stroke();
   }
 }
@@ -482,8 +633,6 @@ function drawEnemies() {
     drawHumanCharacter(
       enemy.x,
       enemy.y,
-      enemy.width,
-      enemy.height,
       enemy.facing,
       {
         skin: '#f0c7aa',
@@ -493,6 +642,7 @@ function drawEnemies() {
         boots: '#2f1937',
         cape: '#6d3257',
       },
+      poseForCharacter(enemy),
       enemy.isFlying,
     );
 
@@ -502,6 +652,29 @@ function drawEnemies() {
     ctx.fillRect(sx - 18, enemy.y - enemy.height - 12, 36, 4);
     ctx.fillStyle = '#7aff91';
     ctx.fillRect(sx - 18, enemy.y - enemy.height - 12, 36 * ratio, 4);
+  }
+}
+
+function drawObstacles() {
+  for (const obstacle of state.obstacles) {
+    const sx = obstacle.x - state.cameraX;
+
+    if (obstacle.kind === 'barrier') {
+      ctx.fillStyle = '#4a4a57';
+      ctx.fillRect(sx - obstacle.width * 0.5, obstacle.y - obstacle.height, obstacle.width, obstacle.height);
+      ctx.fillStyle = '#c9a34f';
+      ctx.fillRect(sx - obstacle.width * 0.5 + 4, obstacle.y - obstacle.height + 8, obstacle.width - 8, 8);
+    } else {
+      ctx.fillStyle = '#8f8f9a';
+      for (let i = -1; i <= 1; i += 1) {
+        ctx.beginPath();
+        ctx.moveTo(sx + i * 8, obstacle.y);
+        ctx.lineTo(sx + i * 8 + 5, obstacle.y - obstacle.height);
+        ctx.lineTo(sx + i * 8 + 10, obstacle.y);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
   }
 }
 
@@ -545,6 +718,7 @@ function drawPause() {
 function render() {
   const levelStart = levelStartX(state.wave);
   drawCityBackdrop(levelStart);
+  drawObstacles();
   drawEnemies();
   drawParticles();
   drawPlayer();
@@ -565,7 +739,13 @@ window.addEventListener('resize', resize);
 window.addEventListener('keydown', (event) => {
   if (event.code === 'KeyF') {
     event.preventDefault();
-    burstPunch();
+    heroAttack('punch');
+    return;
+  }
+
+  if (event.code === 'KeyG') {
+    event.preventDefault();
+    heroAttack('kick');
     return;
   }
 
