@@ -13,7 +13,7 @@ const LX = -0.32, LY = 0.48, LZ = 0.82;
 // ─── CANVAS ──────────────────────────────────────────────────────────────────
 const canvas = document.getElementById('canvas');
 const ctx    = canvas.getContext('2d');
-let W, H, CX, CY;
+let W, H, CX, CY, DPR = 1;
 
 const off    = document.createElement('canvas');
 off.width    = SIZE;
@@ -47,6 +47,17 @@ let mousePos  = { x: 0, y: 0 };
 let isDown    = false;
 let laserLast = null;
 let iceFrame  = 0;
+let hudTimer  = 0;
+let lastHudDestroyed = -1;
+let lastHudPower = '';
+let lastHudIceState = null;
+
+const CLOUDS = [
+  {r:.72,a:0,   s:14,sp:1.0},{r:.85,a:1.2, s:10,sp:.8},
+  {r:.78,a:2.5, s:16,sp:1.2},{r:.68,a:3.8, s:11,sp:.9},
+  {r:.90,a:4.7, s:10,sp:1.1},{r:.75,a:5.5, s:15,sp:1.0},
+  {r:.82,a:.55, s:9, sp:.7}, {r:.70,a:2.1, s:13,sp:1.3},
+];
 
 const POWER_COLORS = {
   meteor:'#ff8844', laser:'#ff3333', nuke:'#ffff44',
@@ -262,12 +273,14 @@ function placeBlackHole(wx,wy){
 
 function triggerFlood(){
   floodLevel=Math.min(1,floodLevel+0.13);
+  let changed = false;
   for(let j=0;j<SIZE;j++)
     for(let i=0;i<SIZE;i++){
       const idx=j*SIZE+i;
       if(terrain[idx]===T.OCEAN||terrain[idx]===T.CRATER) continue;
-      if(noiseMap[idx]<-0.28+floodLevel*0.95) setCell(i,j,T.OCEAN);
+      if(noiseMap[idx]<-0.28+floodLevel*0.95){ terrain[idx]=T.OCEAN; changed = true; }
     }
+  if(changed) planetDirty = true;
   playNoise(800,0.5,0.2);
 }
 
@@ -342,12 +355,15 @@ function update(dt){
   if(iceSpreading){
     iceFrame=(iceFrame+1)%2;
     if(iceFrame===0){
+      let changed = false;
       for(let k=0;k<280;k++){
         const idx=0|Math.random()*SIZE*SIZE;
         const t=terrain[idx];
         if(t===T.ICE||t===T.CRATER) continue;
-        setCell(idx%SIZE, idx/SIZE|0, T.ICE);
+        terrain[idx] = T.ICE;
+        changed = true;
       }
+      if(changed) planetDirty = true;
     }
   }
 
@@ -444,13 +460,6 @@ function drawScene(){
   atmo.addColorStop(1,'rgba(0,10,80,0)');
   ctx.fillStyle=atmo; ctx.beginPath(); ctx.arc(CX,CY,aR*1.28,0,Math.PI*2); ctx.fill();
 
-  // Clouds
-  const CLOUDS=[
-    {r:.72,a:0,   s:14,sp:1.0},{r:.85,a:1.2, s:10,sp:.8},
-    {r:.78,a:2.5, s:16,sp:1.2},{r:.68,a:3.8, s:11,sp:.9},
-    {r:.90,a:4.7, s:10,sp:1.1},{r:.75,a:5.5, s:15,sp:1.0},
-    {r:.82,a:.55, s:9, sp:.7}, {r:.70,a:2.1, s:13,sp:1.3},
-  ];
   ctx.shadowColor='#fff'; ctx.shadowBlur=8; ctx.fillStyle='#ddeeff';
   for(const c of CLOUDS){
     const ang=c.a+cloudAngle*c.sp;
@@ -512,6 +521,13 @@ function drawScene(){
     else{ ctx.globalAlpha=Math.min(1,nukeFlash.life/.35)*.85;ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);ctx.globalAlpha=1; }
   }
 
+  // Subtle cinematic vignette
+  const vignette = ctx.createRadialGradient(CX, CY, aR * 0.8, CX, CY, Math.max(W, H) * 0.75);
+  vignette.addColorStop(0, 'rgba(0,0,0,0)');
+  vignette.addColorStop(1, 'rgba(0,0,0,0.45)');
+  ctx.fillStyle = vignette;
+  ctx.fillRect(0, 0, W, H);
+
   drawCursor();
 }
 
@@ -535,7 +551,13 @@ function drawCursor(){
 }
 
 // ─── HUD ─────────────────────────────────────────────────────────────────────
-function updateHUD(){
+function updateHUD(force=false){
+  if(!force){
+    if(lastHudDestroyed===destroyedCells && lastHudPower===selectedPower && lastHudIceState===iceSpreading) return;
+  }
+  lastHudDestroyed = destroyedCells;
+  lastHudPower = selectedPower;
+  lastHudIceState = iceSpreading;
   const ratio=1-(destroyedCells/totalCells);
   const pop=Math.max(0,Math.round(ratio*8_000_000_000));
   const pct=Math.round((1-ratio)*100);
@@ -575,7 +597,11 @@ function loop(ts){
   ctx.save(); ctx.translate(shakeX,shakeY);
   drawScene();
   ctx.restore();
-  updateHUD();
+  hudTimer += dt;
+  if(hudTimer>=0.15){
+    updateHUD();
+    hudTimer = 0;
+  }
   requestAnimationFrame(loop);
 }
 
@@ -637,7 +663,13 @@ document.querySelectorAll('.power').forEach(btn=>{
 
 // ─── RESIZE ──────────────────────────────────────────────────────────────────
 function resize(){
-  W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight;
+  DPR = Math.min(2, window.devicePixelRatio || 1);
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = Math.floor(W * DPR);
+  canvas.height = Math.floor(H * DPR);
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
   CX=W/2; CY=H/2;
   stars=Array.from({length:220},()=>({
     x:Math.random()*W,y:Math.random()*H,r:.8+Math.random()*1.8,
@@ -655,4 +687,6 @@ window.addEventListener('resize',()=>{resize();planetDirty=true;});
 // ─── BOOT ────────────────────────────────────────────────────────────────────
 resize();
 initPlanet();
+updateHUD(true);
+updateStatus();
 requestAnimationFrame(loop);
