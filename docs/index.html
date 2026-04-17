@@ -2,78 +2,86 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AetherDeck X — Presentation OS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Neon Arcade — 3 Game Hub</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
-  <div class="aurora" aria-hidden="true"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
 
-  <header class="topbar">
-    <div class="brand">
-      <div class="brand__glyph">◇</div>
-      <div>
-        <div class="brand__title">AetherDeck X</div>
-        <div class="brand__sub">Presentation OS · cinematic + interactive + speaker-intelligent</div>
-      </div>
-    </div>
-
-    <div class="topbar__status" aria-live="polite">
-      <span id="statusMode">Audience View</span>
-      <span aria-hidden="true">•</span>
-      <span id="statusTime">00:00</span>
-    </div>
-
-    <div class="topbar__actions">
-      <button id="toggleCommand" class="btn btn--ghost" type="button">Jump ⌘K</button>
-      <button id="toggleNotes" class="btn btn--ghost" type="button">Notes</button>
-      <button id="toggleAutoplay" class="btn btn--ghost" type="button">Autoplay</button>
-      <button id="toggleTheme" class="btn btn--ghost" type="button">Theme</button>
-      <button id="toggleFullscreen" class="btn btn--primary" type="button">Present</button>
+  <header class="hero">
+    <p class="kicker">Arcade Collection</p>
+    <h1>Neon Arcade</h1>
+    <p class="subtitle">Three polished browser games in one place: Snake Rush, Memory Matrix, and Target Tap.</p>
+    <div class="chips" role="list" aria-label="Game highlights">
+      <span role="listitem">Instant play</span>
+      <span role="listitem">No installs</span>
+      <span role="listitem">Mobile friendly</span>
     </div>
   </header>
 
-  <main class="workspace">
-    <aside class="rail" aria-label="Slide thumbnails">
-      <h2 class="rail__title">Deck Map</h2>
-      <div id="thumbRail"></div>
-    </aside>
-
-    <section class="stageWrap">
-      <div class="stageMeta">
-        <div class="stageMeta__row">
-          <div id="slideCounter" class="slideCounter">1 / 1</div>
-          <div id="fragmentCounter" class="fragmentCounter"></div>
+  <main class="game-grid">
+    <section class="card" id="snake-card">
+      <div class="card-head">
+        <div>
+          <h2>🐍 Snake Rush</h2>
+          <p>Eat, grow, and survive as speed increases.</p>
         </div>
-        <div class="progress"><span id="progressFill"></span></div>
+        <button id="snakeStart" class="btn btn-primary" type="button">Start / Restart</button>
       </div>
 
-      <article id="slideStage" class="slideStage" aria-live="polite"></article>
+      <canvas id="snakeCanvas" width="360" height="360" aria-label="Snake game board"></canvas>
 
-      <nav class="controls" aria-label="Slide controls">
-        <button id="prevSlide" class="btn" type="button">← Previous</button>
-        <button id="nextFragment" class="btn btn--primary" type="button">Next Step →</button>
-      </nav>
+      <div class="stats">
+        <p>Score: <strong id="snakeScore">0</strong></p>
+        <p>Best: <strong id="snakeBest">0</strong></p>
+        <p class="hint">Use Arrow Keys or WASD</p>
+      </div>
     </section>
 
-    <aside id="notesPanel" class="notesPanel" hidden>
-      <h2>Speaker Notes</h2>
-      <p id="speakerNotes"></p>
+    <section class="card" id="memory-card">
+      <div class="card-head">
+        <div>
+          <h2>🧠 Memory Matrix</h2>
+          <p>Match all pairs in the fewest moves possible.</p>
+        </div>
+        <button id="memoryReset" class="btn" type="button">New Board</button>
+      </div>
 
-      <h3>Delivery Cues</h3>
-      <ul id="deliveryCues"></ul>
+      <div id="memoryGrid" class="memory-grid" aria-live="polite"></div>
 
-      <h3>Talk Track</h3>
-      <div id="talkTrack" class="talkTrack"></div>
-    </aside>
+      <div class="stats">
+        <p>Moves: <strong id="memoryMoves">0</strong></p>
+        <p>Matched: <strong id="memoryMatched">0</strong>/8</p>
+        <p class="hint">Tap cards to reveal symbols</p>
+      </div>
+    </section>
+
+    <section class="card" id="target-card">
+      <div class="card-head">
+        <div>
+          <h2>🎯 Target Tap</h2>
+          <p>Hit as many pop-up targets as you can in 30 seconds.</p>
+        </div>
+        <button id="targetStart" class="btn btn-primary" type="button">Start Round</button>
+      </div>
+
+      <div id="targetArena" class="target-arena" aria-label="Target tap arena">
+        <button id="targetDot" class="target-dot" type="button" aria-label="Target"></button>
+        <p id="targetOverlay" class="arena-overlay">Press “Start Round” to play.</p>
+      </div>
+
+      <div class="stats">
+        <p>Hits: <strong id="targetHits">0</strong></p>
+        <p>Time: <strong id="targetTime">30</strong>s</p>
+        <p>Best: <strong id="targetBest">0</strong></p>
+      </div>
+    </section>
   </main>
 
-  <section id="commandPalette" class="palette" hidden aria-label="Jump to slide">
-    <div class="palette__shell">
-      <input id="slideSearch" type="text" placeholder="Jump to slide by title or number…" autocomplete="off" />
-      <div id="searchResults" class="palette__results"></div>
-    </div>
-  </section>
+  <footer class="footer">
+    <p>Built as a complete arcade replacement hub.</p>
+  </footer>
 
   <script src="./app.js" defer></script>
 </body>
