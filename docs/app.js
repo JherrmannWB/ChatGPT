@@ -18,7 +18,11 @@ let height = 0;
 let dpr = 1;
 
 const keys = new Set();
-const mouse = { x: 0, y: 0, shooting: false };
+
+const LEVEL_COUNT = 10;
+const LEVEL_LENGTH = 2600;
+const GRAVITY = 1450;
+const GROUND_HEIGHT = 108;
 
 const state = {
   paused: false,
@@ -26,35 +30,42 @@ const state = {
   victory: false,
   wave: 1,
   score: 0,
-  nextWaveTimer: 0,
-  lasers: [],
+  cameraX: 0,
   particles: [],
   enemies: [],
+  levelEndX: LEVEL_LENGTH,
 };
 
 const player = {
-  x: 0,
+  x: 120,
   y: 0,
   vx: 0,
   vy: 0,
-  radius: 20,
+  width: 36,
+  height: 74,
   health: 100,
   energy: 100,
-  maxSpeed: 420,
-  accel: 1600,
-  friction: 0.9,
-  shootCooldown: 0,
+  maxWalkSpeed: 290,
+  maxFlySpeed: 380,
+  accel: 1650,
+  airAccel: 1150,
+  friction: 0.82,
+  flyPower: 2000,
+  onGround: false,
+  facing: 1,
   punchCooldown: 0,
-};
-
-const WAVE_SETTINGS = {
-  baseCount: 5,
-  maxWave: 12,
-  spawnPadding: 80,
 };
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
+}
+
+function groundYAt() {
+  return height - GROUND_HEIGHT;
+}
+
+function levelStartX(level) {
+  return (level - 1) * LEVEL_LENGTH;
 }
 
 function resize() {
@@ -68,257 +79,230 @@ function resize() {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
+function addParticles(x, y, color, count = 16, speedScale = 1) {
+  for (let i = 0; i < count; i += 1) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = (65 + Math.random() * 200) * speedScale;
+    state.particles.push({
+      x,
+      y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      life: 0.35 + Math.random() * 0.65,
+      color,
+      size: 2 + Math.random() * 4,
+    });
+  }
+}
+
+function spawnLevel(level) {
+  state.enemies.length = 0;
+  const startX = levelStartX(level);
+  state.levelEndX = startX + LEVEL_LENGTH - 260;
+
+  const count = 5 + level * 2;
+  for (let i = 0; i < count; i += 1) {
+    const x = startX + 380 + Math.random() * (LEVEL_LENGTH - 560);
+    const baseY = groundYAt();
+
+    state.enemies.push({
+      x,
+      y: baseY,
+      vx: 0,
+      vy: 0,
+      width: 30,
+      height: 62,
+      speed: 95 + level * 20 + Math.random() * 40,
+      hp: 32 + level * 12,
+      maxHp: 32 + level * 12,
+      touchDamage: 8 + Math.floor(level / 2),
+      jumpTimer: Math.random() * 2,
+      facing: -1,
+      isFlying: Math.random() < 0.28 + level * 0.03,
+    });
+  }
+}
+
 function resetGame() {
   state.paused = false;
   state.gameOver = false;
   state.victory = false;
   state.wave = 1;
   state.score = 0;
-  state.nextWaveTimer = 0;
-  state.lasers.length = 0;
+  state.cameraX = 0;
   state.particles.length = 0;
-  state.enemies.length = 0;
 
-  player.x = width * 0.5;
-  player.y = height * 0.65;
+  player.x = 120;
+  player.y = groundYAt();
   player.vx = 0;
   player.vy = 0;
   player.health = 100;
   player.energy = 100;
-  player.shootCooldown = 0;
   player.punchCooldown = 0;
+  player.onGround = true;
+  player.facing = 1;
 
-  spawnWave();
+  spawnLevel(state.wave);
   overlay.classList.add('hidden');
   updateHud();
 }
 
-function spawnWave() {
-  const count = WAVE_SETTINGS.baseCount + (state.wave - 1) * 2;
-  for (let i = 0; i < count; i += 1) {
-    const side = Math.floor(Math.random() * 4);
-    let x = 0;
-    let y = 0;
-    const p = WAVE_SETTINGS.spawnPadding;
-
-    if (side === 0) {
-      x = -p;
-      y = Math.random() * height;
-    } else if (side === 1) {
-      x = width + p;
-      y = Math.random() * height;
-    } else if (side === 2) {
-      x = Math.random() * width;
-      y = -p;
-    } else {
-      x = Math.random() * width;
-      y = height + p;
-    }
-
-    const speed = 75 + state.wave * 14 + Math.random() * 50;
-    const hp = 24 + state.wave * 9;
-
-    state.enemies.push({
-      x,
-      y,
-      vx: 0,
-      vy: 0,
-      radius: 14 + Math.random() * 7,
-      speed,
-      hp,
-      maxHp: hp,
-      touchDamage: 6 + Math.floor(state.wave / 2),
-    });
-  }
-
-  updateHud();
-}
-
-function addExplosion(x, y, color, count = 16) {
-  for (let i = 0; i < count; i += 1) {
-    const angle = Math.random() * Math.PI * 2;
-    const speed = 40 + Math.random() * 190;
-    state.particles.push({
-      x,
-      y,
-      vx: Math.cos(angle) * speed,
-      vy: Math.sin(angle) * speed,
-      life: 0.3 + Math.random() * 0.7,
-      color,
-      size: 2 + Math.random() * 3,
-    });
-  }
-}
-
-function shootLaser() {
-  if (player.shootCooldown > 0 || player.energy < 4) return;
-
-  const dx = mouse.x - player.x;
-  const dy = mouse.y - player.y;
-  const mag = Math.hypot(dx, dy) || 1;
-
-  state.lasers.push({
-    x: player.x,
-    y: player.y,
-    vx: (dx / mag) * 920,
-    vy: (dy / mag) * 920,
-    life: 0.26,
-    radius: 4,
-  });
-
-  player.shootCooldown = 0.08;
-  player.energy = clamp(player.energy - 4, 0, 100);
-}
-
 function burstPunch() {
-  if (player.punchCooldown > 0 || player.energy < 12) return;
+  if (player.punchCooldown > 0 || player.energy < 18) return;
+  player.punchCooldown = 0.75;
+  player.energy = clamp(player.energy - 18, 0, 100);
 
-  player.punchCooldown = 0.8;
-  player.energy = clamp(player.energy - 12, 0, 100);
-
-  const pulseRadius = 120;
+  const pulseRadius = 135;
   let hits = 0;
 
   for (const enemy of state.enemies) {
-    const dx = enemy.x - player.x;
-    const dy = enemy.y - player.y;
-    const dist = Math.hypot(dx, dy);
+    const ex = enemy.x - player.x;
+    const ey = (enemy.y - enemy.height * 0.5) - (player.y - player.height * 0.5);
+    const dist = Math.hypot(ex, ey);
+    if (dist > pulseRadius) continue;
 
-    if (dist < pulseRadius) {
-      const power = (pulseRadius - dist) / pulseRadius;
-      enemy.hp -= 22 + power * 30;
-      const knockback = 380 + power * 240;
-      enemy.vx += (dx / (dist || 1)) * knockback;
-      enemy.vy += (dy / (dist || 1)) * knockback;
-      hits += 1;
-    }
+    const power = (pulseRadius - dist) / pulseRadius;
+    enemy.hp -= 28 + power * 32;
+    enemy.vx += Math.sign(ex || player.facing) * (340 + power * 260);
+    enemy.vy -= 180 + power * 160;
+    hits += 1;
   }
 
   if (hits > 0) {
-    state.score += hits * 40;
-    addExplosion(player.x, player.y, '#9ec4ff', 30);
+    state.score += hits * 45;
+    addParticles(player.x, player.y - player.height * 0.5, '#9ec4ff', 28);
   }
 }
 
 function updatePlayer(dt) {
   let mx = 0;
-  let my = 0;
-
   if (keys.has('KeyA') || keys.has('ArrowLeft')) mx -= 1;
   if (keys.has('KeyD') || keys.has('ArrowRight')) mx += 1;
-  if (keys.has('KeyW') || keys.has('ArrowUp')) my -= 1;
-  if (keys.has('KeyS') || keys.has('ArrowDown')) my += 1;
 
-  const moving = mx !== 0 || my !== 0;
-  const boost = keys.has('ShiftLeft') || keys.has('ShiftRight');
+  const tryingFly = keys.has('KeyW') || keys.has('ArrowUp') || keys.has('Space');
 
-  if (moving) {
-    const mag = Math.hypot(mx, my);
-    mx /= mag;
-    my /= mag;
+  if (mx !== 0) {
+    player.facing = mx > 0 ? 1 : -1;
+  }
 
-    let accel = player.accel;
-    let maxSpeed = player.maxSpeed;
+  const accel = player.onGround ? player.accel : player.airAccel;
+  player.vx += mx * accel * dt;
 
-    if (boost && player.energy > 0) {
-      accel *= 1.35;
-      maxSpeed *= 1.45;
-      player.energy = clamp(player.energy - 24 * dt, 0, 100);
-    }
+  const topSpeed = player.onGround ? player.maxWalkSpeed : player.maxFlySpeed;
+  player.vx = clamp(player.vx, -topSpeed, topSpeed);
 
-    player.vx += mx * accel * dt;
-    player.vy += my * accel * dt;
-
-    const speed = Math.hypot(player.vx, player.vy);
-    if (speed > maxSpeed) {
-      const scale = maxSpeed / speed;
-      player.vx *= scale;
-      player.vy *= scale;
-    }
-  } else {
+  if (mx === 0 && player.onGround) {
     const damping = Math.pow(player.friction, dt * 60);
     player.vx *= damping;
-    player.vy *= damping;
+    if (Math.abs(player.vx) < 2) player.vx = 0;
   }
 
-  if (!boost) {
-    player.energy = clamp(player.energy + 16 * dt, 0, 100);
+  if (tryingFly && player.energy > 0) {
+    player.vy -= player.flyPower * dt;
+    player.energy = clamp(player.energy - 28 * dt, 0, 100);
+    player.onGround = false;
+  } else {
+    player.energy = clamp(player.energy + 14 * dt, 0, 100);
   }
+
+  player.vy += GRAVITY * dt;
 
   player.x += player.vx * dt;
   player.y += player.vy * dt;
 
-  const margin = player.radius;
-  player.x = clamp(player.x, margin, width - margin);
-  player.y = clamp(player.y, margin + 90, height - margin);
-
-  if (mouse.shooting) {
-    shootLaser();
+  const groundY = groundYAt();
+  if (player.y >= groundY) {
+    player.y = groundY;
+    player.vy = 0;
+    player.onGround = true;
+  } else {
+    player.onGround = false;
   }
 
-  player.shootCooldown = Math.max(0, player.shootCooldown - dt);
+  player.x = Math.max(20, player.x);
+
+  const levelMaxX = levelStartX(state.wave) + LEVEL_LENGTH - 100;
+  player.x = Math.min(levelMaxX, player.x);
+
+  state.cameraX = clamp(player.x - width * 0.33, levelStartX(state.wave), levelStartX(state.wave) + LEVEL_LENGTH - width);
+
   player.punchCooldown = Math.max(0, player.punchCooldown - dt);
 }
 
+function rectHit(a, b) {
+  return (
+    Math.abs(a.x - b.x) * 2 < (a.width + b.width) &&
+    Math.abs((a.y - a.height * 0.5) - (b.y - b.height * 0.5)) * 2 < (a.height + b.height)
+  );
+}
+
 function updateEnemies(dt) {
+  const playerBox = {
+    x: player.x,
+    y: player.y,
+    width: player.width,
+    height: player.height,
+  };
+
   for (let i = state.enemies.length - 1; i >= 0; i -= 1) {
     const enemy = state.enemies[i];
     const dx = player.x - enemy.x;
-    const dy = player.y - enemy.y;
-    const dist = Math.hypot(dx, dy) || 1;
+    const distance = Math.abs(dx);
 
-    const chase = enemy.speed;
-    enemy.vx += (dx / dist) * chase * dt;
-    enemy.vy += (dy / dist) * chase * dt;
+    enemy.facing = dx >= 0 ? 1 : -1;
 
-    enemy.vx *= 0.95;
-    enemy.vy *= 0.95;
+    if (distance < 620) {
+      enemy.vx += enemy.facing * enemy.speed * dt;
+    }
+
+    const maxEnemySpeed = enemy.isFlying ? 260 : 210;
+    enemy.vx = clamp(enemy.vx, -maxEnemySpeed, maxEnemySpeed);
+
+    enemy.jumpTimer -= dt;
+    if (enemy.isFlying && distance < 400) {
+      const targetY = player.y - 40;
+      enemy.vy += clamp((targetY - enemy.y) * 4.8, -300, 300) * dt;
+    } else {
+      if (enemy.jumpTimer <= 0 && distance < 240) {
+        enemy.vy -= 530;
+        enemy.jumpTimer = 1.35 + Math.random() * 1.1;
+      }
+      enemy.vy += GRAVITY * dt;
+    }
 
     enemy.x += enemy.vx * dt;
     enemy.y += enemy.vy * dt;
 
-    if (dist < enemy.radius + player.radius) {
-      player.health = clamp(player.health - enemy.touchDamage * dt * 8, 0, 100);
-      const push = 210;
-      enemy.vx -= (dx / dist) * push * dt;
-      enemy.vy -= (dy / dist) * push * dt;
-    }
-
-    if (enemy.hp <= 0) {
-      state.score += 100 + state.wave * 15;
-      addExplosion(enemy.x, enemy.y, '#ff6f6f', 20);
-      state.enemies.splice(i, 1);
-    }
-  }
-}
-
-function updateLasers(dt) {
-  for (let i = state.lasers.length - 1; i >= 0; i -= 1) {
-    const laser = state.lasers[i];
-    laser.x += laser.vx * dt;
-    laser.y += laser.vy * dt;
-    laser.life -= dt;
-
-    for (let j = state.enemies.length - 1; j >= 0; j -= 1) {
-      const enemy = state.enemies[j];
-      const dx = enemy.x - laser.x;
-      const dy = enemy.y - laser.y;
-      const hitDist = enemy.radius + laser.radius;
-
-      if (dx * dx + dy * dy <= hitDist * hitDist) {
-        enemy.hp -= 16;
-        laser.life = 0;
-        addExplosion(laser.x, laser.y, '#ffe38f', 8);
-        break;
+    if (!enemy.isFlying) {
+      const gy = groundYAt();
+      if (enemy.y >= gy) {
+        enemy.y = gy;
+        enemy.vy = 0;
       }
     }
 
-    if (
-      laser.life <= 0 ||
-      laser.x < -40 || laser.x > width + 40 ||
-      laser.y < -40 || laser.y > height + 40
-    ) {
-      state.lasers.splice(i, 1);
+    enemy.vx *= 0.92;
+
+    const enemyBox = {
+      x: enemy.x,
+      y: enemy.y,
+      width: enemy.width,
+      height: enemy.height,
+    };
+
+    if (rectHit(playerBox, enemyBox)) {
+      player.health = clamp(player.health - enemy.touchDamage * dt * 8, 0, 100);
+      const knock = 220;
+      player.vx -= enemy.facing * knock * dt;
+      if (!player.onGround) {
+        player.vy -= 130 * dt;
+      }
+    }
+
+    if (enemy.hp <= 0) {
+      state.score += 130 + state.wave * 22;
+      addParticles(enemy.x, enemy.y - enemy.height * 0.5, '#ff7c7c', 20);
+      state.enemies.splice(i, 1);
     }
   }
 }
@@ -329,8 +313,8 @@ function updateParticles(dt) {
     p.life -= dt;
     p.x += p.vx * dt;
     p.y += p.vy * dt;
-    p.vx *= 0.98;
-    p.vy *= 0.98;
+    p.vx *= 0.97;
+    p.vy *= 0.97;
 
     if (p.life <= 0) {
       state.particles.splice(i, 1);
@@ -343,7 +327,6 @@ function updateGame(dt) {
 
   updatePlayer(dt);
   updateEnemies(dt);
-  updateLasers(dt);
   updateParticles(dt);
 
   if (player.health <= 0) {
@@ -352,109 +335,173 @@ function updateGame(dt) {
     overlay.classList.remove('hidden');
   }
 
-  if (state.enemies.length === 0 && !state.gameOver) {
-    if (state.wave >= WAVE_SETTINGS.maxWave) {
+  if (!state.gameOver && player.x >= state.levelEndX && state.enemies.length === 0) {
+    if (state.wave >= LEVEL_COUNT) {
       state.victory = true;
-      overlayText.textContent = `Metropolis Safe! Final Score ${Math.floor(state.score)}`;
+      overlayText.textContent = `All 10 Levels Cleared! Final Score ${Math.floor(state.score)}`;
       overlay.classList.remove('hidden');
     } else {
-      state.nextWaveTimer += dt;
-      if (state.nextWaveTimer >= 1.3) {
-        state.wave += 1;
-        state.nextWaveTimer = 0;
-        spawnWave();
-      }
+      state.wave += 1;
+      player.x = levelStartX(state.wave) + 120;
+      player.y = groundYAt();
+      player.vx = 0;
+      player.vy = 0;
+      spawnLevel(state.wave);
+      addParticles(player.x, player.y - 120, '#9fffd8', 36, 1.2);
     }
   }
 
   updateHud();
 }
 
-function drawBackground() {
+function drawCityBackdrop(levelStart) {
   const sky = ctx.createLinearGradient(0, 0, 0, height);
-  sky.addColorStop(0, '#143572');
-  sky.addColorStop(0.56, '#0c1f46');
-  sky.addColorStop(1, '#070b14');
+  sky.addColorStop(0, '#7ec7ff');
+  sky.addColorStop(0.4, '#4f9ce4');
+  sky.addColorStop(1, '#1a3f74');
   ctx.fillStyle = sky;
   ctx.fillRect(0, 0, width, height);
 
-  for (let i = 0; i < 80; i += 1) {
-    const px = (i * 173) % width;
-    const py = (i * 229) % height;
-    const twinkle = 0.2 + Math.abs(Math.sin((performance.now() * 0.001) + i)) * 0.8;
-    ctx.fillStyle = `rgba(255,255,255,${twinkle * 0.6})`;
-    ctx.fillRect(px, py, 2, 2);
+  const cloudShift = state.cameraX * 0.2;
+  for (let i = 0; i < 12; i += 1) {
+    const x = ((i * 260 - cloudShift) % (width + 340)) - 170;
+    const y = 60 + (i % 4) * 42;
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.beginPath();
+    ctx.ellipse(x, y, 56, 20, 0, 0, Math.PI * 2);
+    ctx.fill();
   }
 
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.24)';
-  ctx.fillRect(0, height - 100, width, 100);
+  const buildingParallax = state.cameraX * 0.55;
+  for (let i = -1; i < 20; i += 1) {
+    const bx = i * 150 - (buildingParallax % 150);
+    const bh = 120 + ((i + state.wave * 3) % 6) * 30;
+    ctx.fillStyle = i % 2 === 0 ? '#173560' : '#102a50';
+    ctx.fillRect(bx, groundYAt() - bh, 98, bh);
+  }
+
+  ctx.fillStyle = '#284821';
+  ctx.fillRect(0, groundYAt(), width, GROUND_HEIGHT);
+
+  for (let i = -1; i < 24; i += 1) {
+    const tx = i * 120 - ((state.cameraX * 1.05) % 120);
+    ctx.fillStyle = '#2f5b28';
+    ctx.fillRect(tx + 6, groundYAt() + 18, 16, 42);
+    ctx.beginPath();
+    ctx.fillStyle = '#4f8a44';
+    ctx.arc(tx + 14, groundYAt() + 14, 18, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  const finishX = state.levelEndX - levelStart;
+  const fx = finishX - state.cameraX + levelStart;
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(fx, groundYAt() - 100, 6, 100);
+  ctx.fillStyle = '#ff4545';
+  ctx.fillRect(fx + 6, groundYAt() - 100, 34, 24);
 }
 
-function drawPlayer() {
-  const angle = Math.atan2(player.vy, player.vx);
-
+function drawHumanCharacter(x, y, widthBody, heightBody, facing, palette, cape = false) {
+  const sx = x - state.cameraX;
   ctx.save();
-  ctx.translate(player.x, player.y);
-  ctx.rotate(angle || -Math.PI / 2);
+  ctx.translate(sx, y - heightBody);
+  ctx.scale(facing, 1);
 
-  ctx.fillStyle = '#3f79ff';
+  if (cape) {
+    ctx.fillStyle = palette.cape;
+    ctx.beginPath();
+    ctx.moveTo(-10, 16);
+    ctx.quadraticCurveTo(-32, 54, -24, 92);
+    ctx.lineTo(2, 72);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  ctx.fillStyle = palette.skin;
   ctx.beginPath();
-  ctx.moveTo(22, 0);
-  ctx.lineTo(-14, -13);
-  ctx.lineTo(-4, 0);
-  ctx.lineTo(-14, 13);
+  ctx.arc(0, 12, 10, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = palette.hair;
+  ctx.beginPath();
+  ctx.arc(0, 7, 10, Math.PI, 0);
+  ctx.lineTo(10, 9);
+  ctx.lineTo(-10, 9);
   ctx.closePath();
   ctx.fill();
 
-  ctx.fillStyle = '#ff2f2f';
-  ctx.fillRect(-4, -13, 8, 26);
+  ctx.fillStyle = palette.suit;
+  ctx.fillRect(-8, 22, 16, 24);
 
-  ctx.fillStyle = '#ffe17f';
-  ctx.font = 'bold 15px Arial';
-  ctx.fillText('S', -5, 5);
+  ctx.fillStyle = palette.accent;
+  ctx.fillRect(-8, 42, 16, 6);
+
+  ctx.fillStyle = palette.skin;
+  ctx.fillRect(-14, 24, 6, 20);
+  ctx.fillRect(8, 24, 6, 20);
+
+  ctx.fillStyle = palette.boots;
+  ctx.fillRect(-8, 46, 6, 24);
+  ctx.fillRect(2, 46, 6, 24);
 
   ctx.restore();
+}
 
-  if (player.punchCooldown > 0.65) {
-    const t = (0.8 - player.punchCooldown) / 0.15;
+function drawPlayer() {
+  drawHumanCharacter(
+    player.x,
+    player.y,
+    player.width,
+    player.height,
+    player.facing,
+    {
+      skin: '#ffd1b3',
+      hair: '#231205',
+      suit: '#2f72ff',
+      accent: '#ffdb58',
+      boots: '#d82828',
+      cape: '#d91a1a',
+    },
+    true,
+  );
+
+  if (player.punchCooldown > 0.6) {
+    const t = (0.75 - player.punchCooldown) / 0.15;
+    const cx = player.x - state.cameraX;
+    const cy = player.y - player.height * 0.5;
     ctx.strokeStyle = `rgba(158, 196, 255, ${1 - t})`;
     ctx.lineWidth = 4;
     ctx.beginPath();
-    ctx.arc(player.x, player.y, 80 + t * 42, 0, Math.PI * 2);
+    ctx.arc(cx, cy, 85 + t * 42, 0, Math.PI * 2);
     ctx.stroke();
   }
 }
 
 function drawEnemies() {
   for (const enemy of state.enemies) {
-    ctx.fillStyle = '#b51717';
-    ctx.beginPath();
-    ctx.arc(enemy.x, enemy.y, enemy.radius, 0, Math.PI * 2);
-    ctx.fill();
+    drawHumanCharacter(
+      enemy.x,
+      enemy.y,
+      enemy.width,
+      enemy.height,
+      enemy.facing,
+      {
+        skin: '#f0c7aa',
+        hair: '#3d2b1e',
+        suit: '#6a2a7d',
+        accent: '#9d5dcb',
+        boots: '#2f1937',
+        cape: '#6d3257',
+      },
+      enemy.isFlying,
+    );
 
-    ctx.fillStyle = '#fff';
-    ctx.beginPath();
-    ctx.arc(enemy.x - 4, enemy.y - 3, 2, 0, Math.PI * 2);
-    ctx.arc(enemy.x + 4, enemy.y - 3, 2, 0, Math.PI * 2);
-    ctx.fill();
-
-    const hpRatio = clamp(enemy.hp / enemy.maxHp, 0, 1);
-    const w = enemy.radius * 2;
-    ctx.fillStyle = 'rgba(0,0,0,0.5)';
-    ctx.fillRect(enemy.x - enemy.radius, enemy.y - enemy.radius - 10, w, 4);
-    ctx.fillStyle = '#77ff93';
-    ctx.fillRect(enemy.x - enemy.radius, enemy.y - enemy.radius - 10, w * hpRatio, 4);
-  }
-}
-
-function drawLasers() {
-  for (const laser of state.lasers) {
-    ctx.strokeStyle = '#ffea7f';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(laser.x, laser.y);
-    ctx.lineTo(laser.x - laser.vx * 0.02, laser.y - laser.vy * 0.02);
-    ctx.stroke();
+    const sx = enemy.x - state.cameraX;
+    const ratio = clamp(enemy.hp / enemy.maxHp, 0, 1);
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    ctx.fillRect(sx - 18, enemy.y - enemy.height - 12, 36, 4);
+    ctx.fillStyle = '#7aff91';
+    ctx.fillRect(sx - 18, enemy.y - enemy.height - 12, 36 * ratio, 4);
   }
 }
 
@@ -463,10 +510,24 @@ function drawParticles() {
     ctx.globalAlpha = clamp(p.life, 0, 1);
     ctx.fillStyle = p.color;
     ctx.beginPath();
-    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.arc(p.x - state.cameraX, p.y, p.size, 0, Math.PI * 2);
     ctx.fill();
   }
   ctx.globalAlpha = 1;
+}
+
+function drawHudHints() {
+  const levelStart = levelStartX(state.wave);
+  const progress = clamp((player.x - levelStart) / (LEVEL_LENGTH - 260), 0, 1);
+
+  ctx.fillStyle = 'rgba(0,0,0,0.35)';
+  ctx.fillRect(24, height - 34, width - 48, 12);
+  ctx.fillStyle = '#6ac8ff';
+  ctx.fillRect(24, height - 34, (width - 48) * progress, 12);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 14px Arial';
+  ctx.fillText(`Level ${state.wave} progress`, 24, height - 42);
 }
 
 function drawPause() {
@@ -482,11 +543,12 @@ function drawPause() {
 }
 
 function render() {
-  drawBackground();
+  const levelStart = levelStartX(state.wave);
+  drawCityBackdrop(levelStart);
   drawEnemies();
-  drawLasers();
   drawParticles();
   drawPlayer();
+  drawHudHints();
   drawPause();
 }
 
@@ -501,7 +563,7 @@ function updateHud() {
 window.addEventListener('resize', resize);
 
 window.addEventListener('keydown', (event) => {
-  if (event.code === 'Space') {
+  if (event.code === 'KeyF') {
     event.preventDefault();
     burstPunch();
     return;
@@ -517,21 +579,6 @@ window.addEventListener('keydown', (event) => {
 
 window.addEventListener('keyup', (event) => {
   keys.delete(event.code);
-});
-
-canvas.addEventListener('mousemove', (event) => {
-  mouse.x = event.clientX;
-  mouse.y = event.clientY;
-});
-
-canvas.addEventListener('mousedown', (event) => {
-  if (event.button !== 0) return;
-  mouse.shooting = true;
-  shootLaser();
-});
-
-window.addEventListener('mouseup', () => {
-  mouse.shooting = false;
 });
 
 restartBtn.addEventListener('click', () => {
