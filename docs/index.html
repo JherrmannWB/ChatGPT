@@ -1,88 +1,52 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Neon Arcade — 3 Game Hub</title>
-  <link rel="stylesheet" href="./styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>God Mode — Planet Destroyer</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="bg-grid" aria-hidden="true"></div>
+  <canvas id="canvas"></canvas>
 
-  <header class="hero">
-    <p class="kicker">Arcade Collection</p>
-    <h1>Neon Arcade</h1>
-    <p class="subtitle">Three polished browser games in one place: Snake Rush, Memory Matrix, and Target Tap.</p>
-    <div class="chips" role="list" aria-label="Game highlights">
-      <span role="listitem">Instant play</span>
-      <span role="listitem">No installs</span>
-      <span role="listitem">Mobile friendly</span>
+  <div id="hud">
+    <div class="hud-col">
+      <div class="stat">
+        <span class="label">POPULATION</span>
+        <span id="pop" class="value green">8,000,000,000</span>
+      </div>
+      <div class="stat">
+        <span class="label">DESTRUCTION</span>
+        <span id="dest" class="value">0%</span>
+      </div>
     </div>
-  </header>
-
-  <main class="game-grid">
-    <section class="card" id="snake-card">
-      <div class="card-head">
-        <div>
-          <h2>🐍 Snake Rush</h2>
-          <p>Eat, grow, and survive as speed increases.</p>
-        </div>
-        <button id="snakeStart" class="btn btn-primary" type="button">Start / Restart</button>
+    <div class="hud-center">
+      <div id="title">GOD MODE</div>
+      <div id="subtitle">Planet Destroyer</div>
+    </div>
+    <div class="hud-col right">
+      <div class="stat">
+        <span class="label">POWER</span>
+        <span id="power-label" class="value" style="color:#ff8844">METEOR STRIKE</span>
       </div>
-
-      <canvas id="snakeCanvas" width="360" height="360" aria-label="Snake game board"></canvas>
-
-      <div class="stats">
-        <p>Score: <strong id="snakeScore">0</strong></p>
-        <p>Best: <strong id="snakeBest">0</strong></p>
-        <p class="hint">Use Arrow Keys or WASD</p>
+      <div class="stat">
+        <span class="label">STATUS</span>
+        <span id="status-txt" class="value">READY</span>
       </div>
-    </section>
+    </div>
+  </div>
 
-    <section class="card" id="memory-card">
-      <div class="card-head">
-        <div>
-          <h2>🧠 Memory Matrix</h2>
-          <p>Match all pairs in the fewest moves possible.</p>
-        </div>
-        <button id="memoryReset" class="btn" type="button">New Board</button>
-      </div>
+  <div id="powers">
+    <button class="power active" data-power="meteor"    data-label="METEOR STRIKE"  title="Meteor Strike">☄️</button>
+    <button class="power"        data-power="laser"     data-label="LASER BEAM"     title="Laser Beam — drag">🔴</button>
+    <button class="power"        data-power="nuke"      data-label="NUCLEAR STRIKE" title="Nuclear Strike">☢️</button>
+    <button class="power"        data-power="blackhole" data-label="BLACK HOLE"     title="Black Hole">🕳️</button>
+    <button class="power"        data-power="flood"     data-label="GLOBAL FLOOD"   title="Raise sea level">🌊</button>
+    <button class="power"        data-power="volcano"   data-label="VOLCANO"        title="Volcanic eruption">🌋</button>
+    <button class="power"        data-power="ice"       data-label="ICE AGE"        title="Freeze the planet">❄️</button>
+    <button class="power restore" data-power="restore"  data-label="RESTORE"        title="Restore planet">♻️</button>
+  </div>
 
-      <div id="memoryGrid" class="memory-grid" aria-live="polite"></div>
-
-      <div class="stats">
-        <p>Moves: <strong id="memoryMoves">0</strong></p>
-        <p>Matched: <strong id="memoryMatched">0</strong>/8</p>
-        <p class="hint">Tap cards to reveal symbols</p>
-      </div>
-    </section>
-
-    <section class="card" id="target-card">
-      <div class="card-head">
-        <div>
-          <h2>🎯 Target Tap</h2>
-          <p>Hit as many pop-up targets as you can in 30 seconds.</p>
-        </div>
-        <button id="targetStart" class="btn btn-primary" type="button">Start Round</button>
-      </div>
-
-      <div id="targetArena" class="target-arena" aria-label="Target tap arena">
-        <button id="targetDot" class="target-dot" type="button" aria-label="Target"></button>
-        <p id="targetOverlay" class="arena-overlay">Press “Start Round” to play.</p>
-      </div>
-
-      <div class="stats">
-        <p>Hits: <strong id="targetHits">0</strong></p>
-        <p>Time: <strong id="targetTime">30</strong>s</p>
-        <p>Best: <strong id="targetBest">0</strong></p>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <p>Built as a complete arcade replacement hub.</p>
-  </footer>
-
-  <script src="./app.js" defer></script>
+  <script src="app.js"></script>
 </body>
 </html>
