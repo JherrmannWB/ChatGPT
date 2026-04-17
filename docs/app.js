@@ -1,890 +1,555 @@
 'use strict';
 
-// ─── CONFIG ──────────────────────────────────────────────────────────────────
-const CELL = 3;
-const PR   = 130;
-const SIZE = PR * 2 + 1; // 261 — equirectangular terrain grid
-
-const T = { ROCK:1, OCEAN:2, VEGETATION:3, LAVA:4, ICE:5, SAND:6, CRATER:7, IRRADIATED:8 };
-
-// Light direction (upper-left, toward viewer) — normalized
-const LX = -0.32, LY = 0.48, LZ = 0.82;
-
-// ─── CANVAS ──────────────────────────────────────────────────────────────────
 const canvas = document.getElementById('canvas');
-const ctx    = canvas.getContext('2d');
-let W, H, CX, CY, DPR = 1;
+const ctx = canvas.getContext('2d');
 
-const off    = document.createElement('canvas');
-off.width    = SIZE;
-off.height   = SIZE;
-const offCtx = off.getContext('2d');
-const planetImg = new ImageData(SIZE, SIZE);
+const healthEl = document.getElementById('health');
+const waveEl = document.getElementById('wave');
+const enemiesEl = document.getElementById('enemies');
+const scoreEl = document.getElementById('score');
+const energyEl = document.getElementById('energy');
 
-// ─── STATE ───────────────────────────────────────────────────────────────────
-let terrain   = new Uint8Array(SIZE * SIZE);
-let noiseMap  = new Float32Array(SIZE * SIZE);
-let totalCells = SIZE * SIZE;
-let destroyedCells = 0;
-let floodLevel = 0;
-let iceSpreading = false;
-let planetDirty  = true;
+const overlay = document.getElementById('overlay');
+const overlayText = document.getElementById('overlay-text');
+const restartBtn = document.getElementById('restart');
 
-let rotX = 0, rotY = 0; // 3-D rotation angles
-let rotating = false, rotLastX = 0, rotLastY = 0;
+let width = 0;
+let height = 0;
+let dpr = 1;
 
-let stars      = [];
-let particles  = [];
-let meteors    = [];
-let blackHoles = [];
-let laserSegs  = [];
-let shakeAmt   = 0, shakeX = 0, shakeY = 0;
-let cloudAngle = 0;
-let nukeFlash  = null;
+const keys = new Set();
+const mouse = { x: 0, y: 0, shooting: false };
 
-let selectedPower = 'meteor';
-let mousePos  = { x: 0, y: 0 };
-let isDown    = false;
-let laserLast = null;
-let iceFrame  = 0;
-let hudTimer  = 0;
-let lastHudDestroyed = -1;
-let lastHudPower = '';
-let lastHudIceState = null;
-let score = 0;
-let combo = 1;
-let comboTimer = 0;
-let lastMissionTimeTxt = '';
-let showCustomCursor = true;
-let reduceShake = false;
-let missionState = null;
-let recentPowers = [];
-let callout = { text: '', life: 0, color: '#fff' };
-
-const CLOUDS = [
-  {r:.72,a:0,   s:14,sp:1.0},{r:.85,a:1.2, s:10,sp:.8},
-  {r:.78,a:2.5, s:16,sp:1.2},{r:.68,a:3.8, s:11,sp:.9},
-  {r:.90,a:4.7, s:10,sp:1.1},{r:.75,a:5.5, s:15,sp:1.0},
-  {r:.82,a:.55, s:9, sp:.7}, {r:.70,a:2.1, s:13,sp:1.3},
-];
-
-const POWER_COLORS = {
-  meteor:'#ff8844', laser:'#ff3333', nuke:'#ffff44',
-  blackhole:'#bb99ff', flood:'#44aaff', volcano:'#ff5500',
-  ice:'#aaddff', restore:'#44ff88',
+const state = {
+  paused: false,
+  gameOver: false,
+  victory: false,
+  wave: 1,
+  score: 0,
+  nextWaveTimer: 0,
+  lasers: [],
+  particles: [],
+  enemies: [],
 };
 
-const MISSIONS = [
-  {
-    title: 'Warm up the apocalypse',
-    desc: 'Reach 8% destruction before the timer expires.',
-    seconds: 45,
-    check: () => (destroyedCells / totalCells) >= 0.08,
-  },
-  {
-    title: 'Calculated chaos',
-    desc: 'Score at least 40,000 points this round.',
-    seconds: 55,
-    check: () => score >= 40_000,
-  },
-  {
-    title: 'Power conductor',
-    desc: 'Trigger a combo multiplier of x6 or higher.',
-    seconds: 40,
-    check: () => combo >= 6,
-  },
-];
+const player = {
+  x: 0,
+  y: 0,
+  vx: 0,
+  vy: 0,
+  radius: 20,
+  health: 100,
+  energy: 100,
+  maxSpeed: 420,
+  accel: 1600,
+  friction: 0.9,
+  shootCooldown: 0,
+  punchCooldown: 0,
+};
 
-// ─── PERLIN NOISE ────────────────────────────────────────────────────────────
-const P = new Uint8Array(512);
-{ const t=[...Array(256).keys()];
-  for(let i=255;i>0;i--){const j=0|Math.random()*(i+1);[t[i],t[j]]=[t[j],t[i]];}
-  for(let i=0;i<256;i++) P[i]=P[i+256]=t[i]; }
+const WAVE_SETTINGS = {
+  baseCount: 5,
+  maxWave: 12,
+  spawnPadding: 80,
+};
 
-function _f(t){return t*t*t*(t*(t*6-15)+10);}
-function _l(a,b,t){return a+(b-a)*t;}
-function _g(h,x,y){const u=h<2?x:y,v=h<2?y:x;return(h&1?-u:u)+(h&2?-v:v);}
-
-function perlin(x,y){
-  const xi=x&255|0, yi=y&255|0;
-  const xf=x-(x|0), yf=y-(y|0);
-  const u=_f(xf), v=_f(yf);
-  const aa=P[P[xi]+yi],ab=P[P[xi]+yi+1],ba=P[P[xi+1]+yi],bb=P[P[xi+1]+yi+1];
-  return _l(_l(_g(aa,xf,yf),_g(ba,xf-1,yf),u),_l(_g(ab,xf,yf-1),_g(bb,xf-1,yf-1),u),v);
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
 }
 
-function noise(x,y){
-  return perlin(x,y)*0.60+perlin(x*2,y*2)*0.30+perlin(x*4,y*4)*0.10;
+function resize() {
+  dpr = Math.max(1, window.devicePixelRatio || 1);
+  width = window.innerWidth;
+  height = window.innerHeight;
+  canvas.width = Math.floor(width * dpr);
+  canvas.height = Math.floor(height * dpr);
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
-// ─── COORDINATE SYSTEM ───────────────────────────────────────────────────────
-// Terrain is equirectangular: row j → lat, col i → lon.
-// Sphere coords from lat/lon: ux=cos(lat)*sin(lon), uy=sin(lat), uz=cos(lat)*cos(lon)
-// Screen (canvas) space: +x right, +y DOWN, camera at +z looking toward origin.
-// We flip screen-y when computing sphere normals so geographic north is up.
+function resetGame() {
+  state.paused = false;
+  state.gameOver = false;
+  state.victory = false;
+  state.wave = 1;
+  state.score = 0;
+  state.nextWaveTimer = 0;
+  state.lasers.length = 0;
+  state.particles.length = 0;
+  state.enemies.length = 0;
 
-function applyInvRot(nx, ny, nz){
-  // world = Ry(-rotY) * Rx(-rotX) * screen_normal
-  const cX=Math.cos(rotX), sX=Math.sin(rotX);
-  const cY=Math.cos(rotY), sY=Math.sin(rotY);
-  // Rx(-rotX):
-  const ax=nx, ay=ny*cX+nz*sX, az=-ny*sX+nz*cX;
-  // Ry(-rotY):
-  return [ax*cY-az*sY, ay, ax*sY+az*cY];
+  player.x = width * 0.5;
+  player.y = height * 0.65;
+  player.vx = 0;
+  player.vy = 0;
+  player.health = 100;
+  player.energy = 100;
+  player.shootCooldown = 0;
+  player.punchCooldown = 0;
+
+  spawnWave();
+  overlay.classList.add('hidden');
+  updateHud();
 }
 
-function applyFwdRot(ux, uy, uz){
-  // screen = Rx(rotX) * Ry(rotY) * world_normal
-  const cX=Math.cos(rotX), sX=Math.sin(rotX);
-  const cY=Math.cos(rotY), sY=Math.sin(rotY);
-  const bx=ux*cY+uz*sY, by=uy, bz=-ux*sY+uz*cY;
-  return [bx, by*cX-bz*sX, by*sX+bz*cX];
-}
+function spawnWave() {
+  const count = WAVE_SETTINGS.baseCount + (state.wave - 1) * 2;
+  for (let i = 0; i < count; i += 1) {
+    const side = Math.floor(Math.random() * 4);
+    let x = 0;
+    let y = 0;
+    const p = WAVE_SETTINGS.spawnPadding;
 
-// Screen pixel → terrain grid {i,j}. Returns null if outside sphere.
-function screenToGrid(wx, wy){
-  const nx=(wx-CX)/(PR*CELL), ny=-(wy-CY)/(PR*CELL);
-  const nz2=1-nx*nx-ny*ny;
-  if(nz2<0) return null;
-  const [ux,uy,uz]=applyInvRot(nx,ny,Math.sqrt(nz2));
-  const lat=Math.asin(Math.max(-1,Math.min(1,uy)));
-  const lon=Math.atan2(ux,uz);
-  let i=Math.floor((lon/(Math.PI*2)+0.5)*SIZE);
-  let j=Math.floor((lat/Math.PI+0.5)*SIZE);
-  return { i:((i%SIZE)+SIZE)%SIZE, j:Math.max(0,Math.min(SIZE-1,j)) };
-}
-
-// Terrain grid → screen position. Returns null if on back face.
-function gridToScreen(ti, tj){
-  const lon=(ti/SIZE-0.5)*Math.PI*2;
-  const lat=(tj/SIZE-0.5)*Math.PI;
-  const cLat=Math.cos(lat);
-  const [nx,ny,nz]=applyFwdRot(cLat*Math.sin(lon), Math.sin(lat), cLat*Math.cos(lon));
-  if(nz<=0) return null;
-  return { x:CX+nx*PR*CELL, y:CY-ny*PR*CELL };
-}
-
-// ─── PLANET INIT ─────────────────────────────────────────────────────────────
-function initPlanet(){
-  terrain.fill(0); destroyedCells=0; floodLevel=0; iceSpreading=false;
-  nukeFlash=null; blackHoles=[]; meteors=[]; particles=[]; laserSegs=[];
-  planetDirty=true; score=0; combo=1; comboTimer=0; recentPowers.length=0;
-  callout.life=0;
-
-  for(let j=0;j<SIZE;j++){
-    for(let i=0;i<SIZE;i++){
-      const lon=(i/SIZE-0.5)*Math.PI*2;
-      const lat=(j/SIZE-0.5)*Math.PI;
-      const cLat=Math.cos(lat);
-      // Sample noise in 3-D sphere space to avoid polar distortion
-      const sx=cLat*Math.sin(lon), sy=Math.sin(lat), sz=cLat*Math.cos(lon);
-      const n=noise(sx*2.6,sz*2.6)*0.6+noise(sy*5.2,sx*5.2)*0.3+noise(sz*10.4,sy*10.4)*0.1;
-      noiseMap[j*SIZE+i]=n;
-      let type;
-      if(Math.abs(lat)>1.4)            type=T.ICE;        // polar ice caps
-      else if(n<-0.28)                 type=T.OCEAN;
-      else if(n<-0.08)                 type=T.SAND;
-      else if(n< 0.22)                 type=T.VEGETATION;
-      else                             type=T.ROCK;
-      terrain[j*SIZE+i]=type;
+    if (side === 0) {
+      x = -p;
+      y = Math.random() * height;
+    } else if (side === 1) {
+      x = width + p;
+      y = Math.random() * height;
+    } else if (side === 2) {
+      x = Math.random() * width;
+      y = -p;
+    } else {
+      x = Math.random() * width;
+      y = height + p;
     }
+
+    const speed = 75 + state.wave * 14 + Math.random() * 50;
+    const hp = 24 + state.wave * 9;
+
+    state.enemies.push({
+      x,
+      y,
+      vx: 0,
+      vy: 0,
+      radius: 14 + Math.random() * 7,
+      speed,
+      hp,
+      maxHp: hp,
+      touchDamage: 6 + Math.floor(state.wave / 2),
+    });
+  }
+
+  updateHud();
+}
+
+function addExplosion(x, y, color, count = 16) {
+  for (let i = 0; i < count; i += 1) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 40 + Math.random() * 190;
+    state.particles.push({
+      x,
+      y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      life: 0.3 + Math.random() * 0.7,
+      color,
+      size: 2 + Math.random() * 3,
+    });
   }
 }
 
-function setCallout(text, color='#ffd48a'){
-  callout.text = text;
-  callout.life = 1.6;
-  callout.color = color;
-}
-
-function startMission(index = (Math.random() * MISSIONS.length) | 0){
-  const mission = MISSIONS[index];
-  missionState = {
-    ...mission,
-    timeLeft: mission.seconds,
-    status: 'IN PROGRESS',
-  };
-  lastMissionTimeTxt = '';
-  updateMissionPanel();
-}
-
-function updateMissionPanel(){
-  if(!missionState) return;
-  const tEl = document.getElementById('mission-title');
-  const dEl = document.getElementById('mission-desc');
-  const sEl = document.getElementById('mission-status');
-  tEl.textContent = missionState.title;
-  dEl.textContent = missionState.desc;
-  sEl.textContent = missionState.status;
-  sEl.style.color = missionState.status === 'COMPLETE'
-    ? '#66ffae'
-    : missionState.status === 'FAILED'
-      ? '#ff7f7f'
-      : '#77a8ff';
-}
-
-function formatTimer(seconds){
-  const clamped = Math.max(0, Math.ceil(seconds));
-  const mm = String(Math.floor(clamped / 60)).padStart(2, '0');
-  const ss = String(clamped % 60).padStart(2, '0');
-  return `${mm}:${ss}`;
-}
-
-// ─── TERRAIN HELPERS ─────────────────────────────────────────────────────────
-function wrapI(i){ return ((i%SIZE)+SIZE)%SIZE; }
-
-function destroyCell(i,j){
-  i=wrapI(i); j=Math.max(0,Math.min(SIZE-1,j));
-  const idx=j*SIZE+i;
-  if(terrain[idx]===T.CRATER) return false;
-  terrain[idx]=T.CRATER; destroyedCells++; planetDirty=true; return true;
-}
-
-function setCell(i,j,type){
-  i=wrapI(i); j=Math.max(0,Math.min(SIZE-1,j));
-  if(terrain[j*SIZE+i]===T.CRATER) return;
-  terrain[j*SIZE+i]=type; planetDirty=true;
-}
-
-function explodeAt(wx,wy,radius){
-  const hit=screenToGrid(wx,wy); if(!hit) return 0;
-  const cr=Math.ceil(radius/CELL);
-  let destroyed = 0;
-  for(let dj=-cr;dj<=cr;dj++)
-    for(let di=-cr;di<=cr;di++)
-      if(di*di+dj*dj<=cr*cr && destroyCell(hit.i+di, hit.j+dj)) destroyed++;
-  return destroyed;
-}
-
-function spawnBurst(wx,wy,count,colors,sMin,sMax,lMin,lMax,grav=60){
-  for(let k=0;k<count&&particles.length<900;k++){
-    const a=Math.random()*Math.PI*2, sp=sMin+Math.random()*(sMax-sMin);
-    particles.push({x:wx,y:wy,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-Math.random()*20,
-      life:lMin+Math.random()*(lMax-lMin),maxLife:lMax,
-      color:colors[0|Math.random()*colors.length],size:2+Math.random()*3,grav});
-  }
-}
-
-function shake(a){
-  if(reduceShake) a *= 0.25;
-  shakeAmt=Math.max(shakeAmt,a);
-}
-
-// ─── AUDIO ───────────────────────────────────────────────────────────────────
-let AC;
-function ac(){ if(!AC) AC=new(window.AudioContext||window.webkitAudioContext)(); return AC; }
-
-function playBoom(f=80,d=0.7,v=0.4){try{
-  const a=ac(),o=a.createOscillator(),g=a.createGain();
-  o.connect(g);g.connect(a.destination);
-  o.frequency.setValueAtTime(f,a.currentTime);
-  o.frequency.exponentialRampToValueAtTime(4,a.currentTime+d);
-  g.gain.setValueAtTime(v,a.currentTime);
-  g.gain.exponentialRampToValueAtTime(0.001,a.currentTime+d);
-  o.start();o.stop(a.currentTime+d);}catch(_){}}
-
-function playNoise(bp=1500,d=0.4,v=0.22){try{
-  const a=ac(),sr=a.sampleRate,buf=a.createBuffer(1,sr*d,sr);
-  const dd=buf.getChannelData(0);
-  for(let i=0;i<dd.length;i++) dd[i]=(Math.random()*2-1)*(1-i/dd.length);
-  const src=a.createBufferSource();src.buffer=buf;
-  const f=a.createBiquadFilter();f.type='bandpass';f.frequency.value=bp;
-  const g=a.createGain();g.gain.value=v;
-  src.connect(f);f.connect(g);g.connect(a.destination);src.start();}catch(_){}}
-
-function playTone(f=300,f2=900,d=0.5,v=0.2,type='sine'){try{
-  const a=ac(),o=a.createOscillator(),g=a.createGain();
-  o.type=type;o.connect(g);g.connect(a.destination);
-  o.frequency.setValueAtTime(f,a.currentTime);
-  o.frequency.exponentialRampToValueAtTime(f2,a.currentTime+d);
-  g.gain.setValueAtTime(v,a.currentTime);
-  g.gain.exponentialRampToValueAtTime(0.001,a.currentTime+d);
-  o.start();o.stop(a.currentTime+d);}catch(_){}}
-
-function registerPowerUse(power){
-  if(power === 'restore') return;
-  const now = performance.now() / 1000;
-  recentPowers.push({ power, t: now });
-  while(recentPowers.length && now - recentPowers[0].t > 3.5) recentPowers.shift();
-  const unique = new Set(recentPowers.map(p => p.power));
-  if(unique.size >= 3){
-    combo = Math.max(combo, 4);
-    comboTimer = 3.2;
-    score += 1200;
-    setCallout('ELEMENTAL CHAIN +1200', '#ffe38a');
-    recentPowers.length = 0;
-  }
-}
-
-function registerImpact(power, cells){
-  if(cells <= 0) return;
-  if(comboTimer > 0) combo = Math.min(12, combo + 1);
-  else combo = 1;
-  comboTimer = 2.5;
-  const mult = 1 + (combo - 1) * 0.35;
-  const gain = Math.round(cells * 24 * mult);
-  score += gain;
-  if(combo >= 4){
-    setCallout(`COMBO x${combo} +${gain.toLocaleString()}`, POWER_COLORS[power] || '#ffd48a');
-  }
-}
-
-// ─── POWERS ──────────────────────────────────────────────────────────────────
-function usePower(wx,wy){
-  registerPowerUse(selectedPower);
-  switch(selectedPower){
-    case 'meteor':    launchMeteor(wx,wy);   break;
-    case 'nuke':      fireNuke(wx,wy);       break;
-    case 'blackhole': placeBlackHole(wx,wy); break;
-    case 'flood':     triggerFlood();        break;
-    case 'volcano':   erupt(wx,wy);          break;
-    case 'ice':       iceSpreading=!iceSpreading; updateStatus(); break;
-    case 'restore':   restorePlanet();       break;
-  }
-}
-
-function launchMeteor(tx,ty){
-  const a=-Math.PI*0.55+(Math.random()-0.5)*0.6;
-  const dist=Math.max(W,H)*0.85;
-  meteors.push({x:tx-Math.cos(a)*dist,y:ty-Math.sin(a)*dist,
-    tx,ty,speed:650+Math.random()*250,size:9+Math.random()*9,trail:[]});
-  playNoise(1800,0.3,0.2);
-}
-
-function fireNuke(wx,wy){
-  const destroyed = explodeAt(wx,wy,130);
-  spawnBurst(wx,wy,220,['#fff','#ffff88','#ff8800','#ff4400'],70,520,1,3,80);
-  const hit=screenToGrid(wx,wy);
-  if(hit){
-    const {i:ci,j:cj}=hit;
-    const outer=Math.ceil(185/CELL), inner=Math.ceil(95/CELL);
-    for(let dj=-outer;dj<=outer;dj++){
-      for(let di=-outer;di<=outer;di++){
-        const d2=di*di+dj*dj;
-        if(d2>outer*outer||d2<inner*inner||Math.random()>0.28) continue;
-        if(terrain[(Math.max(0,Math.min(SIZE-1,cj+dj)))*SIZE+wrapI(ci+di)]!==T.CRATER)
-          setCell(ci+di,cj+dj,T.IRRADIATED);
-      }
-    }
-  }
-  nukeFlash={life:0.9}; shake(55); playBoom(160,2.2,0.9);
-  registerImpact('nuke', destroyed);
-}
-
-function placeBlackHole(wx,wy){
-  blackHoles.push({x:wx,y:wy,life:12,age:0}); shake(8);
-  playTone(30,8,2,0.15,'sawtooth');
-}
-
-function triggerFlood(){
-  floodLevel=Math.min(1,floodLevel+0.13);
-  let changed = 0;
-  for(let j=0;j<SIZE;j++)
-    for(let i=0;i<SIZE;i++){
-      const idx=j*SIZE+i;
-      if(terrain[idx]===T.OCEAN||terrain[idx]===T.CRATER) continue;
-      if(noiseMap[idx]<-0.28+floodLevel*0.95){ terrain[idx]=T.OCEAN; changed++; }
-    }
-  if(changed>0){
-    planetDirty = true;
-    registerImpact('flood', Math.round(changed * 0.18));
-  }
-  playNoise(800,0.5,0.2);
-}
-
-function erupt(wx,wy){
-  const destroyed = explodeAt(wx,wy,16);
-  const hit=screenToGrid(wx,wy);
-  if(hit){
-    const {i:ci,j:cj}=hit, r=Math.ceil(55/CELL);
-    for(let k=0;k<80;k++){
-      const a=Math.random()*Math.PI*2, d=5+Math.random()*r;
-      setCell(ci+Math.round(Math.cos(a)*d), cj+Math.round(Math.sin(a)*d), T.LAVA);
-    }
-  }
-  for(let k=0;k<70&&particles.length<900;k++)
-    particles.push({x:wx,y:wy,vx:(Math.random()-0.5)*130,vy:-160-Math.random()*260,
-      life:1+Math.random()*1.8,maxLife:2.8,color:Math.random()>0.5?'#ff5500':'#ff9900',size:3+Math.random()*5,grav:80});
-  shake(22); playBoom(55,0.9,0.5);
-  registerImpact('volcano', destroyed + 8);
-}
-
-function restorePlanet(){
-  initPlanet();
-  startMission();
-  playTone(250,1000,0.5,0.2,'sine');
-}
-
-// ─── UPDATE ──────────────────────────────────────────────────────────────────
-function update(dt){
-  // Meteors
-  for(let k=meteors.length-1;k>=0;k--){
-    const m=meteors[k];
-    m.trail.push({x:m.x,y:m.y,s:m.size});
-    if(m.trail.length>28) m.trail.shift();
-    const dx=m.tx-m.x,dy=m.ty-m.y,dist=Math.sqrt(dx*dx+dy*dy),step=m.speed*dt;
-    if(dist<=step+m.size){
-      const destroyed = explodeAt(m.tx,m.ty,38+m.size*2.2);
-      spawnBurst(m.tx,m.ty,90,['#ff6030','#ff9050','#ffcc60','#ff4020'],55,260,0.5,2);
-      registerImpact('meteor', destroyed);
-      shake(16+m.size); playBoom(75+Math.random()*35,0.65,0.45); meteors.splice(k,1);
-    } else { m.x+=(dx/dist)*step; m.y+=(dy/dist)*step; }
-  }
-
-  // Black holes — destroy cells near their screen position
-  for(let k=blackHoles.length-1;k>=0;k--){
-    const bh=blackHoles[k];
-    let consumed = 0;
-    bh.life-=dt; bh.age+=dt;
-    if(bh.life<=0){ blackHoles.splice(k,1); continue; }
-    for(let att=0;att<18;att++){
-      const a=Math.random()*Math.PI*2, r=8+Math.random()*110;
-      const sx=bh.x+Math.cos(a)*r, sy=bh.y+Math.sin(a)*r;
-      const hit=screenToGrid(sx,sy); if(!hit) continue;
-      if(destroyCell(hit.i,hit.j)){
-        consumed++;
-        const toA=Math.atan2(bh.y-sy,bh.x-sx)+0.45;
-        if(particles.length<900)
-          particles.push({x:sx,y:sy,vx:Math.cos(toA)*90,vy:Math.sin(toA)*90,
-            life:0.35+Math.random()*0.5,maxLife:0.85,color:'#cc99ff',size:1.5,grav:0});
-      }
-    }
-    if(consumed>0) registerImpact('blackhole', consumed);
-    shake(1.5);
-  }
-
-  // Particles
-  for(let i=particles.length-1;i>=0;i--){
-    const p=particles[i];
-    p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=p.grav*dt; p.life-=dt;
-    if(p.life<=0) particles.splice(i,1);
-  }
-
-  // Shake decay
-  if(shakeAmt>0){
-    shakeX=(Math.random()-0.5)*shakeAmt*2; shakeY=(Math.random()-0.5)*shakeAmt*2;
-    shakeAmt=Math.max(0,shakeAmt-dt*130);
-  } else { shakeX=shakeY=0; }
-
-  // Ice spreading
-  if(iceSpreading){
-    iceFrame=(iceFrame+1)%2;
-    if(iceFrame===0){
-      let changed = false;
-      for(let k=0;k<280;k++){
-        const idx=0|Math.random()*SIZE*SIZE;
-        const t=terrain[idx];
-        if(t===T.ICE||t===T.CRATER) continue;
-        terrain[idx] = T.ICE;
-        changed = true;
-      }
-      if(changed) planetDirty = true;
-    }
-  }
-
-  cloudAngle+=dt*0.025;
-  if(comboTimer>0){
-    comboTimer -= dt;
-    if(comboTimer<=0) combo = 1;
-  }
-  if(callout.life>0) callout.life -= dt;
-
-  if(missionState && missionState.status==='IN PROGRESS'){
-    missionState.timeLeft -= dt;
-    if(missionState.check()){
-      missionState.status = 'COMPLETE';
-      score += 5000;
-      setCallout('MISSION COMPLETE +5000', '#72ffb7');
-      updateMissionPanel();
-      setTimeout(() => startMission(), 1300);
-    } else if(missionState.timeLeft <= 0){
-      missionState.timeLeft = 0;
-      missionState.status = 'FAILED';
-      setCallout('MISSION FAILED', '#ff8888');
-      updateMissionPanel();
-      setTimeout(() => startMission(), 1600);
-    }
-  }
-}
-
-// ─── RENDER PLANET (3-D sphere projection) ───────────────────────────────────
-function renderPlanetTexture(){
-  const data=planetImg.data;
-  const cX=Math.cos(rotX),sX=Math.sin(rotX);
-  const cY=Math.cos(rotY),sY=Math.sin(rotY);
-
-  for(let j=0;j<SIZE;j++){
-    for(let i=0;i<SIZE;i++){
-      const nx=(i-PR)/PR;
-      const ny=-(j-PR)/PR;   // flip Y so north is up
-      const nz2=1-nx*nx-ny*ny;
-      const p=(j*SIZE+i)*4;
-
-      if(nz2<0){ data[p+3]=0; continue; }
-      const nz=Math.sqrt(nz2);
-
-      // ── diffuse lighting (in screen space, before rotation) ──
-      const diffuse=Math.max(0.12, nx*LX + ny*LY + nz*LZ);
-
-      // ── inverse rotation → world sphere point ──
-      // Step 1: Rx(-rotX)
-      const ax=nx, ay=ny*cX+nz*sX, az=-ny*sX+nz*cX;
-      // Step 2: Ry(-rotY)
-      const ux=ax*cY-az*sY, uy=ay, uz=ax*sY+az*cY;
-
-      // ── world sphere → lat/lon → terrain grid ──
-      const lat=Math.asin(Math.max(-1,Math.min(1,uy)));
-      const lon=Math.atan2(ux,uz);
-      let ti=0|((lon/(Math.PI*2)+0.5)*SIZE);
-      let tj=0|((lat/Math.PI+0.5)*SIZE);
-      ti=((ti%SIZE)+SIZE)%SIZE; tj=Math.max(0,Math.min(SIZE-1,tj));
-
-      const idx=tj*SIZE+ti;
-      const t=terrain[idx];
-      const n=noiseMap[idx]*14;
-
-      let r,g,b;
-      switch(t){
-        case T.ROCK:       r=108+n;    g=74+n*.7;  b=54+n*.5;   break;
-        case T.OCEAN:      r=22+n*.3;  g=62+n;     b=158+n*1.2; break;
-        case T.VEGETATION: r=32+n*.3;  g=108+n;    b=42+n*.4;   break;
-        case T.LAVA:       r=215+n*.4; g=44+Math.abs(n)*1.5; b=4; break;
-        case T.ICE:        r=155+n*.4; g=208+n*.3; b=238+n*.2;  break;
-        case T.SAND:       r=168+n;    g=148+n*.8; b=88+n*.5;   break;
-        case T.CRATER:     r=38+n*.3;  g=26+n*.2;  b=20+n*.15;  break;
-        case T.IRRADIATED: r=72+n;     g=92+n;     b=16;        break;
-        default:           r=g=b=80;
-      }
-
-      // Apply lighting
-      data[p]  =Math.max(0,Math.min(255,r*diffuse));
-      data[p+1]=Math.max(0,Math.min(255,g*diffuse));
-      data[p+2]=Math.max(0,Math.min(255,b*diffuse));
-      data[p+3]=255;
-    }
-  }
-
-  offCtx.putImageData(planetImg,0,0);
-  planetDirty=false;
-}
-
-// ─── DRAW ────────────────────────────────────────────────────────────────────
-function drawScene(){
-  ctx.fillStyle='#00000e';
-  ctx.fillRect(-shakeX,-shakeY,W,H);
-
-  // Stars
-  const t=Date.now()*0.0008;
-  for(const s of stars){
-    ctx.globalAlpha=(0.55+0.45*Math.sin(t*s.sp+s.ph))*s.br;
-    ctx.fillStyle='#fff'; ctx.fillRect(s.x,s.y,s.r,s.r);
-  }
-  ctx.globalAlpha=1;
-
-  // Planet
-  if(planetDirty) renderPlanetTexture();
-  ctx.save();
-  ctx.beginPath(); ctx.arc(CX,CY,PR*CELL,0,Math.PI*2); ctx.clip();
-  ctx.imageSmoothingEnabled=false;
-  ctx.drawImage(off,CX-PR*CELL,CY-PR*CELL,SIZE*CELL,SIZE*CELL);
-  ctx.restore();
-
-  // Atmosphere
-  const aR=PR*CELL;
-  const atmo=ctx.createRadialGradient(CX,CY,aR*.82,CX,CY,aR*1.28);
-  atmo.addColorStop(0,'rgba(50,110,255,0.28)');
-  atmo.addColorStop(0.55,'rgba(20,60,200,0.08)');
-  atmo.addColorStop(1,'rgba(0,10,80,0)');
-  ctx.fillStyle=atmo; ctx.beginPath(); ctx.arc(CX,CY,aR*1.28,0,Math.PI*2); ctx.fill();
-
-  ctx.shadowColor='#fff'; ctx.shadowBlur=8; ctx.fillStyle='#ddeeff';
-  for(const c of CLOUDS){
-    const ang=c.a+cloudAngle*c.sp;
-    const cr=c.r*aR, cx2=CX+Math.cos(ang)*cr, cy2=CY+Math.sin(ang)*cr;
-    const dx=cx2-CX,dy=cy2-CY;
-    if(dx*dx+dy*dy>(aR*.97)**2) continue;
-    ctx.globalAlpha=.38;
-    ctx.beginPath();ctx.arc(cx2,cy2,c.s,0,Math.PI*2);ctx.fill();
-    ctx.beginPath();ctx.arc(cx2+c.s*.65,cy2-c.s*.2,c.s*.68,0,Math.PI*2);ctx.fill();
-    ctx.beginPath();ctx.arc(cx2-c.s*.55,cy2-c.s*.15,c.s*.55,0,Math.PI*2);ctx.fill();
-  }
-  ctx.shadowBlur=0; ctx.globalAlpha=1;
-
-  // Black holes
-  for(const bh of blackHoles){
-    const alpha=Math.min(1,bh.life/3); ctx.globalAlpha=alpha;
-    const g=ctx.createRadialGradient(bh.x,bh.y,0,bh.x,bh.y,68);
-    g.addColorStop(0,'rgba(0,0,0,1)');g.addColorStop(.45,'rgba(90,45,200,.55)');g.addColorStop(1,'rgba(40,0,100,0)');
-    ctx.fillStyle=g; ctx.beginPath();ctx.arc(bh.x,bh.y,68,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle=`hsla(${275+bh.age*25},80%,72%,${alpha})`;
-    ctx.shadowColor='#cc99ff';ctx.shadowBlur=22;ctx.lineWidth=2;
-    ctx.beginPath();ctx.arc(bh.x,bh.y,13,0,Math.PI*2);ctx.stroke();
-    ctx.shadowBlur=0;ctx.globalAlpha=1;
-  }
-
-  // Meteors
-  for(const m of meteors){
-    for(let k=0;k<m.trail.length;k++){
-      const tr=m.trail[k],f=k/m.trail.length;
-      ctx.globalAlpha=f*.65;ctx.fillStyle='#ff7733';ctx.shadowColor='#ff9944';ctx.shadowBlur=14;
-      ctx.beginPath();ctx.arc(tr.x,tr.y,tr.s*f,0,Math.PI*2);ctx.fill();
-    }
-    ctx.globalAlpha=1;ctx.fillStyle='#ffaa66';ctx.shadowColor='#ff8844';ctx.shadowBlur=28;
-    ctx.beginPath();ctx.arc(m.x,m.y,m.size,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
-  }
-  ctx.globalAlpha=1;
-
-  // Laser
-  for(let i=laserSegs.length-1;i>=0;i--){
-    const l=laserSegs[i]; l.life-=1/60;
-    if(l.life<=0){laserSegs.splice(i,1);continue;}
-    ctx.globalAlpha=l.life/.12;ctx.strokeStyle='#ff2222';ctx.shadowColor='#ff5555';ctx.shadowBlur=16;ctx.lineWidth=3;
-    ctx.beginPath();ctx.moveTo(l.x1,l.y1);ctx.lineTo(l.x2,l.y2);ctx.stroke();
-    ctx.shadowBlur=0;ctx.globalAlpha=1;
-  }
-
-  // Particles
-  ctx.shadowBlur=5;
-  for(const p of particles){
-    ctx.globalAlpha=(p.life/p.maxLife)*.95;ctx.fillStyle=p.color;ctx.shadowColor=p.color;
-    ctx.fillRect(p.x-p.size/2,p.y-p.size/2,p.size,p.size);
-  }
-  ctx.shadowBlur=0;ctx.globalAlpha=1;
-
-  // Nuke flash
-  if(nukeFlash){
-    nukeFlash.life-=1/60;
-    if(nukeFlash.life<=0) nukeFlash=null;
-    else{ ctx.globalAlpha=Math.min(1,nukeFlash.life/.35)*.85;ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);ctx.globalAlpha=1; }
-  }
-
-  // Subtle cinematic vignette
-  const vignette = ctx.createRadialGradient(CX, CY, aR * 0.8, CX, CY, Math.max(W, H) * 0.75);
-  vignette.addColorStop(0, 'rgba(0,0,0,0)');
-  vignette.addColorStop(1, 'rgba(0,0,0,0.45)');
-  ctx.fillStyle = vignette;
-  ctx.fillRect(0, 0, W, H);
-
-  if(callout.life > 0){
-    ctx.globalAlpha = Math.min(1, callout.life);
-    ctx.font = 'bold 20px "Courier New", monospace';
-    ctx.textAlign = 'center';
-    ctx.fillStyle = callout.color;
-    ctx.shadowColor = callout.color;
-    ctx.shadowBlur = 16;
-    ctx.fillText(callout.text, CX, CY - PR * CELL - 24);
-    ctx.shadowBlur = 0;
-    ctx.globalAlpha = 1;
-  }
-
-  drawCursor();
-}
-
-function drawCursor(){
-  if(rotating || !showCustomCursor) return;
-  const {x,y}=mousePos;
-  const col=POWER_COLORS[selectedPower]||'#fff';
-  ctx.strokeStyle=col;ctx.shadowColor=col;ctx.shadowBlur=10;ctx.lineWidth=1.5;ctx.globalAlpha=.7;
-  ctx.beginPath();
-  ctx.moveTo(x-20,y);ctx.lineTo(x-7,y); ctx.moveTo(x+7,y);ctx.lineTo(x+20,y);
-  ctx.moveTo(x,y-20);ctx.lineTo(x,y-7); ctx.moveTo(x,y+7);ctx.lineTo(x,y+20);
-  ctx.stroke();
-  ctx.lineWidth=1;ctx.globalAlpha=.18;
-  if(selectedPower==='meteor'){ctx.beginPath();ctx.arc(x,y,62,0,Math.PI*2);ctx.stroke();}
-  else if(selectedPower==='nuke'){
-    ctx.beginPath();ctx.arc(x,y,130,0,Math.PI*2);ctx.stroke();
-    ctx.globalAlpha=.08;ctx.beginPath();ctx.arc(x,y,185,0,Math.PI*2);ctx.stroke();
-  } else if(selectedPower==='blackhole'){ctx.beginPath();ctx.arc(x,y,110,0,Math.PI*2);ctx.stroke();}
-  else if(selectedPower==='volcano'){ctx.beginPath();ctx.arc(x,y,55,0,Math.PI*2);ctx.stroke();}
-  ctx.globalAlpha=1;ctx.shadowBlur=0;
-}
-
-// ─── HUD ─────────────────────────────────────────────────────────────────────
-function updateHUD(force=false){
-  const missionTxt = missionState ? formatTimer(missionState.timeLeft) : '--:--';
-  if(!force){
-    if(
-      lastHudDestroyed===destroyedCells &&
-      lastHudPower===selectedPower &&
-      lastHudIceState===iceSpreading &&
-      comboTimer <= 0.01 &&
-      missionTxt === lastMissionTimeTxt
-    ) return;
-  }
-  lastHudDestroyed = destroyedCells;
-  lastHudPower = selectedPower;
-  lastHudIceState = iceSpreading;
-  const ratio=1-(destroyedCells/totalCells);
-  const pop=Math.max(0,Math.round(ratio*8_000_000_000));
-  const pct=Math.round((1-ratio)*100);
-  const popEl=document.getElementById('pop');
-  popEl.textContent=pop.toLocaleString();
-  popEl.className='value '+(pop<1e6?'red':pop<1e9?'orange':'green');
-  const destEl=document.getElementById('dest');
-  destEl.textContent=pct+'%';
-  destEl.style.color=pct>80?'#ff3333':pct>40?'#ffaa44':'#aaaacc';
-
-  document.getElementById('score').textContent = score.toLocaleString();
-  document.getElementById('combo-pill').textContent = `COMBO x${combo}`;
-  document.getElementById('combo-pill').style.borderColor = combo >= 4 ? 'rgba(255,120,120,0.75)' : 'rgba(255,170,90,0.45)';
-  document.getElementById('combo-pill').style.color = combo >= 4 ? '#ff8a8a' : '#ffbe7d';
-
-  if(missionState){
-    if(missionTxt !== lastMissionTimeTxt || force){
-      document.getElementById('mission-time').textContent = missionTxt;
-      lastMissionTimeTxt = missionTxt;
-    }
-  }
-}
-
-function updateStatus(){
-  const el=document.getElementById('status-txt');
-  el.textContent=selectedPower==='ice'&&iceSpreading?'FREEZING':'READY';
-}
-
-// ─── LASER SLICE ─────────────────────────────────────────────────────────────
-function sliceLaser(wx,wy){
-  if(!laserLast){laserLast={x:wx,y:wy};return;}
-  const dx=wx-laserLast.x, dy=wy-laserLast.y;
-  const dist=Math.sqrt(dx*dx+dy*dy);
-  const steps=Math.max(1,Math.ceil(dist/(CELL*.5)));
-  let destroyed = 0;
-  for(let s=0;s<=steps;s++){
-    const px=laserLast.x+dx*(s/steps), py=laserLast.y+dy*(s/steps);
-    const hit=screenToGrid(px,py); if(!hit) continue;
-    for(let di=-1;di<=1;di++) for(let dj=-1;dj<=1;dj++) if(destroyCell(hit.i+di,hit.j+dj)) destroyed++;
-  }
-  registerImpact('laser', destroyed);
-  laserSegs.push({x1:laserLast.x,y1:laserLast.y,x2:wx,y2:wy,life:.12});
-  laserLast={x:wx,y:wy};
-}
-
-// ─── MAIN LOOP ────────────────────────────────────────────────────────────────
-let lastT=0;
-function loop(ts){
-  const dt=Math.min((ts-lastT)/1000,.05); lastT=ts;
-  update(dt);
-  ctx.save(); ctx.translate(shakeX,shakeY);
-  drawScene();
-  ctx.restore();
-  hudTimer += dt;
-  if(hudTimer>=0.15){
-    updateHUD();
-    hudTimer = 0;
-  }
-  requestAnimationFrame(loop);
-}
-
-// ─── INPUT ───────────────────────────────────────────────────────────────────
-canvas.addEventListener('contextmenu',e=>e.preventDefault());
-
-canvas.addEventListener('mousedown',e=>{
-  if(e.button===2){ rotating=true; rotLastX=e.clientX; rotLastY=e.clientY; return; }
-  isDown=true; laserLast=null;
-  if(selectedPower==='laser') laserLast={x:e.clientX,y:e.clientY};
-  else usePower(e.clientX,e.clientY);
-});
-
-canvas.addEventListener('mousemove',e=>{
-  mousePos={x:e.clientX,y:e.clientY};
-  if(rotating){
-    rotY-=(e.clientX-rotLastX)*0.006;
-    rotX+=Math.max(-0.05,Math.min(0.05,(e.clientY-rotLastY)*0.006));
-    rotX=Math.max(-Math.PI/2,Math.min(Math.PI/2,rotX));
-    rotLastX=e.clientX; rotLastY=e.clientY;
-    planetDirty=true; return;
-  }
-  if(isDown&&selectedPower==='laser') sliceLaser(e.clientX,e.clientY);
-});
-
-canvas.addEventListener('mouseup',e=>{
-  if(e.button===2){rotating=false;return;}
-  isDown=false; laserLast=null;
-});
-canvas.addEventListener('mouseleave',()=>{isDown=false;laserLast=null;rotating=false;});
-
-canvas.addEventListener('touchstart',e=>{
-  e.preventDefault(); isDown=true; laserLast=null;
-  const t=e.touches[0]; mousePos={x:t.clientX,y:t.clientY};
-  if(selectedPower==='laser') laserLast={x:t.clientX,y:t.clientY};
-  else usePower(t.clientX,t.clientY);
-},{passive:false});
-
-canvas.addEventListener('touchmove',e=>{
-  e.preventDefault();
-  const t=e.touches[0]; mousePos={x:t.clientX,y:t.clientY};
-  if(isDown&&selectedPower==='laser') sliceLaser(t.clientX,t.clientY);
-},{passive:false});
-
-canvas.addEventListener('touchend',()=>{isDown=false;laserLast=null;});
-
-document.querySelectorAll('.power').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('.power').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    selectedPower=btn.dataset.power;
-    const lbl=document.getElementById('power-label');
-    lbl.textContent=btn.dataset.label;
-    lbl.style.color=POWER_COLORS[selectedPower]||'#fff';
-    if(selectedPower!=='ice') iceSpreading=false;
-    updateStatus();
+function shootLaser() {
+  if (player.shootCooldown > 0 || player.energy < 4) return;
+
+  const dx = mouse.x - player.x;
+  const dy = mouse.y - player.y;
+  const mag = Math.hypot(dx, dy) || 1;
+
+  state.lasers.push({
+    x: player.x,
+    y: player.y,
+    vx: (dx / mag) * 920,
+    vy: (dy / mag) * 920,
+    life: 0.26,
+    radius: 4,
   });
-});
 
-document.getElementById('next-mission').addEventListener('click', () => startMission());
+  player.shootCooldown = 0.08;
+  player.energy = clamp(player.energy - 4, 0, 100);
+}
 
-document.getElementById('settings-toggle').addEventListener('click', () => {
-  document.getElementById('settings-panel').classList.toggle('hidden');
-});
+function burstPunch() {
+  if (player.punchCooldown > 0 || player.energy < 12) return;
 
-document.getElementById('reduce-shake').addEventListener('change', (e) => {
-  reduceShake = e.target.checked;
-});
+  player.punchCooldown = 0.8;
+  player.energy = clamp(player.energy - 12, 0, 100);
 
-document.getElementById('show-cursor').addEventListener('change', (e) => {
-  showCustomCursor = e.target.checked;
-  document.body.classList.toggle('no-custom-cursor', !showCustomCursor);
-});
+  const pulseRadius = 120;
+  let hits = 0;
 
-window.addEventListener('keydown', (e) => {
-  if(e.key.toLowerCase()==='r'){
-    startMission();
+  for (const enemy of state.enemies) {
+    const dx = enemy.x - player.x;
+    const dy = enemy.y - player.y;
+    const dist = Math.hypot(dx, dy);
+
+    if (dist < pulseRadius) {
+      const power = (pulseRadius - dist) / pulseRadius;
+      enemy.hp -= 22 + power * 30;
+      const knockback = 380 + power * 240;
+      enemy.vx += (dx / (dist || 1)) * knockback;
+      enemy.vy += (dy / (dist || 1)) * knockback;
+      hits += 1;
+    }
+  }
+
+  if (hits > 0) {
+    state.score += hits * 40;
+    addExplosion(player.x, player.y, '#9ec4ff', 30);
+  }
+}
+
+function updatePlayer(dt) {
+  let mx = 0;
+  let my = 0;
+
+  if (keys.has('KeyA') || keys.has('ArrowLeft')) mx -= 1;
+  if (keys.has('KeyD') || keys.has('ArrowRight')) mx += 1;
+  if (keys.has('KeyW') || keys.has('ArrowUp')) my -= 1;
+  if (keys.has('KeyS') || keys.has('ArrowDown')) my += 1;
+
+  const moving = mx !== 0 || my !== 0;
+  const boost = keys.has('ShiftLeft') || keys.has('ShiftRight');
+
+  if (moving) {
+    const mag = Math.hypot(mx, my);
+    mx /= mag;
+    my /= mag;
+
+    let accel = player.accel;
+    let maxSpeed = player.maxSpeed;
+
+    if (boost && player.energy > 0) {
+      accel *= 1.35;
+      maxSpeed *= 1.45;
+      player.energy = clamp(player.energy - 24 * dt, 0, 100);
+    }
+
+    player.vx += mx * accel * dt;
+    player.vy += my * accel * dt;
+
+    const speed = Math.hypot(player.vx, player.vy);
+    if (speed > maxSpeed) {
+      const scale = maxSpeed / speed;
+      player.vx *= scale;
+      player.vy *= scale;
+    }
+  } else {
+    const damping = Math.pow(player.friction, dt * 60);
+    player.vx *= damping;
+    player.vy *= damping;
+  }
+
+  if (!boost) {
+    player.energy = clamp(player.energy + 16 * dt, 0, 100);
+  }
+
+  player.x += player.vx * dt;
+  player.y += player.vy * dt;
+
+  const margin = player.radius;
+  player.x = clamp(player.x, margin, width - margin);
+  player.y = clamp(player.y, margin + 90, height - margin);
+
+  if (mouse.shooting) {
+    shootLaser();
+  }
+
+  player.shootCooldown = Math.max(0, player.shootCooldown - dt);
+  player.punchCooldown = Math.max(0, player.punchCooldown - dt);
+}
+
+function updateEnemies(dt) {
+  for (let i = state.enemies.length - 1; i >= 0; i -= 1) {
+    const enemy = state.enemies[i];
+    const dx = player.x - enemy.x;
+    const dy = player.y - enemy.y;
+    const dist = Math.hypot(dx, dy) || 1;
+
+    const chase = enemy.speed;
+    enemy.vx += (dx / dist) * chase * dt;
+    enemy.vy += (dy / dist) * chase * dt;
+
+    enemy.vx *= 0.95;
+    enemy.vy *= 0.95;
+
+    enemy.x += enemy.vx * dt;
+    enemy.y += enemy.vy * dt;
+
+    if (dist < enemy.radius + player.radius) {
+      player.health = clamp(player.health - enemy.touchDamage * dt * 8, 0, 100);
+      const push = 210;
+      enemy.vx -= (dx / dist) * push * dt;
+      enemy.vy -= (dy / dist) * push * dt;
+    }
+
+    if (enemy.hp <= 0) {
+      state.score += 100 + state.wave * 15;
+      addExplosion(enemy.x, enemy.y, '#ff6f6f', 20);
+      state.enemies.splice(i, 1);
+    }
+  }
+}
+
+function updateLasers(dt) {
+  for (let i = state.lasers.length - 1; i >= 0; i -= 1) {
+    const laser = state.lasers[i];
+    laser.x += laser.vx * dt;
+    laser.y += laser.vy * dt;
+    laser.life -= dt;
+
+    for (let j = state.enemies.length - 1; j >= 0; j -= 1) {
+      const enemy = state.enemies[j];
+      const dx = enemy.x - laser.x;
+      const dy = enemy.y - laser.y;
+      const hitDist = enemy.radius + laser.radius;
+
+      if (dx * dx + dy * dy <= hitDist * hitDist) {
+        enemy.hp -= 16;
+        laser.life = 0;
+        addExplosion(laser.x, laser.y, '#ffe38f', 8);
+        break;
+      }
+    }
+
+    if (
+      laser.life <= 0 ||
+      laser.x < -40 || laser.x > width + 40 ||
+      laser.y < -40 || laser.y > height + 40
+    ) {
+      state.lasers.splice(i, 1);
+    }
+  }
+}
+
+function updateParticles(dt) {
+  for (let i = state.particles.length - 1; i >= 0; i -= 1) {
+    const p = state.particles[i];
+    p.life -= dt;
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+    p.vx *= 0.98;
+    p.vy *= 0.98;
+
+    if (p.life <= 0) {
+      state.particles.splice(i, 1);
+    }
+  }
+}
+
+function updateGame(dt) {
+  if (state.paused || state.gameOver || state.victory) return;
+
+  updatePlayer(dt);
+  updateEnemies(dt);
+  updateLasers(dt);
+  updateParticles(dt);
+
+  if (player.health <= 0) {
+    state.gameOver = true;
+    overlayText.textContent = `Mission Failed • Score ${Math.floor(state.score)}`;
+    overlay.classList.remove('hidden');
+  }
+
+  if (state.enemies.length === 0 && !state.gameOver) {
+    if (state.wave >= WAVE_SETTINGS.maxWave) {
+      state.victory = true;
+      overlayText.textContent = `Metropolis Safe! Final Score ${Math.floor(state.score)}`;
+      overlay.classList.remove('hidden');
+    } else {
+      state.nextWaveTimer += dt;
+      if (state.nextWaveTimer >= 1.3) {
+        state.wave += 1;
+        state.nextWaveTimer = 0;
+        spawnWave();
+      }
+    }
+  }
+
+  updateHud();
+}
+
+function drawBackground() {
+  const sky = ctx.createLinearGradient(0, 0, 0, height);
+  sky.addColorStop(0, '#143572');
+  sky.addColorStop(0.56, '#0c1f46');
+  sky.addColorStop(1, '#070b14');
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, width, height);
+
+  for (let i = 0; i < 80; i += 1) {
+    const px = (i * 173) % width;
+    const py = (i * 229) % height;
+    const twinkle = 0.2 + Math.abs(Math.sin((performance.now() * 0.001) + i)) * 0.8;
+    ctx.fillStyle = `rgba(255,255,255,${twinkle * 0.6})`;
+    ctx.fillRect(px, py, 2, 2);
+  }
+
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.24)';
+  ctx.fillRect(0, height - 100, width, 100);
+}
+
+function drawPlayer() {
+  const angle = Math.atan2(player.vy, player.vx);
+
+  ctx.save();
+  ctx.translate(player.x, player.y);
+  ctx.rotate(angle || -Math.PI / 2);
+
+  ctx.fillStyle = '#3f79ff';
+  ctx.beginPath();
+  ctx.moveTo(22, 0);
+  ctx.lineTo(-14, -13);
+  ctx.lineTo(-4, 0);
+  ctx.lineTo(-14, 13);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = '#ff2f2f';
+  ctx.fillRect(-4, -13, 8, 26);
+
+  ctx.fillStyle = '#ffe17f';
+  ctx.font = 'bold 15px Arial';
+  ctx.fillText('S', -5, 5);
+
+  ctx.restore();
+
+  if (player.punchCooldown > 0.65) {
+    const t = (0.8 - player.punchCooldown) / 0.15;
+    ctx.strokeStyle = `rgba(158, 196, 255, ${1 - t})`;
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.arc(player.x, player.y, 80 + t * 42, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+}
+
+function drawEnemies() {
+  for (const enemy of state.enemies) {
+    ctx.fillStyle = '#b51717';
+    ctx.beginPath();
+    ctx.arc(enemy.x, enemy.y, enemy.radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(enemy.x - 4, enemy.y - 3, 2, 0, Math.PI * 2);
+    ctx.arc(enemy.x + 4, enemy.y - 3, 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    const hpRatio = clamp(enemy.hp / enemy.maxHp, 0, 1);
+    const w = enemy.radius * 2;
+    ctx.fillStyle = 'rgba(0,0,0,0.5)';
+    ctx.fillRect(enemy.x - enemy.radius, enemy.y - enemy.radius - 10, w, 4);
+    ctx.fillStyle = '#77ff93';
+    ctx.fillRect(enemy.x - enemy.radius, enemy.y - enemy.radius - 10, w * hpRatio, 4);
+  }
+}
+
+function drawLasers() {
+  for (const laser of state.lasers) {
+    ctx.strokeStyle = '#ffea7f';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(laser.x, laser.y);
+    ctx.lineTo(laser.x - laser.vx * 0.02, laser.y - laser.vy * 0.02);
+    ctx.stroke();
+  }
+}
+
+function drawParticles() {
+  for (const p of state.particles) {
+    ctx.globalAlpha = clamp(p.life, 0, 1);
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawPause() {
+  if (!state.paused || state.gameOver || state.victory) return;
+
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+  ctx.fillRect(0, 0, width, height);
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 40px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('PAUSED', width * 0.5, height * 0.5);
+  ctx.textAlign = 'left';
+}
+
+function render() {
+  drawBackground();
+  drawEnemies();
+  drawLasers();
+  drawParticles();
+  drawPlayer();
+  drawPause();
+}
+
+function updateHud() {
+  healthEl.textContent = Math.ceil(player.health);
+  waveEl.textContent = state.wave;
+  enemiesEl.textContent = state.enemies.length;
+  scoreEl.textContent = Math.floor(state.score);
+  energyEl.textContent = Math.ceil(player.energy);
+}
+
+window.addEventListener('resize', resize);
+
+window.addEventListener('keydown', (event) => {
+  if (event.code === 'Space') {
+    event.preventDefault();
+    burstPunch();
     return;
   }
-  const idx = Number(e.key) - 1;
-  if(!Number.isInteger(idx) || idx < 0) return;
-  const powers = [...document.querySelectorAll('.power')];
-  if(idx >= powers.length) return;
-  powers[idx].click();
+
+  if (event.code === 'KeyP') {
+    state.paused = !state.paused;
+    return;
+  }
+
+  keys.add(event.code);
 });
 
-// ─── RESIZE ──────────────────────────────────────────────────────────────────
-function resize(){
-  DPR = Math.min(2, window.devicePixelRatio || 1);
-  W = window.innerWidth; H = window.innerHeight;
-  canvas.width = Math.floor(W * DPR);
-  canvas.height = Math.floor(H * DPR);
-  canvas.style.width = W + 'px';
-  canvas.style.height = H + 'px';
-  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-  CX=W/2; CY=H/2;
-  stars=Array.from({length:220},()=>({
-    x:Math.random()*W,y:Math.random()*H,r:.8+Math.random()*1.8,
-    br:.3+Math.random()*.7,sp:.4+Math.random()*.9,ph:Math.random()*Math.PI*2,
-  }));
+window.addEventListener('keyup', (event) => {
+  keys.delete(event.code);
+});
+
+canvas.addEventListener('mousemove', (event) => {
+  mouse.x = event.clientX;
+  mouse.y = event.clientY;
+});
+
+canvas.addEventListener('mousedown', (event) => {
+  if (event.button !== 0) return;
+  mouse.shooting = true;
+  shootLaser();
+});
+
+window.addEventListener('mouseup', () => {
+  mouse.shooting = false;
+});
+
+restartBtn.addEventListener('click', () => {
+  resetGame();
+});
+
+let lastTime = performance.now();
+
+function frame(now) {
+  const dt = Math.min(0.033, (now - lastTime) / 1000);
+  lastTime = now;
+
+  updateGame(dt);
+  render();
+
+  requestAnimationFrame(frame);
 }
 
-// CSS color classes
-const sty=document.createElement('style');
-sty.textContent='.red{color:#ff4444;text-shadow:0 0 8px #ff4444}.orange{color:#ffaa44;text-shadow:0 0 8px #ffaa44}.green{color:#44ff88;text-shadow:0 0 8px #44ff88}';
-document.head.appendChild(sty);
-
-window.addEventListener('resize',()=>{resize();planetDirty=true;});
-
-// ─── BOOT ────────────────────────────────────────────────────────────────────
 resize();
-initPlanet();
-startMission();
-updateHUD(true);
-updateStatus();
-requestAnimationFrame(loop);
+resetGame();
+requestAnimationFrame(frame);

@@ -3,75 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>God Mode — Planet Destroyer</title>
+  <title>2D Superman: Sky Defender</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <canvas id="canvas"></canvas>
 
   <div id="hud">
-    <div class="hud-col">
-      <div class="stat">
-        <span class="label">POPULATION</span>
-        <span id="pop" class="value green">8,000,000,000</span>
-      </div>
-      <div class="stat">
-        <span class="label">DESTRUCTION</span>
-        <span id="dest" class="value">0%</span>
-      </div>
-      <div class="stat">
-        <span class="label">SCORE</span>
-        <span id="score" class="value">0</span>
-      </div>
+    <h1>2D SUPERMAN: SKY DEFENDER</h1>
+    <div class="stats">
+      <span>Health: <strong id="health">100</strong></span>
+      <span>Wave: <strong id="wave">1</strong></span>
+      <span>Enemies: <strong id="enemies">0</strong></span>
+      <span>Score: <strong id="score">0</strong></span>
+      <span>Flight Energy: <strong id="energy">100</strong>%</span>
     </div>
-    <div class="hud-center">
-      <div id="title">GOD MODE</div>
-      <div id="subtitle">Planet Destroyer</div>
-      <div id="combo-pill">COMBO x1</div>
-    </div>
-    <div class="hud-col right">
-      <div class="stat">
-        <span class="label">POWER</span>
-        <span id="power-label" class="value" style="color:#ff8844">METEOR STRIKE</span>
-      </div>
-      <div class="stat">
-        <span class="label">STATUS</span>
-        <span id="status-txt" class="value">READY</span>
-      </div>
-      <div class="stat">
-        <span class="label">MISSION TIMER</span>
-        <span id="mission-time" class="value">--:--</span>
-      </div>
-    </div>
+    <p class="controls">
+      Move/Fly: WASD or Arrow Keys • Heat Vision: Left Click • Burst Punch: Space • Pause: P
+    </p>
   </div>
 
-  <div id="mission-panel">
-    <div class="mission-title-row">
-      <span class="label">OBJECTIVE</span>
-      <button id="next-mission" title="New objective">↻</button>
-    </div>
-    <div id="mission-title">Warm up the apocalypse</div>
-    <div id="mission-desc">Reach 8% destruction before the timer expires.</div>
-    <div id="mission-status">IN PROGRESS</div>
-  </div>
-
-  <button id="settings-toggle" aria-label="Toggle settings" title="Settings">⚙️</button>
-  <div id="settings-panel" class="hidden">
-    <div class="settings-title">ACCESSIBILITY</div>
-    <label><input id="reduce-shake" type="checkbox"> Reduce screen shake</label>
-    <label><input id="show-cursor" type="checkbox" checked> Show custom cursor</label>
-    <div class="settings-hint">Hotkeys: 1-8 powers, R reroll objective</div>
-  </div>
-
-  <div id="powers">
-    <button class="power active" data-power="meteor"    data-label="METEOR STRIKE"  title="Meteor Strike">☄️</button>
-    <button class="power"        data-power="laser"     data-label="LASER BEAM"     title="Laser Beam — drag">🔴</button>
-    <button class="power"        data-power="nuke"      data-label="NUCLEAR STRIKE" title="Nuclear Strike">☢️</button>
-    <button class="power"        data-power="blackhole" data-label="BLACK HOLE"     title="Black Hole">🕳️</button>
-    <button class="power"        data-power="flood"     data-label="GLOBAL FLOOD"   title="Raise sea level">🌊</button>
-    <button class="power"        data-power="volcano"   data-label="VOLCANO"        title="Volcanic eruption">🌋</button>
-    <button class="power"        data-power="ice"       data-label="ICE AGE"        title="Freeze the planet">❄️</button>
-    <button class="power restore" data-power="restore"  data-label="RESTORE"        title="Restore planet">♻️</button>
+  <div id="overlay" class="hidden">
+    <div id="overlay-text"></div>
+    <button id="restart">Restart Mission</button>
   </div>
 
   <script src="app.js"></script>
