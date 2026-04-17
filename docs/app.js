@@ -51,6 +51,15 @@ let hudTimer  = 0;
 let lastHudDestroyed = -1;
 let lastHudPower = '';
 let lastHudIceState = null;
+let score = 0;
+let combo = 1;
+let comboTimer = 0;
+let lastMissionTimeTxt = '';
+let showCustomCursor = true;
+let reduceShake = false;
+let missionState = null;
+let recentPowers = [];
+let callout = { text: '', life: 0, color: '#fff' };
 
 const CLOUDS = [
   {r:.72,a:0,   s:14,sp:1.0},{r:.85,a:1.2, s:10,sp:.8},
@@ -64,6 +73,27 @@ const POWER_COLORS = {
   blackhole:'#bb99ff', flood:'#44aaff', volcano:'#ff5500',
   ice:'#aaddff', restore:'#44ff88',
 };
+
+const MISSIONS = [
+  {
+    title: 'Warm up the apocalypse',
+    desc: 'Reach 8% destruction before the timer expires.',
+    seconds: 45,
+    check: () => (destroyedCells / totalCells) >= 0.08,
+  },
+  {
+    title: 'Calculated chaos',
+    desc: 'Score at least 40,000 points this round.',
+    seconds: 55,
+    check: () => score >= 40_000,
+  },
+  {
+    title: 'Power conductor',
+    desc: 'Trigger a combo multiplier of x6 or higher.',
+    seconds: 40,
+    check: () => combo >= 6,
+  },
+];
 
 // ─── PERLIN NOISE ────────────────────────────────────────────────────────────
 const P = new Uint8Array(512);
@@ -138,7 +168,8 @@ function gridToScreen(ti, tj){
 function initPlanet(){
   terrain.fill(0); destroyedCells=0; floodLevel=0; iceSpreading=false;
   nukeFlash=null; blackHoles=[]; meteors=[]; particles=[]; laserSegs=[];
-  planetDirty=true;
+  planetDirty=true; score=0; combo=1; comboTimer=0; recentPowers.length=0;
+  callout.life=0;
 
   for(let j=0;j<SIZE;j++){
     for(let i=0;i<SIZE;i++){
@@ -160,6 +191,45 @@ function initPlanet(){
   }
 }
 
+function setCallout(text, color='#ffd48a'){
+  callout.text = text;
+  callout.life = 1.6;
+  callout.color = color;
+}
+
+function startMission(index = (Math.random() * MISSIONS.length) | 0){
+  const mission = MISSIONS[index];
+  missionState = {
+    ...mission,
+    timeLeft: mission.seconds,
+    status: 'IN PROGRESS',
+  };
+  lastMissionTimeTxt = '';
+  updateMissionPanel();
+}
+
+function updateMissionPanel(){
+  if(!missionState) return;
+  const tEl = document.getElementById('mission-title');
+  const dEl = document.getElementById('mission-desc');
+  const sEl = document.getElementById('mission-status');
+  tEl.textContent = missionState.title;
+  dEl.textContent = missionState.desc;
+  sEl.textContent = missionState.status;
+  sEl.style.color = missionState.status === 'COMPLETE'
+    ? '#66ffae'
+    : missionState.status === 'FAILED'
+      ? '#ff7f7f'
+      : '#77a8ff';
+}
+
+function formatTimer(seconds){
+  const clamped = Math.max(0, Math.ceil(seconds));
+  const mm = String(Math.floor(clamped / 60)).padStart(2, '0');
+  const ss = String(clamped % 60).padStart(2, '0');
+  return `${mm}:${ss}`;
+}
+
 // ─── TERRAIN HELPERS ─────────────────────────────────────────────────────────
 function wrapI(i){ return ((i%SIZE)+SIZE)%SIZE; }
 
@@ -177,11 +247,13 @@ function setCell(i,j,type){
 }
 
 function explodeAt(wx,wy,radius){
-  const hit=screenToGrid(wx,wy); if(!hit) return;
+  const hit=screenToGrid(wx,wy); if(!hit) return 0;
   const cr=Math.ceil(radius/CELL);
+  let destroyed = 0;
   for(let dj=-cr;dj<=cr;dj++)
     for(let di=-cr;di<=cr;di++)
-      if(di*di+dj*dj<=cr*cr) destroyCell(hit.i+di, hit.j+dj);
+      if(di*di+dj*dj<=cr*cr && destroyCell(hit.i+di, hit.j+dj)) destroyed++;
+  return destroyed;
 }
 
 function spawnBurst(wx,wy,count,colors,sMin,sMax,lMin,lMax,grav=60){
@@ -193,7 +265,10 @@ function spawnBurst(wx,wy,count,colors,sMin,sMax,lMin,lMax,grav=60){
   }
 }
 
-function shake(a){ shakeAmt=Math.max(shakeAmt,a); }
+function shake(a){
+  if(reduceShake) a *= 0.25;
+  shakeAmt=Math.max(shakeAmt,a);
+}
 
 // ─── AUDIO ───────────────────────────────────────────────────────────────────
 let AC;
@@ -226,8 +301,37 @@ function playTone(f=300,f2=900,d=0.5,v=0.2,type='sine'){try{
   g.gain.exponentialRampToValueAtTime(0.001,a.currentTime+d);
   o.start();o.stop(a.currentTime+d);}catch(_){}}
 
+function registerPowerUse(power){
+  if(power === 'restore') return;
+  const now = performance.now() / 1000;
+  recentPowers.push({ power, t: now });
+  while(recentPowers.length && now - recentPowers[0].t > 3.5) recentPowers.shift();
+  const unique = new Set(recentPowers.map(p => p.power));
+  if(unique.size >= 3){
+    combo = Math.max(combo, 4);
+    comboTimer = 3.2;
+    score += 1200;
+    setCallout('ELEMENTAL CHAIN +1200', '#ffe38a');
+    recentPowers.length = 0;
+  }
+}
+
+function registerImpact(power, cells){
+  if(cells <= 0) return;
+  if(comboTimer > 0) combo = Math.min(12, combo + 1);
+  else combo = 1;
+  comboTimer = 2.5;
+  const mult = 1 + (combo - 1) * 0.35;
+  const gain = Math.round(cells * 24 * mult);
+  score += gain;
+  if(combo >= 4){
+    setCallout(`COMBO x${combo} +${gain.toLocaleString()}`, POWER_COLORS[power] || '#ffd48a');
+  }
+}
+
 // ─── POWERS ──────────────────────────────────────────────────────────────────
 function usePower(wx,wy){
+  registerPowerUse(selectedPower);
   switch(selectedPower){
     case 'meteor':    launchMeteor(wx,wy);   break;
     case 'nuke':      fireNuke(wx,wy);       break;
@@ -248,7 +352,7 @@ function launchMeteor(tx,ty){
 }
 
 function fireNuke(wx,wy){
-  explodeAt(wx,wy,130);
+  const destroyed = explodeAt(wx,wy,130);
   spawnBurst(wx,wy,220,['#fff','#ffff88','#ff8800','#ff4400'],70,520,1,3,80);
   const hit=screenToGrid(wx,wy);
   if(hit){
@@ -264,6 +368,7 @@ function fireNuke(wx,wy){
     }
   }
   nukeFlash={life:0.9}; shake(55); playBoom(160,2.2,0.9);
+  registerImpact('nuke', destroyed);
 }
 
 function placeBlackHole(wx,wy){
@@ -273,19 +378,22 @@ function placeBlackHole(wx,wy){
 
 function triggerFlood(){
   floodLevel=Math.min(1,floodLevel+0.13);
-  let changed = false;
+  let changed = 0;
   for(let j=0;j<SIZE;j++)
     for(let i=0;i<SIZE;i++){
       const idx=j*SIZE+i;
       if(terrain[idx]===T.OCEAN||terrain[idx]===T.CRATER) continue;
-      if(noiseMap[idx]<-0.28+floodLevel*0.95){ terrain[idx]=T.OCEAN; changed = true; }
+      if(noiseMap[idx]<-0.28+floodLevel*0.95){ terrain[idx]=T.OCEAN; changed++; }
     }
-  if(changed) planetDirty = true;
+  if(changed>0){
+    planetDirty = true;
+    registerImpact('flood', Math.round(changed * 0.18));
+  }
   playNoise(800,0.5,0.2);
 }
 
 function erupt(wx,wy){
-  explodeAt(wx,wy,16);
+  const destroyed = explodeAt(wx,wy,16);
   const hit=screenToGrid(wx,wy);
   if(hit){
     const {i:ci,j:cj}=hit, r=Math.ceil(55/CELL);
@@ -298,10 +406,13 @@ function erupt(wx,wy){
     particles.push({x:wx,y:wy,vx:(Math.random()-0.5)*130,vy:-160-Math.random()*260,
       life:1+Math.random()*1.8,maxLife:2.8,color:Math.random()>0.5?'#ff5500':'#ff9900',size:3+Math.random()*5,grav:80});
   shake(22); playBoom(55,0.9,0.5);
+  registerImpact('volcano', destroyed + 8);
 }
 
 function restorePlanet(){
-  initPlanet(); playTone(250,1000,0.5,0.2,'sine');
+  initPlanet();
+  startMission();
+  playTone(250,1000,0.5,0.2,'sine');
 }
 
 // ─── UPDATE ──────────────────────────────────────────────────────────────────
@@ -313,8 +424,9 @@ function update(dt){
     if(m.trail.length>28) m.trail.shift();
     const dx=m.tx-m.x,dy=m.ty-m.y,dist=Math.sqrt(dx*dx+dy*dy),step=m.speed*dt;
     if(dist<=step+m.size){
-      explodeAt(m.tx,m.ty,38+m.size*2.2);
+      const destroyed = explodeAt(m.tx,m.ty,38+m.size*2.2);
       spawnBurst(m.tx,m.ty,90,['#ff6030','#ff9050','#ffcc60','#ff4020'],55,260,0.5,2);
+      registerImpact('meteor', destroyed);
       shake(16+m.size); playBoom(75+Math.random()*35,0.65,0.45); meteors.splice(k,1);
     } else { m.x+=(dx/dist)*step; m.y+=(dy/dist)*step; }
   }
@@ -322,6 +434,7 @@ function update(dt){
   // Black holes — destroy cells near their screen position
   for(let k=blackHoles.length-1;k>=0;k--){
     const bh=blackHoles[k];
+    let consumed = 0;
     bh.life-=dt; bh.age+=dt;
     if(bh.life<=0){ blackHoles.splice(k,1); continue; }
     for(let att=0;att<18;att++){
@@ -329,12 +442,14 @@ function update(dt){
       const sx=bh.x+Math.cos(a)*r, sy=bh.y+Math.sin(a)*r;
       const hit=screenToGrid(sx,sy); if(!hit) continue;
       if(destroyCell(hit.i,hit.j)){
+        consumed++;
         const toA=Math.atan2(bh.y-sy,bh.x-sx)+0.45;
         if(particles.length<900)
           particles.push({x:sx,y:sy,vx:Math.cos(toA)*90,vy:Math.sin(toA)*90,
             life:0.35+Math.random()*0.5,maxLife:0.85,color:'#cc99ff',size:1.5,grav:0});
       }
     }
+    if(consumed>0) registerImpact('blackhole', consumed);
     shake(1.5);
   }
 
@@ -368,6 +483,28 @@ function update(dt){
   }
 
   cloudAngle+=dt*0.025;
+  if(comboTimer>0){
+    comboTimer -= dt;
+    if(comboTimer<=0) combo = 1;
+  }
+  if(callout.life>0) callout.life -= dt;
+
+  if(missionState && missionState.status==='IN PROGRESS'){
+    missionState.timeLeft -= dt;
+    if(missionState.check()){
+      missionState.status = 'COMPLETE';
+      score += 5000;
+      setCallout('MISSION COMPLETE +5000', '#72ffb7');
+      updateMissionPanel();
+      setTimeout(() => startMission(), 1300);
+    } else if(missionState.timeLeft <= 0){
+      missionState.timeLeft = 0;
+      missionState.status = 'FAILED';
+      setCallout('MISSION FAILED', '#ff8888');
+      updateMissionPanel();
+      setTimeout(() => startMission(), 1600);
+    }
+  }
 }
 
 // ─── RENDER PLANET (3-D sphere projection) ───────────────────────────────────
@@ -528,11 +665,23 @@ function drawScene(){
   ctx.fillStyle = vignette;
   ctx.fillRect(0, 0, W, H);
 
+  if(callout.life > 0){
+    ctx.globalAlpha = Math.min(1, callout.life);
+    ctx.font = 'bold 20px "Courier New", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = callout.color;
+    ctx.shadowColor = callout.color;
+    ctx.shadowBlur = 16;
+    ctx.fillText(callout.text, CX, CY - PR * CELL - 24);
+    ctx.shadowBlur = 0;
+    ctx.globalAlpha = 1;
+  }
+
   drawCursor();
 }
 
 function drawCursor(){
-  if(rotating) return;
+  if(rotating || !showCustomCursor) return;
   const {x,y}=mousePos;
   const col=POWER_COLORS[selectedPower]||'#fff';
   ctx.strokeStyle=col;ctx.shadowColor=col;ctx.shadowBlur=10;ctx.lineWidth=1.5;ctx.globalAlpha=.7;
@@ -552,8 +701,15 @@ function drawCursor(){
 
 // ─── HUD ─────────────────────────────────────────────────────────────────────
 function updateHUD(force=false){
+  const missionTxt = missionState ? formatTimer(missionState.timeLeft) : '--:--';
   if(!force){
-    if(lastHudDestroyed===destroyedCells && lastHudPower===selectedPower && lastHudIceState===iceSpreading) return;
+    if(
+      lastHudDestroyed===destroyedCells &&
+      lastHudPower===selectedPower &&
+      lastHudIceState===iceSpreading &&
+      comboTimer <= 0.01 &&
+      missionTxt === lastMissionTimeTxt
+    ) return;
   }
   lastHudDestroyed = destroyedCells;
   lastHudPower = selectedPower;
@@ -567,6 +723,18 @@ function updateHUD(force=false){
   const destEl=document.getElementById('dest');
   destEl.textContent=pct+'%';
   destEl.style.color=pct>80?'#ff3333':pct>40?'#ffaa44':'#aaaacc';
+
+  document.getElementById('score').textContent = score.toLocaleString();
+  document.getElementById('combo-pill').textContent = `COMBO x${combo}`;
+  document.getElementById('combo-pill').style.borderColor = combo >= 4 ? 'rgba(255,120,120,0.75)' : 'rgba(255,170,90,0.45)';
+  document.getElementById('combo-pill').style.color = combo >= 4 ? '#ff8a8a' : '#ffbe7d';
+
+  if(missionState){
+    if(missionTxt !== lastMissionTimeTxt || force){
+      document.getElementById('mission-time').textContent = missionTxt;
+      lastMissionTimeTxt = missionTxt;
+    }
+  }
 }
 
 function updateStatus(){
@@ -580,11 +748,13 @@ function sliceLaser(wx,wy){
   const dx=wx-laserLast.x, dy=wy-laserLast.y;
   const dist=Math.sqrt(dx*dx+dy*dy);
   const steps=Math.max(1,Math.ceil(dist/(CELL*.5)));
+  let destroyed = 0;
   for(let s=0;s<=steps;s++){
     const px=laserLast.x+dx*(s/steps), py=laserLast.y+dy*(s/steps);
     const hit=screenToGrid(px,py); if(!hit) continue;
-    for(let di=-1;di<=1;di++) for(let dj=-1;dj<=1;dj++) destroyCell(hit.i+di,hit.j+dj);
+    for(let di=-1;di<=1;di++) for(let dj=-1;dj<=1;dj++) if(destroyCell(hit.i+di,hit.j+dj)) destroyed++;
   }
+  registerImpact('laser', destroyed);
   laserSegs.push({x1:laserLast.x,y1:laserLast.y,x2:wx,y2:wy,life:.12});
   laserLast={x:wx,y:wy};
 }
@@ -661,6 +831,33 @@ document.querySelectorAll('.power').forEach(btn=>{
   });
 });
 
+document.getElementById('next-mission').addEventListener('click', () => startMission());
+
+document.getElementById('settings-toggle').addEventListener('click', () => {
+  document.getElementById('settings-panel').classList.toggle('hidden');
+});
+
+document.getElementById('reduce-shake').addEventListener('change', (e) => {
+  reduceShake = e.target.checked;
+});
+
+document.getElementById('show-cursor').addEventListener('change', (e) => {
+  showCustomCursor = e.target.checked;
+  document.body.classList.toggle('no-custom-cursor', !showCustomCursor);
+});
+
+window.addEventListener('keydown', (e) => {
+  if(e.key.toLowerCase()==='r'){
+    startMission();
+    return;
+  }
+  const idx = Number(e.key) - 1;
+  if(!Number.isInteger(idx) || idx < 0) return;
+  const powers = [...document.querySelectorAll('.power')];
+  if(idx >= powers.length) return;
+  powers[idx].click();
+});
+
 // ─── RESIZE ──────────────────────────────────────────────────────────────────
 function resize(){
   DPR = Math.min(2, window.devicePixelRatio || 1);
@@ -687,6 +884,7 @@ window.addEventListener('resize',()=>{resize();planetDirty=true;});
 // ─── BOOT ────────────────────────────────────────────────────────────────────
 resize();
 initPlanet();
+startMission();
 updateHUD(true);
 updateStatus();
 requestAnimationFrame(loop);
