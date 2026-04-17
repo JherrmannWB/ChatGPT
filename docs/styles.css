@@ -85,13 +85,30 @@ body {
 #restart {
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 10px;
-  padding: 10px 20px;
+  padding: 12px 22px;
   background: rgba(38, 81, 179, 0.6);
   color: #ffffff;
   font-size: 16px;
   cursor: pointer;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  transition: transform 90ms ease, background-color 120ms ease, box-shadow 120ms ease;
+  user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 #restart:hover {
   background: rgba(65, 118, 232, 0.8);
+  box-shadow: 0 5px 16px rgba(65, 118, 232, 0.45);
+}
+
+#restart:active {
+  transform: translateY(1px) scale(0.985);
+  background: rgba(78, 131, 248, 0.95);
+}
+
+#restart:focus-visible {
+  outline: 2px solid rgba(168, 198, 255, 0.95);
+  outline-offset: 2px;
 }

@@ -45,8 +45,10 @@ const player = {
   vy: 0,
   width: 36,
   height: 74,
-  health: 100,
+  health: 180,
+  maxHealth: 180,
   energy: 100,
+  maxEnergy: 130,
   maxWalkSpeed: 290,
   maxFlySpeed: 390,
   accel: 1650,
@@ -60,6 +62,8 @@ const player = {
   attackType: null,
   runCycle: 0,
   flightBlend: 0,
+  damageResist: 0.4,
+  hitCooldown: 0,
 };
 
 function clamp(value, min, max) {
@@ -68,6 +72,13 @@ function clamp(value, min, max) {
 
 function groundYAt() {
   return height - GROUND_HEIGHT;
+}
+
+function dealDamage(baseDamage) {
+  if (player.hitCooldown > 0) return;
+  const reducedDamage = baseDamage * (1 - player.damageResist);
+  player.health = clamp(player.health - reducedDamage, 0, player.maxHealth);
+  player.hitCooldown = 0.2;
 }
 
 function levelStartX(level) {
@@ -83,6 +94,23 @@ function resize() {
   canvas.style.width = `${width}px`;
   canvas.style.height = `${height}px`;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  const gy = groundYAt();
+  if (player.y > gy || player.onGround) {
+    player.y = gy;
+    player.vy = Math.min(0, player.vy);
+  }
+
+  for (const obstacle of state.obstacles) {
+    obstacle.y = gy;
+  }
+
+  for (const enemy of state.enemies) {
+    if (!enemy.isFlying || enemy.y > gy) {
+      enemy.y = gy;
+      enemy.vy = Math.min(0, enemy.vy);
+    }
+  }
 }
 
 function addParticles(x, y, color, count = 16, speedScale = 1) {
@@ -164,8 +192,8 @@ function resetGame() {
   player.y = groundYAt();
   player.vx = 0;
   player.vy = 0;
-  player.health = 100;
-  player.energy = 100;
+  player.health = player.maxHealth;
+  player.energy = player.maxEnergy;
   player.attackCooldown = 0;
   player.attackTimer = 0;
   player.attackType = null;
@@ -173,6 +201,7 @@ function resetGame() {
   player.flightBlend = 0;
   player.onGround = true;
   player.facing = 1;
+  player.hitCooldown = 0;
 
   spawnLevel(state.wave);
   overlay.classList.add('hidden');
@@ -183,16 +212,16 @@ function heroAttack(type) {
   if (player.attackCooldown > 0) return;
 
   const isKick = type === 'kick';
-  const energyCost = isKick ? 24 : 16;
+  const energyCost = isKick ? 16 : 10;
   if (player.energy < energyCost) return;
 
-  player.energy = clamp(player.energy - energyCost, 0, 100);
+  player.energy = clamp(player.energy - energyCost, 0, player.maxEnergy);
   player.attackType = type;
-  player.attackTimer = isKick ? 0.33 : 0.22;
-  player.attackCooldown = isKick ? 0.65 : 0.45;
+  player.attackTimer = isKick ? 0.36 : 0.24;
+  player.attackCooldown = isKick ? 0.5 : 0.34;
 
-  const reach = isKick ? 160 : 130;
-  const baseDamage = isKick ? 48 : 33;
+  const reach = isKick ? 185 : 155;
+  const baseDamage = isKick ? 74 : 52;
   let hits = 0;
 
   for (const enemy of state.enemies) {
@@ -205,8 +234,8 @@ function heroAttack(type) {
 
     const power = (reach - dist) / reach;
     enemy.hp -= baseDamage + power * 24;
-    enemy.vx += player.facing * (isKick ? 490 : 360);
-    enemy.vy -= isKick ? 220 : 140;
+    enemy.vx += player.facing * (isKick ? 620 : 430);
+    enemy.vy -= isKick ? 300 : 180;
     hits += 1;
   }
 
@@ -241,11 +270,11 @@ function updatePlayer(dt) {
 
   if (tryingFly && player.energy > 0) {
     player.vy -= player.flyPower * dt;
-    player.energy = clamp(player.energy - 28 * dt, 0, 100);
+    player.energy = clamp(player.energy - 22 * dt, 0, player.maxEnergy);
     player.onGround = false;
     player.flightBlend = clamp(player.flightBlend + dt * 4, 0, 1);
   } else {
-    player.energy = clamp(player.energy + 14 * dt, 0, 100);
+    player.energy = clamp(player.energy + 20 * dt, 0, player.maxEnergy);
     player.flightBlend = clamp(player.flightBlend - dt * 3, 0, 1);
   }
 
@@ -272,6 +301,7 @@ function updatePlayer(dt) {
 
   player.attackCooldown = Math.max(0, player.attackCooldown - dt);
   player.attackTimer = Math.max(0, player.attackTimer - dt);
+  player.hitCooldown = Math.max(0, player.hitCooldown - dt);
   if (player.attackTimer === 0) player.attackType = null;
   player.runCycle += Math.abs(player.vx) * dt * 0.045;
 }
@@ -301,7 +331,7 @@ function updateObstacles(dt) {
 
     if (!rectHit(playerBox, box)) continue;
 
-    player.health = clamp(player.health - obstacle.damage * dt * 4.5, 0, 100);
+    dealDamage(obstacle.damage * dt * 1.8);
     player.vx -= Math.sign(player.vx || player.facing) * 120 * dt;
     if (obstacle.kind === 'spike') {
       player.vy -= 120 * dt;
@@ -359,7 +389,7 @@ function updateEnemies(dt) {
       enemy.attackCooldown = 0.6 + Math.random() * 0.7;
 
       const damageScale = enemy.attackType === 'kick' ? 1.45 : 1;
-      player.health = clamp(player.health - enemy.touchDamage * damageScale, 0, 100);
+      dealDamage(enemy.touchDamage * damageScale);
       player.vx += enemy.facing * (enemy.attackType === 'kick' ? 180 : 130);
       player.vy -= enemy.attackType === 'kick' ? 90 : 45;
       addParticles(player.x, player.y - player.height * 0.5, '#ffc9a7', 8, 0.7);
@@ -387,7 +417,7 @@ function updateEnemies(dt) {
     };
 
     if (rectHit(playerBox, enemyBox)) {
-      player.health = clamp(player.health - enemy.touchDamage * dt * 9, 0, 100);
+      dealDamage(enemy.touchDamage * dt * 2.4);
       player.vx -= enemy.facing * 220 * dt;
       if (!player.onGround) player.vy -= 130 * dt;
     }
@@ -578,7 +608,19 @@ function drawHumanCharacter(x, y, facing, palette, pose, cape = false) {
   ctx.fillRect(-8, -6, 16, 28);
 
   ctx.fillStyle = palette.accent;
-  ctx.fillRect(-8, 12, 16, 8);
+  ctx.fillRect(-9, 10, 18, 4);
+  ctx.fillRect(-8, 14, 16, 7);
+
+  if (cape) {
+    ctx.fillStyle = '#f7f3ff';
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(5, 6);
+    ctx.lineTo(0, 12);
+    ctx.lineTo(-5, 6);
+    ctx.closePath();
+    ctx.fill();
+  }
 
   drawLimb(-6, 20, pose.leftLeg, 26, 7, palette.boots);
   drawLimb(6, 20, pose.rightLeg, 26, 7, palette.boots);
@@ -589,28 +631,56 @@ function drawHumanCharacter(x, y, facing, palette, pose, cape = false) {
   ctx.fill();
 
   ctx.fillStyle = palette.hair;
-  ctx.beginPath();
-  ctx.arc(0, -20, 10, Math.PI, 0);
-  ctx.lineTo(10, -17);
-  ctx.lineTo(-10, -17);
-  ctx.closePath();
-  ctx.fill();
+  if (cape) {
+    ctx.beginPath();
+    ctx.moveTo(-10, -17);
+    ctx.lineTo(-7, -28);
+    ctx.lineTo(-2, -20);
+    ctx.lineTo(2, -30);
+    ctx.lineTo(6, -20);
+    ctx.lineTo(10, -26);
+    ctx.lineTo(10, -17);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = '#9fe0ff';
+    ctx.fillRect(-6, -16, 4, 2);
+    ctx.fillRect(2, -16, 4, 2);
+  } else {
+    ctx.beginPath();
+    ctx.arc(0, -20, 10, Math.PI, 0);
+    ctx.lineTo(10, -17);
+    ctx.lineTo(-10, -17);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  if (cape) {
+    ctx.strokeStyle = 'rgba(255,255,255,0.32)';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(-9, -7, 18, 30);
+  }
 
   ctx.restore();
 }
 
 function drawPlayer() {
+  const auraPulse = 0.45 + Math.sin(state.clock * 7) * 0.2 + player.flightBlend * 0.3;
+  ctx.beginPath();
+  ctx.fillStyle = `rgba(126, 225, 255, ${auraPulse * 0.25})`;
+  ctx.ellipse(player.x - state.cameraX, player.y - 42, 34, 58, 0, 0, Math.PI * 2);
+  ctx.fill();
+
   drawHumanCharacter(
     player.x,
     player.y,
     player.facing,
     {
-      skin: '#ffd1b3',
-      hair: '#231205',
-      suit: '#2f72ff',
-      accent: '#ffdb58',
-      boots: '#d82828',
-      cape: '#d91a1a',
+      skin: '#ffd9bd',
+      hair: '#142951',
+      suit: '#2f4dff',
+      accent: '#ffed90',
+      boots: '#ef3b4e',
+      cape: '#ff315a',
     },
     poseForCharacter(player, true),
     true,
@@ -727,11 +797,11 @@ function render() {
 }
 
 function updateHud() {
-  healthEl.textContent = Math.ceil(player.health);
+  healthEl.textContent = `${Math.ceil(player.health)}/${player.maxHealth}`;
   waveEl.textContent = state.wave;
   enemiesEl.textContent = state.enemies.length;
   scoreEl.textContent = Math.floor(state.score);
-  energyEl.textContent = Math.ceil(player.energy);
+  energyEl.textContent = Math.ceil((player.energy / player.maxEnergy) * 100);
 }
 
 window.addEventListener('resize', resize);
