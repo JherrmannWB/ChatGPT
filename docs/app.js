@@ -188,8 +188,8 @@ function roleBadge(role) {
 
 function achBadges(m) {
   const out = [];
-  if (m.exLeader)    out.push('<span class="ach-badge ach-ex-leader">🏛️ Ex-Leader</span>');
-  if (m.neverMissed) out.push('<span class="ach-badge ach-never-missed">🎯 Perfect Record</span>');
+  if (m.exLeader)                      out.push('<span class="ach-badge ach-ex-leader">🏛️ Ex-Leader</span>');
+  if (m.missed === 0 && m.attacks > 0) out.push('<span class="ach-badge ach-never-missed">🎯 Perfect Record</span>');
   return out.length ? `<div class="ach-wrap">${out.join('')}</div>` : '';
 }
 
@@ -242,7 +242,7 @@ function renderPrevLeaders() {
           <div class="prev-leader-badges">
             <span class="level-badge">Lvl ${m.level}</span>
             ${roleBadge(m.role)}
-            ${m.neverMissed ? '<span class="ach-badge ach-never-missed">🎯 Perfect Record</span>' : ''}
+            ${m.missed === 0 && m.attacks > 0 ? '<span class="ach-badge ach-never-missed">🎯 Perfect Record</span>' : ''}
           </div>
         </div>
       </div>
