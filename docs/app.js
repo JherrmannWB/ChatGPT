@@ -186,9 +186,11 @@ function roleBadge(role) {
 
 function achBadges(m) {
   const out = [];
-  if (m.exLeader)                      out.push('<span class="ach-badge ach-ex-leader">🏛️ Ex-Leader</span>');
-  if (m.missed === 0 && m.attacks > 0) out.push('<span class="ach-badge ach-never-missed">🎯 Perfect Record</span>');
-  if (m.sabotagePass)                  out.push('<span class="ach-badge ach-sabotage-pass">💣 Unlimited Sabotage Pass</span>');
+  if (m.exLeader)                                          out.push('<span class="ach-badge ach-ex-leader">🏛️ Ex-Leader</span>');
+  if (m.missed === 0 && m.attacks > 0)                     out.push('<span class="ach-badge ach-never-missed">🎯 Perfect Record</span>');
+  if (m.sabotagePass)                                      out.push('<span class="ach-badge ach-sabotage-pass">💣 Unlimited Sabotage Pass</span>');
+  if (m.role === 'Member' && m.intel >= 400 && m.intel < 500) out.push(`<span class="ach-badge ach-promo-watch">📈 Promotion Watch · ${500 - m.intel} intel to go</span>`);
+  if (m.participation < 80)                                out.push('<span class="ach-badge ach-kick-watch">⚠️ Kick Watch</span>');
   return out.length ? `<div class="ach-wrap">${out.join('')}</div>` : '';
 }
 
