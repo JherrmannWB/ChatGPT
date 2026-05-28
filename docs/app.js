@@ -11,7 +11,7 @@ const PLAYER_CONFIG = {
   'old man':         { emoji: '⚓', title: 'Founder',        color: '#66bb6a' },
   'Rando Calrisian': { emoji: '🎲', title: 'Wild Card',      color: '#ce93d8' },
   'gibbyrulz':       { emoji: '⚡', title: 'Shock Trooper',  color: '#fff176' },
-  'FJ Fruitman':     { emoji: '🎯', title: 'Perfect Record', color: '#ff8c00' },
+  'FJ Fruitman':     { emoji: '☕', title: 'Perfect Record', color: '#ff8c00' },
   'boomerbeachin':   { emoji: '🏖️', title: 'Beach Bum',     color: '#80deea' },
   'PutteQuick':      { emoji: '⛳', title: 'Eagle Eye',      color: '#a5d6a7' },
   'Alexk1728':       { emoji: '🔭', title: 'Intel Scout',    color: '#4dd0e1' },
@@ -217,7 +217,7 @@ function renderSpotlight() {
       const title = cfg.title ? `<div class="cmd-title">${esc(cfg.title)}</div>` : '';
       const avSize = m.role === 'Leader' ? 'lg' : 'md';
       return `
-        <div class="cmd-card ${roleCls(m.role)}">
+        <div class="cmd-card ${roleCls(m.role)}${m.intel > 5000 ? ' is-veteran' : ''}">
           ${renderAvatar(m, { size: avSize })}
           <div class="cmd-info">
             <div class="cmd-name">${esc(m.name)}</div>
@@ -241,7 +241,7 @@ function renderPrevLeaders() {
   const leaders = order.map(n => MEMBERS.find(m => m.name === n)).filter(Boolean);
 
   document.getElementById('prev-leaders-grid').innerHTML = leaders.map(m => `
-    <div class="prev-leader-card">
+    <div class="prev-leader-card${m.intel > 5000 ? ' is-veteran' : ''}">
       <div class="prev-leader-header">
         <div class="prev-leader-ribbon">🏛️ Former Leader</div>
         ${renderAvatar(m, { size: 'xl' })}
@@ -447,7 +447,7 @@ function renderRoster() {
       : `${m.attacks}`;
 
     return `
-      <tr${vpRank <= 3 ? ' class="is-top-3"' : ''}>
+      <tr class="${vpRank <= 3 ? 'is-top-3' : ''}${m.intel > 5000 ? ' is-veteran' : ''}">
         <td class="col-rank">${rankCell}</td>
         <td class="col-name">
           <div class="name-cell">
