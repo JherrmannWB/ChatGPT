@@ -358,6 +358,17 @@ body::after {
 .avatar-lg  .avatar-emoji { font-size: 28px; }
 .avatar-xl  .avatar-emoji { font-size: 32px; }
 
+.avatar--creator {
+  border-width: 3px !important;
+  border-color: #ffd700 !important;
+  box-shadow: 0 0 10px 3px rgba(255,215,0,0.55), 0 0 24px 6px rgba(255,215,0,0.2);
+  animation: creator-pulse 2.2s ease-in-out infinite;
+}
+@keyframes creator-pulse {
+  0%, 100% { box-shadow: 0 0 10px 3px rgba(255,215,0,0.55), 0 0 24px 6px rgba(255,215,0,0.2); }
+  50%       { box-shadow: 0 0 18px 6px rgba(255,215,0,0.85), 0 0 40px 12px rgba(255,215,0,0.35); }
+}
+
 /* ── COMMAND STRUCTURE ─────────────────────────────── */
 .spotlight-section { margin-bottom: 34px; }
 .cmd-tier { margin-bottom: 20px; }
@@ -473,6 +484,7 @@ body::after {
   white-space: nowrap;
 }
 
+.ach-creator      { background: rgba(255,215,0,0.18); color: #ffd700; border: 1px solid rgba(255,215,0,0.55); font-weight: 700; letter-spacing: 0.03em; }
 .ach-ex-leader    { background: rgba(124,58,237,0.18); color: #c4b5fd; border: 1px solid rgba(124,58,237,0.28); }
 .ach-never-missed { background: rgba(16,185,129,0.14); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.24); }
 .ach-sabotage-pass { background: rgba(255,80,0,0.18); color: #ffa070; border: 1px solid rgba(255,80,0,0.38); font-weight: 700; }

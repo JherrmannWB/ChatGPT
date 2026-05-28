@@ -17,7 +17,7 @@ const PLAYER_CONFIG = {
   'Alexk1728':       { emoji: '🔭', title: 'Intel Scout',    color: '#4dd0e1' },
   'lumpy':           { emoji: '🏔️', title: 'Mountain',      color: '#90a4ae' },
   'MT':              { emoji: '🗻', title: 'Summit',         color: '#78909c' },
-  'Boomer':          { emoji: '🛡️', title: 'Iron Guard',    color: '#66bb6a' },
+  'Boomer':          { emoji: '💥', title: 'Site Architect', color: '#ffd700' },
   'jenuine':         { emoji: '💎', title: 'Diamond',        color: '#4fc3f7' },
   'Papa Midnite':    { emoji: '🌙', title: 'Night Owl',      color: '#5c6bc0' },
   '☆CRAZY DAVE☆':   { emoji: '🌀', title: 'Wildman',        color: '#f06292' },
@@ -74,7 +74,7 @@ const MEMBERS = [
   { name: 'FJ Fruitman',     level: 70, role: 'Co-Leader', vp: 1167, intel: 12454, attacks: 421, missed: 0,  participation: 100, neverMissed: true },
   { name: 'MrBoomBoom',      level: 66, role: 'Leader',    vp: 1228, intel: 11353, attacks: 437, missed: 12, participation: 97  },
   { name: 'PutteQuick',      level: 64, role: 'Officer',   vp: 1062, intel: 10738, attacks: 283, missed: 74, participation: 79  },
-  { name: 'Boomer',          level: 55, role: 'Co-Leader', vp: 996,  intel: 7708,  attacks: 409, missed: 0,  participation: 100, exLeader: true, neverMissed: true },
+  { name: 'Boomer',          level: 55, role: 'Co-Leader', vp: 996,  intel: 7708,  attacks: 409, missed: 0,  participation: 100, exLeader: true, neverMissed: true, creator: true },
   { name: 'Papa Midnite',    level: 56, role: 'Officer',   vp: 929,  intel: 7623,  attacks: 304, missed: 82, participation: 78  },
   { name: 'Rando Calrisian', level: 63, role: 'Officer',   vp: 1263, intel: 7441,  attacks: 178, missed: 8,  participation: 95  },
   { name: 'COYG',            level: 70, role: 'Co-Leader', vp: 620,  intel: 5992,  attacks: 255, missed: 1,  participation: 99  },
@@ -172,8 +172,9 @@ function renderAvatar(m, opts = {}) {
 
   let style = `border-color:${color};`;
   try { style += `background:rgba(${hexToRgb(color)},0.12);`; } catch (_) {}
+  const extraClass = m.creator ? ' avatar--creator' : '';
 
-  return `<div class="avatar avatar-${size}" style="${style}">
+  return `<div class="avatar avatar-${size}${extraClass}" style="${style}">
     <span class="avatar-emoji">${emoji}</span>
   </div>`;
 }
@@ -186,6 +187,7 @@ function roleBadge(role) {
 
 function achBadges(m) {
   const out = [];
+  if (m.creator)                                           out.push('<span class="ach-badge ach-creator">💥 Site Architect</span>');
   if (m.exLeader)                                          out.push('<span class="ach-badge ach-ex-leader">🏛️ Ex-Leader</span>');
   if (m.missed === 0 && m.attacks > 0)                     out.push('<span class="ach-badge ach-never-missed">🎯 Perfect Record</span>');
   if (m.sabotagePass)                                      out.push('<span class="ach-badge ach-sabotage-pass">💣 Unlimited Sabotage Pass</span>');
