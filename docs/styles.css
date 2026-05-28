@@ -59,8 +59,8 @@ html { scroll-behavior: smooth; }
 /* ── BASE ──────────────────────────────────────────── */
 body {
   font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  line-height: 1.55;
+  font-size: 15px;
+  line-height: 1.6;
   color: var(--t1);
   background-color: var(--bg-base);
   min-height: 100vh;
@@ -101,7 +101,7 @@ body::after {
 .site-nav {
   position: fixed;
   top: 0; left: 0; right: 0;
-  height: 52px;
+  height: 58px;
   z-index: 200;
   background: rgba(4, 11, 22, 0.95);
   backdrop-filter: blur(20px);
@@ -126,11 +126,11 @@ body::after {
   text-decoration: none;
 }
 
-.nav-emblem { font-size: 18px; }
+.nav-emblem { font-size: 22px; }
 
 .nav-name {
   font-family: 'Teko', sans-serif;
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 700;
   color: var(--gold);
   letter-spacing: 3px;
@@ -145,9 +145,9 @@ body::after {
 }
 
 .nav-link {
-  padding: 5px 12px;
+  padding: 6px 14px;
   border-radius: var(--r-sm);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.8px;
@@ -171,9 +171,9 @@ body::after {
 .page {
   position: relative;
   z-index: 1;
-  max-width: 1100px;
+  max-width: 1180px;
   margin: 0 auto;
-  padding: 70px 16px 80px;
+  padding: 76px 20px 80px;
 }
 
 /* ── HERO HEADER ───────────────────────────────────── */
@@ -219,7 +219,7 @@ body::after {
 
 .tf-name {
   font-family: 'Teko', sans-serif;
-  font-size: 56px;
+  font-size: 64px;
   font-weight: 700;
   color: var(--gold);
   text-transform: uppercase;
@@ -229,7 +229,7 @@ body::after {
 }
 
 .tf-motto {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--t3);
   font-style: italic;
   margin-top: 5px;
@@ -244,7 +244,7 @@ body::after {
 
 .tf-tag {
   font-family: 'Teko', sans-serif;
-  font-size: 15px;
+  font-size: 18px;
   letter-spacing: 2px;
   color: var(--teal-light);
   background: rgba(0,188,212,0.1);
@@ -254,7 +254,7 @@ body::after {
 }
 
 .tf-join-badge {
-  font-size: 10px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 1.2px;
   color: var(--t3);
@@ -284,14 +284,14 @@ body::after {
 
 .stat-val {
   font-family: 'Teko', sans-serif;
-  font-size: 28px;
+  font-size: 34px;
   font-weight: 600;
   color: var(--teal-light);
   line-height: 1;
 }
 
 .stat-lbl {
-  font-size: 9px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 1.5px;
   color: var(--t3);
@@ -308,7 +308,7 @@ body::after {
 /* ── SECTION HEADINGS ──────────────────────────────── */
 .section-heading {
   font-family: 'Teko', sans-serif;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 5px;
   text-transform: uppercase;
@@ -416,17 +416,17 @@ body::after {
 
 .cmd-name {
   font-family: 'Teko', sans-serif;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 500;
   color: var(--t1);
   word-break: break-word;
   line-height: 1.2;
 }
 
-.cmd-card.role-Leader .cmd-name { font-size: 20px; }
+.cmd-card.role-Leader .cmd-name { font-size: 24px; }
 
 .cmd-title {
-  font-size: 9px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.8px;
   color: var(--t3);
@@ -435,9 +435,9 @@ body::after {
 /* ── BADGES ────────────────────────────────────────── */
 .level-badge {
   display: inline-block;
-  padding: 2px 8px;
+  padding: 3px 10px;
   border-radius: 999px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   background: rgba(0,188,212,0.12);
   color: var(--teal-light);
@@ -447,9 +447,9 @@ body::after {
 
 .role-badge {
   display: inline-block;
-  padding: 2px 9px;
+  padding: 3px 11px;
   border-radius: 999px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.3px;
@@ -465,9 +465,9 @@ body::after {
 
 .ach-badge {
   display: inline-block;
-  padding: 1px 7px;
+  padding: 2px 9px;
   border-radius: 999px;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.2px;
   white-space: nowrap;
@@ -524,7 +524,7 @@ body::after {
 
 .prev-leader-name {
   font-family: 'Teko', sans-serif;
-  font-size: 38px;
+  font-size: 44px;
   font-weight: 700;
   color: var(--gold);
   letter-spacing: 1px;
@@ -547,13 +547,13 @@ body::after {
 
 .prev-stat-val {
   font-family: 'Teko', sans-serif;
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 600;
   color: var(--gold);
   line-height: 1;
 }
 
-.prev-stat-lbl { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--t3); margin-top: 2px; }
+.prev-stat-lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--t3); margin-top: 2px; }
 
 /* ── PLAYER OF THE WEEK ────────────────────────────── */
 .potw-section { margin-bottom: 34px; }
@@ -597,7 +597,7 @@ body::after {
 .potw-body { flex: 1; }
 
 .potw-week {
-  font-size: 10px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 2.2px;
   color: rgba(245,197,24,0.44);
@@ -606,7 +606,7 @@ body::after {
 
 .potw-name {
   font-family: 'Teko', sans-serif;
-  font-size: 42px;
+  font-size: 50px;
   font-weight: 700;
   color: var(--gold);
   letter-spacing: 2px;
@@ -631,13 +631,13 @@ body::after {
 
 .potw-stat-val {
   font-family: 'Teko', sans-serif;
-  font-size: 32px;
+  font-size: 38px;
   font-weight: 600;
   color: var(--gold);
   line-height: 1;
 }
 
-.potw-stat-lbl { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: rgba(245,197,24,0.42); margin-top: 2px; }
+.potw-stat-lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(245,197,24,0.42); margin-top: 2px; }
 
 /* ── ACTIVITY HIGHLIGHTS ───────────────────────────── */
 .activity-section { margin-bottom: 34px; }
@@ -667,13 +667,13 @@ body::after {
 
 .act-val {
   font-family: 'Teko', sans-serif;
-  font-size: 28px;
+  font-size: 34px;
   font-weight: 600;
   line-height: 1;
 }
 
-.act-lbl  { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--t3); margin-top: 2px; }
-.act-name { font-size: 11px; color: var(--t2); margin-top: 3px; }
+.act-lbl  { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--t3); margin-top: 2px; }
+.act-name { font-size: 13px; color: var(--t2); margin-top: 3px; }
 
 .act-card--vp     { border-top-color: var(--rank-leader);  } .act-card--vp    .act-val { color: var(--rank-leader);  }
 .act-card--intel  { border-top-color: var(--rank-officer); } .act-card--intel  .act-val { color: var(--rank-officer); }
@@ -694,9 +694,9 @@ body::after {
 }
 
 .lb-header {
-  padding: 10px 14px;
+  padding: 11px 16px;
   font-family: 'Teko', sans-serif;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -708,8 +708,8 @@ body::after {
 .lb-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 7px 14px;
+  gap: 9px;
+  padding: 9px 16px;
   border-bottom: 1px solid rgba(255,255,255,0.03);
   transition: background 0.1s;
 }
@@ -729,7 +729,7 @@ body::after {
 
 .lb-name {
   flex: 1;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--t1);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -738,7 +738,7 @@ body::after {
 
 .lb-score {
   font-family: 'Teko', sans-serif;
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 600;
   flex-shrink: 0;
 }
@@ -776,14 +776,14 @@ body::after {
 
 .rule-title {
   font-family: 'Teko', sans-serif;
-  font-size: 17px;
+  font-size: 20px;
   font-weight: 500;
   color: var(--teal-light);
   letter-spacing: 0.3px;
   margin-bottom: 4px;
 }
 
-.rule-desc { font-size: 12px; color: var(--t2); line-height: 1.55; }
+.rule-desc { font-size: 14px; color: var(--t2); line-height: 1.55; }
 .rule-desc strong { color: var(--t1); }
 
 /* ── ROSTER ────────────────────────────────────────── */
@@ -800,12 +800,12 @@ body::after {
 .search-box {
   flex: 1;
   min-width: 180px;
-  padding: 8px 13px;
+  padding: 9px 14px;
   border-radius: var(--r-md);
   border: 1px solid var(--border-soft);
   background: var(--bg-input);
   color: var(--t1);
-  font-size: 13px;
+  font-size: 14px;
   font-family: 'Inter', sans-serif;
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
@@ -815,27 +815,27 @@ body::after {
 .search-box:focus { border-color: rgba(0,188,212,0.38); box-shadow: 0 0 0 3px rgba(0,188,212,0.07); }
 
 .role-select {
-  padding: 8px 13px;
+  padding: 9px 14px;
   border-radius: var(--r-md);
   border: 1px solid var(--border-soft);
   background: var(--bg-input);
   color: var(--t1);
-  font-size: 13px;
+  font-size: 14px;
   font-family: 'Inter', sans-serif;
   outline: none;
   cursor: pointer;
 }
 
 .sort-group { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
-.sort-label { font-size: 10px; color: var(--t3); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+.sort-label { font-size: 12px; color: var(--t3); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
 
 .sort-btn {
-  padding: 6px 12px;
+  padding: 7px 14px;
   border-radius: var(--r-md);
   border: 1px solid var(--border-soft);
   background: transparent;
   color: var(--t2);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   font-family: 'Inter', sans-serif;
   cursor: pointer;
@@ -864,11 +864,11 @@ body::after {
 
 .roster-table thead th {
   font-family: 'Teko', sans-serif;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
-  padding: 11px 10px;
+  padding: 13px 12px;
   text-align: left;
   color: rgba(0,188,212,0.58);
 }
@@ -889,8 +889,8 @@ body::after {
 .roster-table tbody tr.is-top-3 { background: rgba(245,197,24,0.04); }
 
 .roster-table tbody td {
-  padding: 8px 10px;
-  font-size: 12px;
+  padding: 10px 12px;
+  font-size: 14px;
   color: var(--t1);
   vertical-align: middle;
 }
@@ -903,22 +903,22 @@ body::after {
 .roster-table tbody td.col-part { text-align: center; }
 
 .col-rank  { width: 44px; }
-.rank-num  { font-size: 11px; color: var(--t3); font-weight: 600; }
-.medal     { font-size: 18px; }
+.rank-num  { font-size: 14px; color: var(--t3); font-weight: 600; }
+.medal     { font-size: 22px; }
 
 .name-cell { display: flex; align-items: center; gap: 9px; }
 
-.col-vp      { font-family: 'Teko', sans-serif; font-size: 16px; color: var(--rank-leader);  }
-.col-intel   { font-family: 'Teko', sans-serif; font-size: 15px; color: var(--rank-officer); }
-.col-attacks { font-family: 'Teko', sans-serif; font-size: 15px; color: var(--t2); }
+.col-vp      { font-family: 'Teko', sans-serif; font-size: 20px; color: var(--rank-leader);  }
+.col-intel   { font-family: 'Teko', sans-serif; font-size: 18px; color: var(--rank-officer); }
+.col-attacks { font-family: 'Teko', sans-serif; font-size: 18px; color: var(--t2); }
 
-.miss-note { font-size: 10px; color: var(--red); font-weight: 600; margin-left: 2px; }
+.miss-note { font-size: 12px; color: var(--red); font-weight: 600; margin-left: 2px; }
 
 /* ── PARTICIPATION BAR ─────────────────────────────── */
 .part-wrap { display: flex; align-items: center; justify-content: center; gap: 6px; }
 
 .part-bar {
-  width: 48px; height: 5px;
+  width: 56px; height: 6px;
   background: rgba(255,255,255,0.08);
   border-radius: 3px;
   overflow: hidden;
@@ -928,11 +928,11 @@ body::after {
 .part-fill { height: 100%; background: linear-gradient(to right, var(--orange), var(--gold)); border-radius: 3px; }
 .part-fill.zero { background: rgba(255,255,255,0.1); width: 100% !important; }
 
-.part-pct { font-size: 11px; font-weight: 600; color: var(--t2); min-width: 30px; text-align: left; }
+.part-pct { font-size: 13px; font-weight: 600; color: var(--t2); min-width: 34px; text-align: left; }
 
 .empty-row td { text-align: center; padding: 32px; color: var(--t3); font-style: italic; }
 
-.table-note { font-size: 10px; color: var(--t3); text-align: right; margin-top: 7px; font-style: italic; }
+.table-note { font-size: 12px; color: var(--t3); text-align: right; margin-top: 7px; font-style: italic; }
 
 /* ── FOOTER ────────────────────────────────────────── */
 .tf-footer { padding: 20px 0 8px; border-top: 1px solid var(--border-dim); }
@@ -962,19 +962,19 @@ body::after {
 .animate-in.is-visible { opacity: 1; transform: none; }
 
 /* ── RESPONSIVE ────────────────────────────────────── */
-@media (max-width: 860px) {
+@media (max-width: 900px) {
   .tf-header { flex-direction: column; align-items: flex-start; gap: 20px; padding: 22px 24px; }
   .header-stats { align-self: stretch; }
-  .tf-name { font-size: 46px; }
+  .tf-name { font-size: 52px; }
   .activity-summary { grid-template-columns: repeat(2,1fr); }
   .activity-leaderboards { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 640px) {
-  .page { padding: 62px 12px 64px; }
+  .page { padding: 66px 14px 64px; }
   .tf-header { padding: 18px 18px; }
-  .tf-emblem { font-size: 40px; }
-  .tf-name { font-size: 38px; letter-spacing: 5px; }
+  .tf-emblem { font-size: 42px; }
+  .tf-name { font-size: 42px; letter-spacing: 5px; }
   .header-stats { flex-direction: column; border-radius: var(--r-md); }
   .stat-divider { width: 100%; height: 1px; }
   .stat-card { padding: 10px 18px; }
