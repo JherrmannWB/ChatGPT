@@ -499,6 +499,59 @@ body::after {
 
 .footer-link:hover { text-decoration: underline; }
 
+/* ── SQUAD RULES ────────────────────────────────────── */
+.rules-section { margin-bottom: 36px; }
+
+.rules-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.rule-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background: var(--sand-panel);
+  border: 2px solid var(--gold-dark);
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+  transition: transform 0.14s ease;
+}
+
+.rule-card:hover { transform: translateY(-2px); }
+
+.rule-card--highlight {
+  background: linear-gradient(135deg, #fef9e7 0%, #fff8e1 100%);
+  border-color: var(--gold);
+  box-shadow: 0 2px 14px rgba(245,197,24,0.2);
+}
+
+.rule-icon {
+  font-size: 32px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.rule-title {
+  font-family: 'Teko', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ocean-deep);
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.rule-desc {
+  font-size: 13px;
+  color: var(--text-mid);
+  line-height: 1.55;
+}
+
+.rule-desc strong { color: var(--text-dark); }
+
 /* ── PLAYER OF THE WEEK ─────────────────────────────── */
 .potw-section { margin-bottom: 36px; }
 
@@ -612,6 +665,8 @@ body::after {
 
   .roster-table thead th.col-intel,
   .roster-table tbody td.col-intel { display: none; }
+
+  .rules-grid { grid-template-columns: 1fr; }
 
   .potw-card { flex-direction: column; text-align: center; padding: 24px 20px; }
   .potw-trophy { font-size: 48px; }
