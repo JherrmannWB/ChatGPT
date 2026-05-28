@@ -3,17 +3,17 @@
 const MEMBERS = [
   { name: 'split ya lip',    level: 84, role: 'Member',    vp: 1613, intel: 371, attacks: 4, missed: 0, participation: 100 },
   { name: 'Zed T Dog',       level: 84, role: 'Officer',   vp: 1446, intel: 227, attacks: 3, missed: 0, participation: 100 },
-  { name: 'old man',         level: 65, role: 'Co-Leader', vp: 1307, intel: 144, attacks: 4, missed: 0, participation: 100 },
+  { name: 'old man',         level: 65, role: 'Co-Leader', vp: 1307, intel: 144, attacks: 4, missed: 0, participation: 100, exLeader: true },
   { name: 'Rando Calrisian', level: 63, role: 'Officer',   vp: 1263, intel: 147, attacks: 3, missed: 0, participation: 100 },
   { name: 'gibbyrulz',       level: 64, role: 'Officer',   vp: 1261, intel: 90,  attacks: 4, missed: 0, participation: 100 },
   { name: 'MrBoomBoom',      level: 66, role: 'Leader',    vp: 1228, intel: 96,  attacks: 4, missed: 0, participation: 100 },
-  { name: 'FJ Fruitman',     level: 70, role: 'Co-Leader', vp: 1167, intel: 162, attacks: 3, missed: 0, participation: 100 },
+  { name: 'FJ Fruitman',     level: 70, role: 'Co-Leader', vp: 1167, intel: 162, attacks: 3, missed: 0, participation: 100, neverMissed: true },
   { name: 'boomerbeachin',   level: 61, role: 'Officer',   vp: 1158, intel: 99,  attacks: 3, missed: 0, participation: 100 },
   { name: 'PutteQuick',      level: 64, role: 'Officer',   vp: 1062, intel: 132, attacks: 4, missed: 0, participation: 100 },
   { name: 'Alexk1728',       level: 64, role: 'Officer',   vp: 1061, intel: 134, attacks: 3, missed: 0, participation: 100 },
   { name: 'lumpy',           level: 63, role: 'Co-Leader', vp: 1028, intel: 138, attacks: 4, missed: 0, participation: 100 },
   { name: 'MT',              level: 55, role: 'Member',    vp: 1003, intel: 122, attacks: 3, missed: 0, participation: 100 },
-  { name: 'Boomer',          level: 55, role: 'Co-Leader', vp: 996,  intel: 76,  attacks: 3, missed: 0, participation: 100 },
+  { name: 'Boomer',          level: 55, role: 'Co-Leader', vp: 996,  intel: 76,  attacks: 3, missed: 0, participation: 100, exLeader: true, neverMissed: true },
   { name: 'jenuine',         level: 63, role: 'Officer',   vp: 980,  intel: 17,  attacks: 2, missed: 1, participation: 66  },
   { name: 'Papa Midnite',    level: 56, role: 'Officer',   vp: 929,  intel: 65,  attacks: 2, missed: 0, participation: 100 },
   { name: '☆CRAZY DAVE☆',   level: 54, role: 'Member',    vp: 898,  intel: 76,  attacks: 1, missed: 1, participation: 50  },
@@ -76,27 +76,74 @@ function medalFor(rank) {
   return null;
 }
 
+// Role badge with special icons for Leader and Officer
+function roleBadge(role) {
+  const icons = { 'Leader': '👑', 'Officer': '⭐' };
+  const icon  = icons[role] ? icons[role] + ' ' : '';
+  return `<span class="role-badge ${roleCls(role)}">${icon}${role}</span>`;
+}
+
+// Achievement badges shown beneath a commander's name
+function achBadges(m) {
+  const out = [];
+  if (m.exLeader)    out.push('<span class="ach-badge ach-ex-leader">🏛️ Ex-Leader</span>');
+  if (m.neverMissed) out.push('<span class="ach-badge ach-never-missed">🎯 Perfect Record</span>');
+  return out.length ? `<div class="ach-wrap">${out.join('')}</div>` : '';
+}
+
 function renderSpotlight() {
   const byLevel = (a, b) => b.level - a.level || b.vp - a.vp;
   const tiers = [
-    { key: 'Leader',    label: 'Leader' },
-    { key: 'Co-Leader', label: 'Co-Leaders' },
-    { key: 'Officer',   label: 'Officers' },
+    { key: 'Leader',    label: 'Leader',     icon: '👑' },
+    { key: 'Co-Leader', label: 'Co-Leaders', icon: ''   },
+    { key: 'Officer',   label: 'Officers',   icon: '⭐'  },
   ];
-  document.getElementById('spotlight').innerHTML = tiers.map(({ key, label }) => {
+
+  document.getElementById('spotlight').innerHTML = tiers.map(({ key, label, icon }) => {
     const group = MEMBERS.filter(m => m.role === key).sort(byLevel);
+    const slug  = label.toLowerCase().replace(/[- ]/g, '-');
     const cards = group.map(m => `
       <div class="cmd-card ${roleCls(m.role)}">
+        ${icon ? `<div class="cmd-rank-icon">${icon}</div>` : ''}
         <div class="cmd-name">${esc(m.name)}</div>
         <span class="level-badge">Lvl ${m.level}</span>
       </div>`).join('');
-    const slug = label.toLowerCase().replace(/[- ]/g, '-');
     return `
       <div class="cmd-tier cmd-tier-${slug}">
-        <div class="tier-label tier-label-${slug}">${label}</div>
+        <div class="tier-label tier-label-${slug}">${icon ? icon + ' ' : ''}${label}</div>
         <div class="cmd-cards">${cards}</div>
       </div>`;
   }).join('');
+}
+
+function renderPrevLeaders() {
+  const order = ['old man', 'Boomer'];
+  const leaders = order.map(n => MEMBERS.find(m => m.name === n)).filter(Boolean);
+
+  document.getElementById('prev-leaders').innerHTML = leaders.map(m => `
+    <div class="prev-leader-card">
+      <div class="prev-leader-ribbon">🏛️ Former Leader</div>
+      <div class="prev-leader-name">${esc(m.name)}</div>
+      <div class="prev-leader-badges">
+        <span class="level-badge">Lvl ${m.level}</span>
+        ${roleBadge(m.role)}
+        ${m.neverMissed ? '<span class="ach-badge ach-never-missed">🎯 Perfect Record</span>' : ''}
+      </div>
+      <div class="prev-leader-stats">
+        <div class="prev-stat">
+          <div class="prev-stat-val">${m.vp.toLocaleString()}</div>
+          <div class="prev-stat-lbl">🏅 Victory Points</div>
+        </div>
+        <div class="prev-stat">
+          <div class="prev-stat-val">${m.intel}</div>
+          <div class="prev-stat-lbl">🔭 This Week Intel</div>
+        </div>
+        <div class="prev-stat">
+          <div class="prev-stat-val">${m.participation}%</div>
+          <div class="prev-stat-lbl">📊 Participation</div>
+        </div>
+      </div>
+    </div>`).join('');
 }
 
 function getSorted(key) {
@@ -125,7 +172,6 @@ function renderRoster() {
   });
 
   const tbody = document.getElementById('roster-body');
-
   if (filtered.length === 0) {
     tbody.innerHTML = '<tr class="empty-row"><td colspan="8">No commanders found</td></tr>';
     return;
@@ -144,9 +190,9 @@ function renderRoster() {
     return `
       <tr${vpRank <= 3 ? ' class="is-top-3"' : ''}>
         <td class="col-rank">${rankCell}</td>
-        <td class="col-name">${esc(m.name)}</td>
+        <td class="col-name">${esc(m.name)}${achBadges(m)}</td>
         <td class="col-level"><span class="level-badge">${m.level}</span></td>
-        <td class="col-role"><span class="role-badge ${roleCls(m.role)}">${m.role}</span></td>
+        <td class="col-role">${roleBadge(m.role)}</td>
         <td class="col-vp">${m.vp.toLocaleString()}</td>
         <td class="col-intel">${m.intel}</td>
         <td class="col-attacks">${attacksCell}</td>
@@ -157,6 +203,7 @@ function renderRoster() {
 
 function init() {
   renderSpotlight();
+  renderPrevLeaders();
   renderRoster();
 
   document.getElementById('search').addEventListener('input', e => {

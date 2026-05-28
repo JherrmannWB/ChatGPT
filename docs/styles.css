@@ -275,6 +275,99 @@ body::after {
   white-space: nowrap;
 }
 
+/* ── ACHIEVEMENT BADGES ─────────────────────────────── */
+.ach-wrap { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+
+.ach-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+
+.ach-ex-leader   { background: #3b0764; color: #e9d5ff; }
+.ach-never-missed { background: #14532d; color: #bbf7d0; }
+
+/* ── PREVIOUS LEADERS ───────────────────────────────── */
+.prev-leaders-section { margin-bottom: 36px; }
+
+.prev-leaders-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.prev-leader-card {
+  background: linear-gradient(135deg, #1c1000 0%, #3b2200 50%, #1c1000 100%);
+  border: 2px solid var(--gold-dark);
+  border-radius: 14px;
+  padding: 22px 26px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(245,197,24,0.1);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.15s ease;
+}
+
+.prev-leader-card:hover { transform: translateY(-3px); }
+
+.prev-leader-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 15% 50%, rgba(245,197,24,0.07) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.prev-leader-ribbon {
+  font-family: 'Teko', sans-serif;
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold-dark);
+  margin-bottom: 8px;
+}
+
+.prev-leader-name {
+  font-family: 'Teko', sans-serif;
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 1px;
+  line-height: 1;
+  margin-bottom: 12px;
+  text-shadow: 0 2px 8px rgba(245,197,24,0.3);
+}
+
+.prev-leader-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+
+.prev-leader-stats { display: flex; gap: 24px; }
+
+.prev-stat-val {
+  font-family: 'Teko', sans-serif;
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.prev-stat-lbl {
+  font-size: 10px;
+  color: rgba(245,197,24,0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+/* ── COMMAND CARD RANK ICON ─────────────────────────── */
+.cmd-rank-icon {
+  font-size: 18px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
 /* ── ROSTER ─────────────────────────────────────────── */
 .roster-section { margin-bottom: 32px; }
 
@@ -605,6 +698,7 @@ body::after {
   .stat-card { padding: 0; }
   .controls-bar { flex-direction: column; align-items: stretch; }
   .sort-group { justify-content: center; }
+  .prev-leaders-grid { grid-template-columns: 1fr; }
   .rules-grid { grid-template-columns: 1fr; }
   .potw-card { flex-direction: column; text-align: center; padding: 24px 20px; }
   .potw-trophy { font-size: 48px; }
