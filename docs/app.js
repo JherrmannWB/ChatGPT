@@ -189,6 +189,7 @@ function achBadges(m) {
   if (m.exLeader)                                          out.push('<span class="ach-badge ach-ex-leader">🏛️ Ex-Leader</span>');
   if (m.missed === 0 && m.attacks > 0)                     out.push('<span class="ach-badge ach-never-missed">🎯 Perfect Record</span>');
   if (m.sabotagePass)                                      out.push('<span class="ach-badge ach-sabotage-pass">💣 Unlimited Sabotage Pass</span>');
+  if (m.role === 'Member' && m.intel > 500 && m.participation > 90) out.push('<span class="ach-badge ach-promote-me">⭐ Promote Me</span>');
   if (m.role === 'Member' && m.intel >= 400 && m.intel < 500) out.push(`<span class="ach-badge ach-promo-watch">📈 Promotion Watch · ${500 - m.intel} intel to go</span>`);
   if (m.participation < 80 && m.role === 'Officer')        out.push('<span class="ach-badge ach-demotion-watch">⚠️ Demotion Watch</span>');
   else if (m.participation < 80)                           out.push('<span class="ach-badge ach-kick-watch">⚠️ Kick Watch</span>');

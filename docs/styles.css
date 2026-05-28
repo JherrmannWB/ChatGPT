@@ -476,6 +476,7 @@ body::after {
 .ach-ex-leader    { background: rgba(124,58,237,0.18); color: #c4b5fd; border: 1px solid rgba(124,58,237,0.28); }
 .ach-never-missed { background: rgba(16,185,129,0.14); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.24); }
 .ach-sabotage-pass { background: rgba(255,80,0,0.18); color: #ffa070; border: 1px solid rgba(255,80,0,0.38); font-weight: 700; }
+.ach-promote-me    { background: rgba(245,197,24,0.20); color: #ffe066; border: 1px solid rgba(245,197,24,0.55); font-weight: 700; }
 .ach-promo-watch   { background: rgba(0,188,212,0.18); color: #4dd0e1; border: 1px solid rgba(0,188,212,0.42); font-weight: 700; }
 .ach-kick-watch      { background: rgba(239,83,80,0.22); color: #ff8a80; border: 1px solid rgba(239,83,80,0.48); font-weight: 700; }
 .ach-demotion-watch  { background: rgba(239,83,80,0.22); color: #ff8a80; border: 1px solid rgba(239,83,80,0.48); font-weight: 700; }
