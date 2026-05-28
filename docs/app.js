@@ -386,6 +386,12 @@ function getSorted(key) {
     if (key === 'intel')         return b.intel         - a.intel         || b.vp    - a.vp;
     if (key === 'level')         return b.level         - a.level         || b.vp    - a.vp;
     if (key === 'participation') return b.participation - a.participation || b.intel - a.intel;
+    if (key === 'promote') {
+      const aReady = a.role === 'Member' && a.intel >= 500 && a.participation >= 90;
+      const bReady = b.role === 'Member' && b.intel >= 500 && b.participation >= 90;
+      if (aReady !== bReady) return aReady ? -1 : 1;
+      return b.intel - a.intel;
+    }
     if (key === 'promo') {
       const aWatch = a.role === 'Member' && a.intel >= 400 && a.intel < 500;
       const bWatch = b.role === 'Member' && b.intel >= 400 && b.intel < 500;
