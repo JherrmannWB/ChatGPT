@@ -59,6 +59,8 @@ const PLAYER_CONFIG = {
 
 // ─── PLAYER OF THE WEEK ─────────────────────────────────────────────────────
 // To update: change name, week, vp, and intel here.
+const LAST_UPDATED = 'May 28, 2026';
+
 const POTW_DATA = {
   name:  'split ya lip',
   week:  'Week of May 27, 2026',
@@ -480,6 +482,7 @@ function init() {
   renderPOTW();
   renderActivityHighlights();
   renderRoster();
+  document.getElementById('last-updated').textContent = `Last updated: ${LAST_UPDATED}`;
 
   document.getElementById('search').addEventListener('input', e => {
     currentSearch = e.target.value;
