@@ -60,6 +60,7 @@ const PLAYER_CONFIG = {
 // ─── PLAYER OF THE WEEK ─────────────────────────────────────────────────────
 // To update: change name, week, vp, and intel here.
 const LAST_UPDATED = 'May 28, 2026';
+const CURRENT_OP   = 'Massive Attack'; // Update each operation
 
 const POTW_DATA = {
   name:  'split ya lip',
@@ -484,6 +485,7 @@ function init() {
   renderActivityHighlights();
   renderRoster();
   document.getElementById('last-updated').textContent = `Last updated: ${LAST_UPDATED}`;
+  document.getElementById('current-op-display').textContent = CURRENT_OP;
 
   document.getElementById('search').addEventListener('input', e => {
     currentSearch = e.target.value;
