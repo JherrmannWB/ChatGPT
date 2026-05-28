@@ -6,7 +6,7 @@
 // To add a player not listed: just add a new entry matching their exact name.
 const PLAYER_CONFIG = {
   'MrBoomBoom':      { emoji: '👑', title: 'Commander',      color: '#ffd700' },
-  'split ya lip':    { emoji: '💥', title: 'This Week MVP',  color: '#ff6b35' },
+  'split ya lip':    { emoji: '🫦', title: 'This Week MVP',  color: '#ff6b35' },
   'Zed T Dog':       { emoji: '🐕', title: 'Top Dog',        color: '#4fc3f7' },
   'old man':         { emoji: '⚓', title: 'Founder',        color: '#66bb6a' },
   'Rando Calrisian': { emoji: '🎲', title: 'Wild Card',      color: '#ce93d8' },
