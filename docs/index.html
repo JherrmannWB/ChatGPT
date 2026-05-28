@@ -3,29 +3,132 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2D Superman: Ground to Sky</title>
+  <title>OLD MEN · Task Force HQ · #PCC00J08</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <canvas id="canvas"></canvas>
 
-  <div id="hud">
-    <h1>2D SUPERMAN: GROUND TO SKY</h1>
-    <div class="stats">
-      <span>Health: <strong id="health">180/180</strong></span>
-      <span>Level: <strong id="wave">1</strong>/10</span>
-      <span>Enemies: <strong id="enemies">0</strong></span>
-      <span>Score: <strong id="score">0</strong></span>
-      <span>Flight Energy: <strong id="energy">100</strong>%</span>
-    </div>
-    <p class="controls">
-      Move: A/D or ←/→ • Fly Up: W/↑/Space • Punch: F • Kick: G • Pause: P
-    </p>
-  </div>
+  <div class="page">
 
-  <div id="overlay" class="hidden">
-    <div id="overlay-text"></div>
-    <button id="restart">Restart Mission</button>
+    <header class="tf-header">
+      <div class="tf-emblem">☘️</div>
+      <div class="tf-title-group">
+        <h1 class="tf-name">OLD MEN</h1>
+        <p class="tf-motto">"Just having fun. Attacks daily. Level 45+ or higher"</p>
+      </div>
+      <div class="tf-tag-group">
+        <div class="tf-tag">#PCC00J08</div>
+        <div class="tf-type">Anyone can join</div>
+      </div>
+    </header>
+
+    <section class="tf-stats-bar">
+      <div class="stat-card">
+        <span class="stat-icon">⚙️</span>
+        <div>
+          <div class="stat-val">24,770</div>
+          <div class="stat-lbl">Force Points</div>
+        </div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-card">
+        <span class="stat-icon">🔭</span>
+        <div>
+          <div class="stat-val">1,864</div>
+          <div class="stat-lbl">Weekly Intel</div>
+        </div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-card">
+        <span class="stat-icon">👥</span>
+        <div>
+          <div class="stat-val">50 / 50</div>
+          <div class="stat-lbl">Members</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="spotlight-section">
+      <h2 class="section-heading">Command Structure</h2>
+      <div class="spotlight-grid" id="spotlight"></div>
+    </section>
+
+    <section class="potw-section">
+      <h2 class="section-heading">Player of the Week</h2>
+      <div class="potw-card">
+        <div class="potw-trophy">🏆</div>
+        <div class="potw-body">
+          <div class="potw-week">Week of May 27, 2026</div>
+          <div class="potw-name">split ya lip</div>
+          <div class="potw-badges">
+            <span class="level-badge">Lvl 84</span>
+            <span class="role-badge role-Member">Member</span>
+          </div>
+        </div>
+        <div class="potw-stats">
+          <div class="potw-stat">
+            <div class="potw-stat-val">1,613</div>
+            <div class="potw-stat-lbl">🏅 Victory Points</div>
+          </div>
+          <div class="potw-stat-divider"></div>
+          <div class="potw-stat">
+            <div class="potw-stat-val">346</div>
+            <div class="potw-stat-lbl">🔭 Intel</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="roster-section">
+      <h2 class="section-heading">Full Roster</h2>
+      <div class="controls-bar">
+        <input type="text" id="search" class="search-box" placeholder="🔍  Search commander...">
+        <select id="role-filter" class="role-select">
+          <option value="">All Roles</option>
+          <option value="Leader">Leader</option>
+          <option value="Co-Leader">Co-Leader</option>
+          <option value="Officer">Officer</option>
+          <option value="Member">Member</option>
+        </select>
+        <div class="sort-group">
+          <span class="sort-label">Sort by:</span>
+          <button class="sort-btn active" data-sort="vp">Victory Points</button>
+          <button class="sort-btn" data-sort="intel">Intel</button>
+          <button class="sort-btn" data-sort="level">Level</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="roster-table">
+          <thead>
+            <tr>
+              <th class="col-rank">Rank</th>
+              <th class="col-name">Commander</th>
+              <th class="col-level">Lvl</th>
+              <th class="col-role">Role</th>
+              <th class="col-vp">🏅 VP</th>
+              <th class="col-intel">🔭 Intel</th>
+            </tr>
+          </thead>
+          <tbody id="roster-body"></tbody>
+        </table>
+      </div>
+      <p class="table-note">Intel count resets weekly.</p>
+    </section>
+
+    <footer class="tf-footer">
+      <div class="footer-inner">
+        <span class="footer-logo">☘️ OLD MEN</span>
+        <span class="footer-sep">·</span>
+        <a href="https://discord.gg/zdpuMZtWy" class="footer-link" target="_blank" rel="noopener">Join Discord</a>
+        <span class="footer-sep">·</span>
+        <span>Attack daily · All troops · No retreating</span>
+      </div>
+    </footer>
+
   </div>
 
   <script src="app.js"></script>

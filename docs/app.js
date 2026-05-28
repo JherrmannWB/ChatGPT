@@ -1,852 +1,178 @@
 'use strict';
 
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
+const MEMBERS = [
+  { name: 'split ya lip',    level: 84, role: 'Member',    vp: 1613, intel: 346 },
+  { name: 'Zed T Dog',       level: 84, role: 'Officer',   vp: 1446, intel: 220 },
+  { name: 'old man',         level: 65, role: 'Co-Leader', vp: 1307, intel: 139 },
+  { name: 'Rando Calrisian', level: 63, role: 'Officer',   vp: 1263, intel: 137 },
+  { name: 'gibbyrulz',       level: 64, role: 'Officer',   vp: 1261, intel: 74  },
+  { name: 'MrBoomBoom',      level: 66, role: 'Leader',    vp: 1228, intel: 96  },
+  { name: 'FJ Fruitman',     level: 70, role: 'Co-Leader', vp: 1167, intel: 104 },
+  { name: 'boomerbeachin',   level: 61, role: 'Officer',   vp: 1158, intel: 97  },
+  { name: 'PutteQuick',      level: 64, role: 'Officer',   vp: 1062, intel: 132 },
+  { name: 'Alexk1728',       level: 64, role: 'Officer',   vp: 1061, intel: 126 },
+  { name: 'lumpy',           level: 63, role: 'Co-Leader', vp: 1028, intel: 111 },
+  { name: 'MT',              level: 55, role: 'Member',    vp: 1003, intel: 122 },
+  { name: 'Boomer',          level: 55, role: 'Co-Leader', vp: 996,  intel: 76  },
+  { name: 'jenuine',         level: 63, role: 'Officer',   vp: 980,  intel: 17  },
+  { name: 'Papa Midnite',    level: 56, role: 'Officer',   vp: 929,  intel: 34  },
+  { name: '☆CRAZY DAVE☆',   level: 54, role: 'Member',    vp: 898,  intel: 76  },
+  { name: 'keg too',         level: 78, role: 'Officer',   vp: 805,  intel: 49  },
+  { name: 'th3.sid',         level: 59, role: 'Co-Leader', vp: 780,  intel: 65  },
+  { name: 'BRUNOG',          level: 53, role: 'Member',    vp: 733,  intel: 63  },
+  { name: 'CRAZYCRAFT',      level: 62, role: 'Co-Leader', vp: 677,  intel: 15  },
+  { name: 'ACFrontRanger',   level: 70, role: 'Officer',   vp: 676,  intel: 57  },
+  { name: 'MRchappel24',     level: 61, role: 'Officer',   vp: 634,  intel: 18  },
+  { name: 'COYG',            level: 70, role: 'Co-Leader', vp: 620,  intel: 119 },
+  { name: 'Frei_Taz',        level: 59, role: 'Officer',   vp: 609,  intel: 80  },
+  { name: 'MrBoomBoomjr',    level: 42, role: 'Member',    vp: 585,  intel: 62  },
+  { name: 'Boofoo',          level: 50, role: 'Officer',   vp: 585,  intel: 65  },
+  { name: 'DaVinceC',        level: 34, role: 'Member',    vp: 528,  intel: 154 },
+  { name: 'JASHAN',          level: 48, role: 'Member',    vp: 503,  intel: 24  },
+  { name: 'Ricky',           level: 62, role: 'Member',    vp: 493,  intel: 108 },
+  { name: 'Skyfan113',       level: 50, role: 'Member',    vp: 477,  intel: 73  },
+  { name: 'Rubberducky',     level: 43, role: 'Officer',   vp: 403,  intel: 53  },
+  { name: 'ميدو الطيار',     level: 69, role: 'Member',    vp: 267,  intel: 84  },
+  { name: 'TwistedDonut',    level: 56, role: 'Member',    vp: 219,  intel: 13  },
+  { name: 'homer459',        level: 27, role: 'Officer',   vp: 189,  intel: 68  },
+  { name: 'CHARLIES DAD',    level: 74, role: 'Member',    vp: 188,  intel: 71  },
+  { name: 'Black Naruto89',  level: 62, role: 'Member',    vp: 169,  intel: 16  },
+  { name: 'cupidstunt',      level: 52, role: 'Officer',   vp: 165,  intel: 2   },
+  { name: 'papagiorgio',     level: 67, role: 'Officer',   vp: 163,  intel: 6   },
+  { name: 'Buda',            level: 78, role: 'Member',    vp: 131,  intel: 30  },
+  { name: 'ただん',           level: 81, role: 'Member',    vp: 118,  intel: 40  },
+  { name: 'bouboule44',      level: 32, role: 'Member',    vp: 73,   intel: 4   },
+  { name: 'Exterminador',    level: 14, role: 'Member',    vp: 59,   intel: 2   },
+  { name: '⛔Tired Bloke⛔',  level: 78, role: 'Officer',   vp: 55,   intel: 39  },
+  { name: 'el conquestador', level: 81, role: 'Officer',   vp: 9,    intel: 44  },
+  { name: 'SpartyOn',        level: 82, role: 'Member',    vp: 8,    intel: 15  },
+  { name: 'ringoskyblastr3', level: 84, role: 'Member',    vp: 5,    intel: 26  },
+  { name: 'Dr Faustus',      level: 81, role: 'Officer',   vp: 0,    intel: 34  },
+  { name: 'Snopy',           level: 49, role: 'Officer',   vp: 0,    intel: 24  },
+  { name: 'Andy',            level: 56, role: 'Member',    vp: 0,    intel: 28  },
+  { name: 'Commander',       level: 72, role: 'Officer',   vp: 0,    intel: 34  },
+];
 
-const healthEl = document.getElementById('health');
-const waveEl = document.getElementById('wave');
-const enemiesEl = document.getElementById('enemies');
-const scoreEl = document.getElementById('score');
-const energyEl = document.getElementById('energy');
+const vpRanking = [...MEMBERS]
+  .sort((a, b) => b.vp - a.vp || b.intel - a.intel)
+  .map(m => m.name);
 
-const overlay = document.getElementById('overlay');
-const overlayText = document.getElementById('overlay-text');
-const restartBtn = document.getElementById('restart');
+let currentSort  = 'vp';
+let currentRole  = '';
+let currentSearch = '';
 
-let width = 0;
-let height = 0;
-let dpr = 1;
-
-const keys = new Set();
-
-const LEVEL_COUNT = 10;
-const LEVEL_LENGTH = 2600;
-const GRAVITY = 1450;
-const GROUND_HEIGHT = 108;
-
-const state = {
-  paused: false,
-  gameOver: false,
-  victory: false,
-  wave: 1,
-  score: 0,
-  cameraX: 0,
-  particles: [],
-  enemies: [],
-  obstacles: [],
-  levelEndX: LEVEL_LENGTH,
-  clock: 0,
-};
-
-const player = {
-  x: 120,
-  y: 0,
-  vx: 0,
-  vy: 0,
-  width: 36,
-  height: 74,
-  health: 180,
-  maxHealth: 180,
-  energy: 100,
-  maxEnergy: 130,
-  maxWalkSpeed: 290,
-  maxFlySpeed: 390,
-  accel: 1650,
-  airAccel: 1180,
-  friction: 0.82,
-  flyPower: 2000,
-  onGround: false,
-  facing: 1,
-  attackCooldown: 0,
-  attackTimer: 0,
-  attackType: null,
-  runCycle: 0,
-  flightBlend: 0,
-  damageResist: 0.4,
-  hitCooldown: 0,
-};
-
-function clamp(value, min, max) {
-  return Math.max(min, Math.min(max, value));
+function esc(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 
-function groundYAt() {
-  return height - GROUND_HEIGHT;
+function roleCls(role) {
+  return 'role-' + role.replace(' ', '-');
 }
 
-function dealDamage(baseDamage) {
-  if (player.hitCooldown > 0) return;
-  const reducedDamage = baseDamage * (1 - player.damageResist);
-  player.health = clamp(player.health - reducedDamage, 0, player.maxHealth);
-  player.hitCooldown = 0.2;
+function vpRankOf(name) {
+  return vpRanking.indexOf(name) + 1;
 }
 
-function levelStartX(level) {
-  return (level - 1) * LEVEL_LENGTH;
+function medalFor(rank) {
+  if (rank === 1) return '🥇';
+  if (rank === 2) return '🥈';
+  if (rank === 3) return '🥉';
+  return null;
 }
 
-function resize() {
-  dpr = Math.max(1, window.devicePixelRatio || 1);
-  width = window.innerWidth;
-  height = window.innerHeight;
-  canvas.width = Math.floor(width * dpr);
-  canvas.height = Math.floor(height * dpr);
-  canvas.style.width = `${width}px`;
-  canvas.style.height = `${height}px`;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+function renderSpotlight() {
+  const byLevel = (a, b) => b.level - a.level || b.vp - a.vp;
 
-  const gy = groundYAt();
-  if (player.y > gy || player.onGround) {
-    player.y = gy;
-    player.vy = Math.min(0, player.vy);
-  }
+  const tiers = [
+    { key: 'Leader',     label: 'Leader' },
+    { key: 'Co-Leader',  label: 'Co-Leaders' },
+    { key: 'Officer',    label: 'Officers' },
+  ];
 
-  for (const obstacle of state.obstacles) {
-    obstacle.y = gy;
-  }
-
-  for (const enemy of state.enemies) {
-    if (!enemy.isFlying || enemy.y > gy) {
-      enemy.y = gy;
-      enemy.vy = Math.min(0, enemy.vy);
-    }
-  }
+  document.getElementById('spotlight').innerHTML = tiers.map(({ key, label }) => {
+    const group = MEMBERS.filter(m => m.role === key).sort(byLevel);
+    const cards = group.map(m => `
+      <div class="cmd-card ${roleCls(m.role)}">
+        <div class="cmd-name">${esc(m.name)}</div>
+        <span class="level-badge">Lvl ${m.level}</span>
+      </div>`).join('');
+    const slugLabel = label.toLowerCase().replace(/[- ]/g, '-');
+    return `
+      <div class="cmd-tier cmd-tier-${slugLabel}">
+        <div class="tier-label tier-label-${slugLabel}">${label}</div>
+        <div class="cmd-cards">${cards}</div>
+      </div>`;
+  }).join('');
 }
 
-function addParticles(x, y, color, count = 16, speedScale = 1) {
-  for (let i = 0; i < count; i += 1) {
-    const angle = Math.random() * Math.PI * 2;
-    const speed = (65 + Math.random() * 200) * speedScale;
-    state.particles.push({
-      x,
-      y,
-      vx: Math.cos(angle) * speed,
-      vy: Math.sin(angle) * speed,
-      life: 0.35 + Math.random() * 0.65,
-      color,
-      size: 2 + Math.random() * 4,
-    });
-  }
+function getSorted(key) {
+  return [...MEMBERS].sort((a, b) => {
+    if (key === 'vp')    return b.vp    - a.vp    || b.intel - a.intel;
+    if (key === 'intel') return b.intel - a.intel  || b.vp   - a.vp;
+    if (key === 'level') return b.level - a.level  || b.vp   - a.vp;
+    return 0;
+  });
 }
 
-function spawnLevel(level) {
-  state.enemies.length = 0;
-  state.obstacles.length = 0;
-
-  const startX = levelStartX(level);
-  state.levelEndX = startX + LEVEL_LENGTH - 260;
-
-  const count = 6 + level * 2;
-  for (let i = 0; i < count; i += 1) {
-    const x = startX + 360 + Math.random() * (LEVEL_LENGTH - 560);
-    const baseY = groundYAt();
-
-    state.enemies.push({
-      x,
-      y: baseY,
-      vx: 0,
-      vy: 0,
-      width: 30,
-      height: 62,
-      speed: 115 + level * 22 + Math.random() * 55,
-      hp: 45 + level * 16,
-      maxHp: 45 + level * 16,
-      touchDamage: 10 + Math.floor(level / 2),
-      jumpTimer: 0.6 + Math.random() * 1.4,
-      dodgeTimer: Math.random(),
-      facing: -1,
-      isFlying: Math.random() < 0.32 + level * 0.03,
-      attackCooldown: 0.5 + Math.random() * 0.8,
-      attackTimer: 0,
-      attackType: 'punch',
-      runCycle: Math.random() * Math.PI * 2,
-    });
-  }
-
-  const obstacleCount = 3 + Math.floor(level * 1.2);
-  for (let i = 0; i < obstacleCount; i += 1) {
-    const x = startX + 280 + Math.random() * (LEVEL_LENGTH - 460);
-    const kind = Math.random() < 0.5 ? 'barrier' : 'spike';
-    state.obstacles.push({
-      x,
-      y: groundYAt(),
-      width: kind === 'barrier' ? 36 : 28,
-      height: kind === 'barrier' ? 64 : 36,
-      damage: kind === 'barrier' ? 12 + level : 18 + level,
-      kind,
-    });
-  }
-}
-
-function resetGame() {
-  state.paused = false;
-  state.gameOver = false;
-  state.victory = false;
-  state.wave = 1;
-  state.score = 0;
-  state.cameraX = 0;
-  state.clock = 0;
-  state.particles.length = 0;
-
-  player.x = 120;
-  player.y = groundYAt();
-  player.vx = 0;
-  player.vy = 0;
-  player.health = player.maxHealth;
-  player.energy = player.maxEnergy;
-  player.attackCooldown = 0;
-  player.attackTimer = 0;
-  player.attackType = null;
-  player.runCycle = 0;
-  player.flightBlend = 0;
-  player.onGround = true;
-  player.facing = 1;
-  player.hitCooldown = 0;
-
-  spawnLevel(state.wave);
-  overlay.classList.add('hidden');
-  updateHud();
-}
-
-function heroAttack(type) {
-  if (player.attackCooldown > 0) return;
-
-  const isKick = type === 'kick';
-  const energyCost = isKick ? 16 : 10;
-  if (player.energy < energyCost) return;
-
-  player.energy = clamp(player.energy - energyCost, 0, player.maxEnergy);
-  player.attackType = type;
-  player.attackTimer = isKick ? 0.36 : 0.24;
-  player.attackCooldown = isKick ? 0.5 : 0.34;
-
-  const reach = isKick ? 185 : 155;
-  const baseDamage = isKick ? 74 : 52;
-  let hits = 0;
-
-  for (const enemy of state.enemies) {
-    const ex = enemy.x - player.x;
-    const ey = (enemy.y - enemy.height * 0.5) - (player.y - player.height * 0.5);
-    const dist = Math.hypot(ex, ey);
-    const frontCheck = Math.sign(ex || player.facing) === player.facing;
-
-    if (dist > reach || !frontCheck) continue;
-
-    const power = (reach - dist) / reach;
-    enemy.hp -= baseDamage + power * 24;
-    enemy.vx += player.facing * (isKick ? 620 : 430);
-    enemy.vy -= isKick ? 300 : 180;
-    hits += 1;
-  }
-
-  if (hits > 0) {
-    state.score += hits * (isKick ? 72 : 48);
-    addParticles(player.x + player.facing * 22, player.y - player.height * 0.58, '#9ec4ff', 24, 1.1);
-  }
-}
-
-function updatePlayer(dt) {
-  let mx = 0;
-  if (keys.has('KeyA') || keys.has('ArrowLeft')) mx -= 1;
-  if (keys.has('KeyD') || keys.has('ArrowRight')) mx += 1;
-
-  const tryingFly = keys.has('KeyW') || keys.has('ArrowUp') || keys.has('Space');
-
-  if (mx !== 0) {
-    player.facing = mx > 0 ? 1 : -1;
-  }
-
-  const accel = player.onGround ? player.accel : player.airAccel;
-  player.vx += mx * accel * dt;
-
-  const topSpeed = player.onGround ? player.maxWalkSpeed : player.maxFlySpeed;
-  player.vx = clamp(player.vx, -topSpeed, topSpeed);
-
-  if (mx === 0 && player.onGround) {
-    const damping = Math.pow(player.friction, dt * 60);
-    player.vx *= damping;
-    if (Math.abs(player.vx) < 2) player.vx = 0;
-  }
-
-  if (tryingFly && player.energy > 0) {
-    player.vy -= player.flyPower * dt;
-    player.energy = clamp(player.energy - 22 * dt, 0, player.maxEnergy);
-    player.onGround = false;
-    player.flightBlend = clamp(player.flightBlend + dt * 4, 0, 1);
-  } else {
-    player.energy = clamp(player.energy + 20 * dt, 0, player.maxEnergy);
-    player.flightBlend = clamp(player.flightBlend - dt * 3, 0, 1);
-  }
-
-  player.vy += GRAVITY * dt;
-
-  player.x += player.vx * dt;
-  player.y += player.vy * dt;
-
-  const groundY = groundYAt();
-  if (player.y >= groundY) {
-    player.y = groundY;
-    player.vy = 0;
-    player.onGround = true;
-  } else {
-    player.onGround = false;
-  }
-
-  player.x = Math.max(20, player.x);
-
-  const levelMaxX = levelStartX(state.wave) + LEVEL_LENGTH - 100;
-  player.x = Math.min(levelMaxX, player.x);
-
-  state.cameraX = clamp(player.x - width * 0.33, levelStartX(state.wave), levelStartX(state.wave) + LEVEL_LENGTH - width);
-
-  player.attackCooldown = Math.max(0, player.attackCooldown - dt);
-  player.attackTimer = Math.max(0, player.attackTimer - dt);
-  player.hitCooldown = Math.max(0, player.hitCooldown - dt);
-  if (player.attackTimer === 0) player.attackType = null;
-  player.runCycle += Math.abs(player.vx) * dt * 0.045;
-}
-
-function rectHit(a, b) {
-  return (
-    Math.abs(a.x - b.x) * 2 < (a.width + b.width) &&
-    Math.abs((a.y - a.height * 0.5) - (b.y - b.height * 0.5)) * 2 < (a.height + b.height)
-  );
-}
-
-function updateObstacles(dt) {
-  const playerBox = {
-    x: player.x,
-    y: player.y,
-    width: player.width,
-    height: player.height,
-  };
-
-  for (const obstacle of state.obstacles) {
-    const box = {
-      x: obstacle.x,
-      y: obstacle.y,
-      width: obstacle.width,
-      height: obstacle.height,
-    };
-
-    if (!rectHit(playerBox, box)) continue;
-
-    dealDamage(obstacle.damage * dt * 1.8);
-    player.vx -= Math.sign(player.vx || player.facing) * 120 * dt;
-    if (obstacle.kind === 'spike') {
-      player.vy -= 120 * dt;
-    }
-  }
-}
-
-function updateEnemies(dt) {
-  const playerBox = {
-    x: player.x,
-    y: player.y,
-    width: player.width,
-    height: player.height,
-  };
-
-  for (let i = state.enemies.length - 1; i >= 0; i -= 1) {
-    const enemy = state.enemies[i];
-    const dx = player.x - enemy.x;
-    const distance = Math.abs(dx);
-
-    enemy.facing = dx >= 0 ? 1 : -1;
-
-    if (distance < 760) {
-      enemy.vx += enemy.facing * enemy.speed * dt;
-    }
-
-    enemy.dodgeTimer -= dt;
-    if (enemy.dodgeTimer <= 0 && distance < 200) {
-      enemy.vx -= enemy.facing * (160 + Math.random() * 190);
-      enemy.vy -= 200 + Math.random() * 120;
-      enemy.dodgeTimer = 1.4 + Math.random() * 1.4;
-    }
-
-    const maxEnemySpeed = enemy.isFlying ? 300 : 245;
-    enemy.vx = clamp(enemy.vx, -maxEnemySpeed, maxEnemySpeed);
-
-    enemy.jumpTimer -= dt;
-    if (enemy.isFlying && distance < 460) {
-      const targetY = player.y - 50;
-      enemy.vy += clamp((targetY - enemy.y) * 5.2, -340, 340) * dt;
-    } else {
-      if (enemy.jumpTimer <= 0 && distance < 280) {
-        enemy.vy -= 560;
-        enemy.jumpTimer = 0.9 + Math.random() * 1.1;
-      }
-      enemy.vy += GRAVITY * dt;
-    }
-
-    enemy.attackCooldown -= dt;
-    enemy.attackTimer = Math.max(0, enemy.attackTimer - dt);
-
-    if (enemy.attackCooldown <= 0 && distance < 92) {
-      enemy.attackType = Math.random() < 0.4 ? 'kick' : 'punch';
-      enemy.attackTimer = enemy.attackType === 'kick' ? 0.25 : 0.18;
-      enemy.attackCooldown = 0.6 + Math.random() * 0.7;
-
-      const damageScale = enemy.attackType === 'kick' ? 1.45 : 1;
-      dealDamage(enemy.touchDamage * damageScale);
-      player.vx += enemy.facing * (enemy.attackType === 'kick' ? 180 : 130);
-      player.vy -= enemy.attackType === 'kick' ? 90 : 45;
-      addParticles(player.x, player.y - player.height * 0.5, '#ffc9a7', 8, 0.7);
-    }
-
-    enemy.x += enemy.vx * dt;
-    enemy.y += enemy.vy * dt;
-
-    if (!enemy.isFlying) {
-      const gy = groundYAt();
-      if (enemy.y >= gy) {
-        enemy.y = gy;
-        enemy.vy = 0;
-      }
-    }
-
-    enemy.vx *= 0.93;
-    enemy.runCycle += Math.abs(enemy.vx) * dt * 0.055;
-
-    const enemyBox = {
-      x: enemy.x,
-      y: enemy.y,
-      width: enemy.width,
-      height: enemy.height,
-    };
-
-    if (rectHit(playerBox, enemyBox)) {
-      dealDamage(enemy.touchDamage * dt * 2.4);
-      player.vx -= enemy.facing * 220 * dt;
-      if (!player.onGround) player.vy -= 130 * dt;
-    }
-
-    if (enemy.hp <= 0) {
-      state.score += 160 + state.wave * 28;
-      addParticles(enemy.x, enemy.y - enemy.height * 0.5, '#ff7c7c', 20);
-      state.enemies.splice(i, 1);
-    }
-  }
-}
-
-function updateParticles(dt) {
-  for (let i = state.particles.length - 1; i >= 0; i -= 1) {
-    const p = state.particles[i];
-    p.life -= dt;
-    p.x += p.vx * dt;
-    p.y += p.vy * dt;
-    p.vx *= 0.97;
-    p.vy *= 0.97;
-
-    if (p.life <= 0) {
-      state.particles.splice(i, 1);
-    }
-  }
-}
-
-function updateGame(dt) {
-  if (state.paused || state.gameOver || state.victory) return;
-
-  state.clock += dt;
-  updatePlayer(dt);
-  updateObstacles(dt);
-  updateEnemies(dt);
-  updateParticles(dt);
-
-  if (player.health <= 0) {
-    state.gameOver = true;
-    overlayText.textContent = `Mission Failed • Score ${Math.floor(state.score)}`;
-    overlay.classList.remove('hidden');
-  }
-
-  if (!state.gameOver && player.x >= state.levelEndX) {
-    const blockingEnemies = state.enemies.filter((enemy) => Math.abs(enemy.x - player.x) < 520);
-    if (blockingEnemies.length === 0) {
-      if (state.enemies.length > 0) {
-        state.score += state.enemies.length * 40;
-        state.enemies.length = 0;
-      }
-
-      if (state.wave >= LEVEL_COUNT) {
-        state.victory = true;
-        overlayText.textContent = `All 10 Levels Cleared! Final Score ${Math.floor(state.score)}`;
-        overlay.classList.remove('hidden');
-      } else {
-        state.wave += 1;
-        player.x = levelStartX(state.wave) + 120;
-        player.y = groundYAt();
-        player.vx = 0;
-        player.vy = 0;
-        spawnLevel(state.wave);
-        addParticles(player.x, player.y - 120, '#9fffd8', 36, 1.2);
-      }
-    }
-  }
-
-  updateHud();
-}
-
-function drawCityBackdrop(levelStart) {
-  const sky = ctx.createLinearGradient(0, 0, 0, height);
-  sky.addColorStop(0, '#7ec7ff');
-  sky.addColorStop(0.4, '#4f9ce4');
-  sky.addColorStop(1, '#1a3f74');
-  ctx.fillStyle = sky;
-  ctx.fillRect(0, 0, width, height);
-
-  const cloudShift = state.cameraX * 0.2;
-  for (let i = 0; i < 12; i += 1) {
-    const x = ((i * 260 - cloudShift) % (width + 340)) - 170;
-    const y = 60 + (i % 4) * 42;
-    ctx.fillStyle = 'rgba(255,255,255,0.4)';
-    ctx.beginPath();
-    ctx.ellipse(x, y, 56, 20, 0, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  const buildingParallax = state.cameraX * 0.55;
-  for (let i = -1; i < 20; i += 1) {
-    const bx = i * 150 - (buildingParallax % 150);
-    const bh = 120 + ((i + state.wave * 3) % 6) * 30;
-    ctx.fillStyle = i % 2 === 0 ? '#173560' : '#102a50';
-    ctx.fillRect(bx, groundYAt() - bh, 98, bh);
-  }
-
-  ctx.fillStyle = '#284821';
-  ctx.fillRect(0, groundYAt(), width, GROUND_HEIGHT);
-
-  for (let i = -1; i < 24; i += 1) {
-    const tx = i * 120 - ((state.cameraX * 1.05) % 120);
-    ctx.fillStyle = '#2f5b28';
-    ctx.fillRect(tx + 6, groundYAt() + 18, 16, 42);
-    ctx.beginPath();
-    ctx.fillStyle = '#4f8a44';
-    ctx.arc(tx + 14, groundYAt() + 14, 18, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  const finishX = state.levelEndX - levelStart;
-  const fx = finishX - state.cameraX + levelStart;
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(fx, groundYAt() - 100, 6, 100);
-  ctx.fillStyle = '#ff4545';
-  ctx.fillRect(fx + 6, groundYAt() - 100, 34, 24);
-}
-
-function poseForCharacter(entity, isPlayer = false) {
-  const speedNorm = clamp(Math.abs(entity.vx) / 250, 0, 1);
-  const phase = entity.runCycle || 0;
-  const runSway = Math.sin(phase) * 0.75 * speedNorm;
-  const onGround = Math.abs(entity.y - groundYAt()) < 2;
-  const flightLift = isPlayer ? player.flightBlend : (!onGround && entity.isFlying ? 0.8 : 0);
-
-  let leftLeg = runSway;
-  let rightLeg = -runSway;
-  let leftArm = -runSway * 0.9;
-  let rightArm = runSway * 0.9;
-  let tilt = runSway * 0.1;
-
-  if (!onGround) {
-    leftLeg = -0.3 - flightLift * 0.5;
-    rightLeg = 0.15 + flightLift * 0.3;
-    leftArm = -0.4 - flightLift * 0.4;
-    rightArm = 0.5 + flightLift * 0.3;
-    tilt = -0.2 * (flightLift || 1);
-  }
-
-  if (entity.attackType && entity.attackTimer > 0) {
-    if (entity.attackType === 'punch') {
-      rightArm = 1.2;
-      leftArm = -0.45;
-      tilt = 0.08;
-    } else {
-      rightLeg = 1.1;
-      leftLeg = -0.4;
-      rightArm = 0.5;
-      leftArm = -0.5;
-      tilt = 0.14;
-    }
-  }
-
-  return { leftLeg, rightLeg, leftArm, rightArm, tilt, flightLift };
-}
-
-function drawLimb(x, y, angle, length, widthLimb, color) {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.rotate(angle);
-  ctx.fillStyle = color;
-  ctx.fillRect(-widthLimb * 0.5, 0, widthLimb, length);
-  ctx.restore();
-}
-
-function drawHumanCharacter(x, y, facing, palette, pose, cape = false) {
-  const sx = x - state.cameraX;
-  const torsoTop = y - 54;
-
-  ctx.save();
-  ctx.translate(sx, torsoTop + 24);
-  ctx.scale(facing, 1);
-  ctx.rotate(pose.tilt);
-
-  if (cape) {
-    const flutter = Math.sin(state.clock * 12 + x * 0.02) * 7 + pose.flightLift * 10;
-    ctx.fillStyle = palette.cape;
-    ctx.beginPath();
-    ctx.moveTo(-9, -8);
-    ctx.quadraticCurveTo(-36, 26 + flutter, -24, 76 + flutter * 0.6);
-    ctx.lineTo(3, 56 + flutter * 0.45);
-    ctx.closePath();
-    ctx.fill();
-  }
-
-  drawLimb(-10, -4, pose.leftArm, 24, 6, palette.skin);
-  drawLimb(10, -4, pose.rightArm, 24, 6, palette.skin);
-
-  ctx.fillStyle = palette.suit;
-  ctx.fillRect(-8, -6, 16, 28);
-
-  ctx.fillStyle = palette.accent;
-  ctx.fillRect(-9, 10, 18, 4);
-  ctx.fillRect(-8, 14, 16, 7);
-
-  if (cape) {
-    ctx.fillStyle = '#f7f3ff';
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(5, 6);
-    ctx.lineTo(0, 12);
-    ctx.lineTo(-5, 6);
-    ctx.closePath();
-    ctx.fill();
-  }
-
-  drawLimb(-6, 20, pose.leftLeg, 26, 7, palette.boots);
-  drawLimb(6, 20, pose.rightLeg, 26, 7, palette.boots);
-
-  ctx.fillStyle = palette.skin;
-  ctx.beginPath();
-  ctx.arc(0, -16, 10, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.fillStyle = palette.hair;
-  if (cape) {
-    ctx.beginPath();
-    ctx.moveTo(-10, -17);
-    ctx.lineTo(-7, -28);
-    ctx.lineTo(-2, -20);
-    ctx.lineTo(2, -30);
-    ctx.lineTo(6, -20);
-    ctx.lineTo(10, -26);
-    ctx.lineTo(10, -17);
-    ctx.closePath();
-    ctx.fill();
-    ctx.fillStyle = '#9fe0ff';
-    ctx.fillRect(-6, -16, 4, 2);
-    ctx.fillRect(2, -16, 4, 2);
-  } else {
-    ctx.beginPath();
-    ctx.arc(0, -20, 10, Math.PI, 0);
-    ctx.lineTo(10, -17);
-    ctx.lineTo(-10, -17);
-    ctx.closePath();
-    ctx.fill();
-  }
-
-  if (cape) {
-    ctx.strokeStyle = 'rgba(255,255,255,0.32)';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(-9, -7, 18, 30);
-  }
-
-  ctx.restore();
-}
-
-function drawPlayer() {
-  const auraPulse = 0.45 + Math.sin(state.clock * 7) * 0.2 + player.flightBlend * 0.3;
-  ctx.beginPath();
-  ctx.fillStyle = `rgba(126, 225, 255, ${auraPulse * 0.25})`;
-  ctx.ellipse(player.x - state.cameraX, player.y - 42, 34, 58, 0, 0, Math.PI * 2);
-  ctx.fill();
-
-  drawHumanCharacter(
-    player.x,
-    player.y,
-    player.facing,
-    {
-      skin: '#ffd9bd',
-      hair: '#142951',
-      suit: '#2f4dff',
-      accent: '#ffed90',
-      boots: '#ef3b4e',
-      cape: '#ff315a',
-    },
-    poseForCharacter(player, true),
-    true,
-  );
-
-  if (player.attackType && player.attackTimer > 0) {
-    const punchAlpha = clamp(player.attackTimer * 4, 0, 1);
-    const cx = player.x - state.cameraX + player.facing * 24;
-    const cy = player.y - player.height * 0.62;
-    ctx.strokeStyle = `rgba(158, 196, 255, ${punchAlpha})`;
-    ctx.lineWidth = player.attackType === 'kick' ? 6 : 4;
-    ctx.beginPath();
-    ctx.arc(cx, cy, player.attackType === 'kick' ? 40 : 30, 0, Math.PI * 2);
-    ctx.stroke();
-  }
-}
-
-function drawEnemies() {
-  for (const enemy of state.enemies) {
-    drawHumanCharacter(
-      enemy.x,
-      enemy.y,
-      enemy.facing,
-      {
-        skin: '#f0c7aa',
-        hair: '#3d2b1e',
-        suit: '#6a2a7d',
-        accent: '#9d5dcb',
-        boots: '#2f1937',
-        cape: '#6d3257',
-      },
-      poseForCharacter(enemy),
-      enemy.isFlying,
-    );
-
-    const sx = enemy.x - state.cameraX;
-    const ratio = clamp(enemy.hp / enemy.maxHp, 0, 1);
-    ctx.fillStyle = 'rgba(0,0,0,0.45)';
-    ctx.fillRect(sx - 18, enemy.y - enemy.height - 12, 36, 4);
-    ctx.fillStyle = '#7aff91';
-    ctx.fillRect(sx - 18, enemy.y - enemy.height - 12, 36 * ratio, 4);
-  }
-}
-
-function drawObstacles() {
-  for (const obstacle of state.obstacles) {
-    const sx = obstacle.x - state.cameraX;
-
-    if (obstacle.kind === 'barrier') {
-      ctx.fillStyle = '#4a4a57';
-      ctx.fillRect(sx - obstacle.width * 0.5, obstacle.y - obstacle.height, obstacle.width, obstacle.height);
-      ctx.fillStyle = '#c9a34f';
-      ctx.fillRect(sx - obstacle.width * 0.5 + 4, obstacle.y - obstacle.height + 8, obstacle.width - 8, 8);
-    } else {
-      ctx.fillStyle = '#8f8f9a';
-      for (let i = -1; i <= 1; i += 1) {
-        ctx.beginPath();
-        ctx.moveTo(sx + i * 8, obstacle.y);
-        ctx.lineTo(sx + i * 8 + 5, obstacle.y - obstacle.height);
-        ctx.lineTo(sx + i * 8 + 10, obstacle.y);
-        ctx.closePath();
-        ctx.fill();
-      }
-    }
-  }
-}
-
-function drawParticles() {
-  for (const p of state.particles) {
-    ctx.globalAlpha = clamp(p.life, 0, 1);
-    ctx.fillStyle = p.color;
-    ctx.beginPath();
-    ctx.arc(p.x - state.cameraX, p.y, p.size, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  ctx.globalAlpha = 1;
-}
-
-function drawHudHints() {
-  const levelStart = levelStartX(state.wave);
-  const progress = clamp((player.x - levelStart) / (LEVEL_LENGTH - 260), 0, 1);
-
-  ctx.fillStyle = 'rgba(0,0,0,0.35)';
-  ctx.fillRect(24, height - 34, width - 48, 12);
-  ctx.fillStyle = '#6ac8ff';
-  ctx.fillRect(24, height - 34, (width - 48) * progress, 12);
-
-  ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 14px Arial';
-  ctx.fillText(`Level ${state.wave} progress`, 24, height - 42);
-}
-
-function drawPause() {
-  if (!state.paused || state.gameOver || state.victory) return;
-
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
-  ctx.fillRect(0, 0, width, height);
-  ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 40px Arial';
-  ctx.textAlign = 'center';
-  ctx.fillText('PAUSED', width * 0.5, height * 0.5);
-  ctx.textAlign = 'left';
-}
-
-function render() {
-  const levelStart = levelStartX(state.wave);
-  drawCityBackdrop(levelStart);
-  drawObstacles();
-  drawEnemies();
-  drawParticles();
-  drawPlayer();
-  drawHudHints();
-  drawPause();
-}
-
-function updateHud() {
-  healthEl.textContent = `${Math.ceil(player.health)}/${player.maxHealth}`;
-  waveEl.textContent = state.wave;
-  enemiesEl.textContent = state.enemies.length;
-  scoreEl.textContent = Math.floor(state.score);
-  energyEl.textContent = Math.ceil((player.energy / player.maxEnergy) * 100);
-}
-
-window.addEventListener('resize', resize);
-
-window.addEventListener('keydown', (event) => {
-  if (event.code === 'KeyF') {
-    event.preventDefault();
-    heroAttack('punch');
+function renderRoster() {
+  const sorted   = getSorted(currentSort);
+  const filtered = sorted.filter(m => {
+    const matchRole   = !currentRole   || m.role === currentRole;
+    const matchSearch = !currentSearch || m.name.toLowerCase().includes(currentSearch.toLowerCase());
+    return matchRole && matchSearch;
+  });
+
+  const tbody = document.getElementById('roster-body');
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No commanders found</td></tr>';
     return;
   }
 
-  if (event.code === 'KeyG') {
-    event.preventDefault();
-    heroAttack('kick');
-    return;
-  }
+  tbody.innerHTML = filtered.map(m => {
+    const vpRank = vpRankOf(m.name);
+    const medal  = medalFor(vpRank);
+    const rankCell = medal
+      ? `<span style="font-size:20px">${medal}</span>`
+      : `<span class="rank-num">${vpRank}</span>`;
 
-  if (event.code === 'KeyP') {
-    state.paused = !state.paused;
-    return;
-  }
-
-  keys.add(event.code);
-});
-
-window.addEventListener('keyup', (event) => {
-  keys.delete(event.code);
-});
-
-restartBtn.addEventListener('click', () => {
-  resetGame();
-});
-
-let lastTime = performance.now();
-
-function frame(now) {
-  const dt = Math.min(0.033, (now - lastTime) / 1000);
-  lastTime = now;
-
-  updateGame(dt);
-  render();
-
-  requestAnimationFrame(frame);
+    return `
+      <tr${vpRank <= 3 ? ' class="is-top-3"' : ''}>
+        <td class="col-rank">${rankCell}</td>
+        <td class="col-name">${esc(m.name)}</td>
+        <td class="col-level"><span class="level-badge">${m.level}</span></td>
+        <td class="col-role"><span class="role-badge ${roleCls(m.role)}">${m.role}</span></td>
+        <td class="col-vp">${m.vp.toLocaleString()}</td>
+        <td class="col-intel">${m.intel.toLocaleString()}</td>
+      </tr>`;
+  }).join('');
 }
 
-resize();
-resetGame();
-requestAnimationFrame(frame);
+function init() {
+  renderSpotlight();
+  renderRoster();
+
+  document.getElementById('search').addEventListener('input', e => {
+    currentSearch = e.target.value;
+    renderRoster();
+  });
+
+  document.getElementById('role-filter').addEventListener('change', e => {
+    currentRole = e.target.value;
+    renderRoster();
+  });
+
+  document.querySelectorAll('.sort-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentSort = btn.dataset.sort;
+      document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderRoster();
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', init);
