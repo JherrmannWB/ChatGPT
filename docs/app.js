@@ -27,7 +27,7 @@ const PLAYER_CONFIG = {
   'CRAZYCRAFT':      { emoji: '🔨', title: 'Crafter',        color: '#ff7043' },
   'ACFrontRanger':   { emoji: '🏕️', title: 'Ranger',        color: '#66bb6a' },
   'MRchappel24':     { emoji: '📐', title: 'Architect',      color: '#42a5f5' },
-  'COYG':            { emoji: '🏆', title: 'Champion',       color: '#ffd54f' },
+  'COYG':            { emoji: '🏆', title: 'Team Dumbass',   color: '#ffd54f' },
   'Frei_Taz':        { emoji: '🌪️', title: 'Whirlwind',     color: '#b0bec5' },
   'MrBoomBoomjr':    { emoji: '💣', title: 'Boom Jr.',       color: '#ef9a9a' },
   'Boofoo':          { emoji: '👻', title: 'Ghost',          color: '#e0e0e0' },
