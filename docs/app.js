@@ -81,7 +81,7 @@ const MEMBERS = [
   { name: 'th3.sid',         level: 59, role: 'Co-Leader', vp: 780,  intel: 5688,  attacks: 270, missed: 11, participation: 96  },
   { name: 'MT',              level: 55, role: 'Member',    vp: 1003, intel: 5437,  attacks: 159, missed: 50, participation: 76  },
   { name: 'Frei_Taz',        level: 59, role: 'Officer',   vp: 609,  intel: 4474,  attacks: 191, missed: 20, participation: 90  },
-  { name: 'gibbyrulz',       level: 64, role: 'Officer',   vp: 1261, intel: 3068,  attacks: 73,  missed: 5,  participation: 93  },
+  { name: 'gibbyrulz',       level: 64, role: 'Officer',   vp: 1261, intel: 3068,  attacks: 73,  missed: 5,  participation: 93,  sabotagePass: true },
   { name: 'MRchappel24',     level: 61, role: 'Officer',   vp: 634,  intel: 2635,  attacks: 118, missed: 31, participation: 79  },
   { name: 'Alexk1728',       level: 64, role: 'Officer',   vp: 1061, intel: 2288,  attacks: 60,  missed: 2,  participation: 96  },
   { name: 'boomerbeachin',   level: 61, role: 'Officer',   vp: 1158, intel: 2031,  attacks: 86,  missed: 3,  participation: 96  },
@@ -188,6 +188,7 @@ function achBadges(m) {
   const out = [];
   if (m.exLeader)                      out.push('<span class="ach-badge ach-ex-leader">🏛️ Ex-Leader</span>');
   if (m.missed === 0 && m.attacks > 0) out.push('<span class="ach-badge ach-never-missed">🎯 Perfect Record</span>');
+  if (m.sabotagePass)                  out.push('<span class="ach-badge ach-sabotage-pass">💣 Unlimited Sabotage Pass</span>');
   return out.length ? `<div class="ach-wrap">${out.join('')}</div>` : '';
 }
 
