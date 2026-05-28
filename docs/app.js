@@ -189,6 +189,7 @@ function roleBadge(role) {
 
 function achBadges(m) {
   const out = [];
+  if (m.intel > 5000)                                      out.push('<span class="ach-badge ach-veteran">🎖️ Veteran</span>');
   if (m.creator)                                           out.push('<span class="ach-badge ach-creator">💥 Site Architect</span>');
   if (m.exLeader)                                          out.push('<span class="ach-badge ach-ex-leader">🏛️ Ex-Leader</span>');
   if (m.missed === 0 && m.attacks > 0)                     out.push('<span class="ach-badge ach-never-missed">🎯 Perfect Record</span>');

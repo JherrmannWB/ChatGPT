@@ -484,6 +484,7 @@ body::after {
   white-space: nowrap;
 }
 
+.ach-veteran      { background: rgba(183,110,0,0.22); color: #ffb74d; border: 1px solid rgba(183,110,0,0.50); font-weight: 700; letter-spacing: 0.03em; }
 .ach-creator      { background: rgba(255,215,0,0.18); color: #ffd700; border: 1px solid rgba(255,215,0,0.55); font-weight: 700; letter-spacing: 0.03em; }
 .ach-ex-leader    { background: rgba(124,58,237,0.18); color: #c4b5fd; border: 1px solid rgba(124,58,237,0.28); }
 .ach-never-missed { background: rgba(16,185,129,0.14); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.24); }
