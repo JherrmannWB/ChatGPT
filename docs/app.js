@@ -118,8 +118,6 @@ const MEMBERS = [
   { name: 'Andy',            level: 56, role: 'Member',    vp: 0,    intel: 28,    attacks: 2,   missed: 0,  participation: 100 },
   { name: 'JASHAN',          level: 48, role: 'Member',    vp: 503,  intel: 24,    attacks: 0,   missed: 0,  participation: 0   },
   { name: 'BRUNOG',          level: 53, role: 'Member',    vp: 733,  intel: 288,   attacks: 13,  missed: 5,  participation: 72  },
-  { name: 'bouboule44',      level: 32, role: 'Member',    vp: 73,   intel: 4,     attacks: 0,   missed: 1,  participation: 0   },
-  { name: 'Exterminador',    level: 14, role: 'Member',    vp: 59,   intel: 2,     attacks: 0,   missed: 1,  participation: 0   },
 ];
 
 // ─── COMPUTED ────────────────────────────────────────────────────────────────
