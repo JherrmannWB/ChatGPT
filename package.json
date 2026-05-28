@@ -1,0 +1,13 @@
+{
+  "name": "old-men-tf",
+  "version": "1.0.0",
+  "private": true,
+  "description": "OLD MEN Task Force HQ — Boom Beach clan dashboard",
+  "scripts": {
+    "dev": "serve docs -p 3000",
+    "start": "serve docs"
+  },
+  "devDependencies": {
+    "serve": "^14.2.4"
+  }
+}

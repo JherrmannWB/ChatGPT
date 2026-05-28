@@ -6,91 +6,97 @@
   <title>OLD MEN · Task Force HQ · #PCC00J08</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
+  <nav class="site-nav" id="site-nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="#">
+        <span class="nav-emblem">☘️</span>
+        <span class="nav-name">OLD MEN</span>
+      </a>
+      <div class="nav-links">
+        <a href="#command"  class="nav-link">Command</a>
+        <a href="#roster"   class="nav-link">Roster</a>
+        <a href="#activity" class="nav-link">Activity</a>
+        <a href="#rules"    class="nav-link">Rules</a>
+        <a href="https://discord.gg/zdpuMZtWy" class="nav-link nav-discord" target="_blank" rel="noopener">Discord ↗</a>
+      </div>
+    </div>
+  </nav>
+
   <div class="page">
 
-    <header class="tf-header">
-      <div class="tf-emblem">☘️</div>
-      <div class="tf-title-group">
-        <h1 class="tf-name">OLD MEN</h1>
-        <p class="tf-motto">"Just having fun. Attacks daily. Level 45+ or higher"</p>
+    <!-- HERO HEADER -->
+    <header class="tf-header animate-in">
+      <div class="header-left">
+        <div class="tf-emblem">☘️</div>
+        <div class="tf-title-group">
+          <h1 class="tf-name">OLD MEN</h1>
+          <p class="tf-motto">"Just having fun. Attacks daily. Level 45+ or higher"</p>
+          <div class="tf-meta">
+            <span class="tf-tag">#PCC00J08</span>
+            <span class="tf-join-badge">Anyone can join</span>
+          </div>
+        </div>
       </div>
-      <div class="tf-tag-group">
-        <div class="tf-tag">#PCC00J08</div>
-        <div class="tf-type">Anyone can join</div>
+      <div class="header-stats">
+        <div class="stat-card">
+          <div class="stat-icon">⚙️</div>
+          <div>
+            <div class="stat-val">24,770</div>
+            <div class="stat-lbl">Force Points</div>
+          </div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-card">
+          <div class="stat-icon">🔭</div>
+          <div>
+            <div class="stat-val">1,864</div>
+            <div class="stat-lbl">Weekly Intel</div>
+          </div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div>
+            <div class="stat-val">50 / 50</div>
+            <div class="stat-lbl">Members</div>
+          </div>
+        </div>
       </div>
     </header>
 
-    <section class="tf-stats-bar">
-      <div class="stat-card">
-        <span class="stat-icon">⚙️</span>
-        <div>
-          <div class="stat-val">24,770</div>
-          <div class="stat-lbl">Force Points</div>
-        </div>
-      </div>
-      <div class="stat-divider"></div>
-      <div class="stat-card">
-        <span class="stat-icon">🔭</span>
-        <div>
-          <div class="stat-val">1,864</div>
-          <div class="stat-lbl">Weekly Intel</div>
-        </div>
-      </div>
-      <div class="stat-divider"></div>
-      <div class="stat-card">
-        <span class="stat-icon">👥</span>
-        <div>
-          <div class="stat-val">50 / 50</div>
-          <div class="stat-lbl">Members</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="spotlight-section">
+    <!-- COMMAND STRUCTURE -->
+    <section class="spotlight-section animate-in" id="command">
       <h2 class="section-heading">Command Structure</h2>
       <div class="spotlight-grid" id="spotlight"></div>
     </section>
 
-    <section class="prev-leaders-section">
+    <!-- PREVIOUS LEADERS -->
+    <section class="prev-leaders-section animate-in">
       <h2 class="section-heading">Previous Leaders</h2>
-      <div class="prev-leaders-grid" id="prev-leaders"></div>
+      <div class="prev-leaders-grid" id="prev-leaders-grid"></div>
     </section>
 
-    <section class="potw-section">
+    <!-- PLAYER OF THE WEEK -->
+    <section class="potw-section animate-in" id="potw">
       <h2 class="section-heading">Player of the Week</h2>
-      <div class="potw-card">
-        <div class="potw-trophy">🏆</div>
-        <div class="potw-body">
-          <div class="potw-week">Week of May 27, 2026</div>
-          <div class="potw-name">split ya lip</div>
-          <div class="potw-badges">
-            <span class="level-badge">Lvl 84</span>
-            <span class="role-badge role-Member">Member</span>
-          </div>
-        </div>
-        <div class="potw-stats">
-          <div class="potw-stat">
-            <div class="potw-stat-val">1,613</div>
-            <div class="potw-stat-lbl">🏅 Victory Points</div>
-          </div>
-          <div class="potw-stat-divider"></div>
-          <div class="potw-stat">
-            <div class="potw-stat-val">346</div>
-            <div class="potw-stat-lbl">🔭 Intel</div>
-          </div>
-        </div>
-      </div>
+      <div id="potw-card"></div>
     </section>
 
-    <section class="rules-section">
+    <!-- ACTIVITY HIGHLIGHTS -->
+    <section class="activity-section animate-in" id="activity">
+      <h2 class="section-heading">This Week's Activity</h2>
+      <div id="activity-content"></div>
+    </section>
+
+    <!-- SQUAD RULES -->
+    <section class="rules-section animate-in" id="rules">
       <h2 class="section-heading">Squad Rules</h2>
       <div class="rules-grid">
-
         <div class="rule-card">
           <div class="rule-icon">⚔️</div>
           <div class="rule-body">
@@ -98,7 +104,6 @@
             <div class="rule-desc">Commit fully to every attack. Deploy all troops — no pulling back once the assault begins.</div>
           </div>
         </div>
-
         <div class="rule-card">
           <div class="rule-icon">📋</div>
           <div class="rule-body">
@@ -106,7 +111,6 @@
             <div class="rule-desc">Read attack notes before hitting any base. Coordinate with the task force and stick to the plan.</div>
           </div>
         </div>
-
         <div class="rule-card rule-card--highlight">
           <div class="rule-icon">🎖️</div>
           <div class="rule-body">
@@ -114,7 +118,6 @@
             <div class="rule-desc">Collect <strong>500+ intel</strong> weekly and show high participation consistently to earn an Officer promotion.</div>
           </div>
         </div>
-
         <div class="rule-card">
           <div class="rule-icon">💣</div>
           <div class="rule-body">
@@ -122,11 +125,11 @@
             <div class="rule-desc">Max <strong>5 sabotages</strong> per operation — unless intel storage is nearly full, in which case use your best judgement.</div>
           </div>
         </div>
-
       </div>
     </section>
 
-    <section class="roster-section">
+    <!-- FULL ROSTER -->
+    <section class="roster-section animate-in" id="roster">
       <h2 class="section-heading">Full Roster</h2>
       <div class="controls-bar">
         <input type="text" id="search" class="search-box" placeholder="🔍  Search commander...">
@@ -138,19 +141,18 @@
           <option value="Member">Member</option>
         </select>
         <div class="sort-group">
-          <span class="sort-label">Sort by:</span>
-          <button class="sort-btn active" data-sort="vp">Victory Points</button>
+          <span class="sort-label">Sort:</span>
+          <button class="sort-btn active" data-sort="vp">VP</button>
           <button class="sort-btn" data-sort="intel">Intel</button>
-          <button class="sort-btn" data-sort="participation">Participation</button>
+          <button class="sort-btn" data-sort="participation">Part.</button>
           <button class="sort-btn" data-sort="level">Level</button>
         </div>
       </div>
-
       <div class="table-wrap">
         <table class="roster-table">
           <thead>
             <tr>
-              <th class="col-rank">Rank</th>
+              <th class="col-rank">#</th>
               <th class="col-name">Commander</th>
               <th class="col-level">Lvl</th>
               <th class="col-role">Role</th>
