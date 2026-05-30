@@ -519,7 +519,8 @@ window.TASK_FORCE_DATA = Object.freeze({
       "intel": 1339,
       "attacks": 37,
       "missed": 1,
-      "participation": 97
+      "participation": 97,
+      "zombie": true
     },
     {
       "name": "Rubberducky",
