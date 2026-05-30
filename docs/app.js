@@ -76,9 +76,9 @@ const POTW_DATA = {
 const MEMBERS = [
   { name: 'old man',         level: 65, role: 'Co-Leader', vp: 1304, intel: 15205, attacks: 488, missed: 4,  participation: 99,  exLeader: true },
   { name: 'FJ Fruitman',     level: 70, role: 'Co-Leader', vp: 1173, intel: 12513, attacks: 424, missed: 0,  participation: 100, neverMissed: true },
-  { name: 'MrBoomBoom',      level: 66, role: 'Leader',    vp: 1229, intel: 11432, attacks: 440, missed: 12, participation: 97  },
+  { name: 'MrBoomBoom',      level: 66, role: 'Leader',    vp: 1229, intel: 11432, attacks: 440, missed: 12, participation: 97,  notesGiver: true },
   { name: 'PutteQuick',      level: 64, role: 'Officer',   vp: 1045, intel: 10743, attacks: 283, missed: 76, participation: 78  },
-  { name: 'Boomer',          level: 55, role: 'Co-Leader', vp: 1004, intel: 7749,  attacks: 412, missed: 0,  participation: 100, exLeader: true, neverMissed: true, creator: true },
+  { name: 'Boomer',          level: 55, role: 'Co-Leader', vp: 1004, intel: 7749,  attacks: 412, missed: 0,  participation: 100, exLeader: true, neverMissed: true, creator: true, notesGiver: true },
   { name: 'Papa Midnite',    level: 57, role: 'Officer',   vp: 935,  intel: 7638,  attacks: 305, missed: 84, participation: 78  },
   { name: 'Rando Calrisian', level: 63, role: 'Officer',   vp: 1269, intel: 7477,  attacks: 179, missed: 9,  participation: 95  },
   { name: 'COYG',            level: 70, role: 'Co-Leader', vp: 617,  intel: 6048,  attacks: 258, missed: 1,  participation: 99  },
@@ -94,9 +94,9 @@ const MEMBERS = [
   { name: 'boomerbeachin',   level: 61, role: 'Officer',   vp: 1156, intel: 2059,  attacks: 89,  missed: 3,  participation: 96  },
   { name: 'cupidstunt',      level: 52, role: 'Officer',   vp: 164,  intel: 2024,  attacks: 224, missed: 13, participation: 94  },
   { name: 'jenuine',         level: 63, role: 'Officer',   vp: 977,  intel: 1866,  attacks: 93,  missed: 6,  participation: 93  },
-  { name: 'keg too',         level: 78, role: 'Officer',   vp: 810,  intel: 1622,  attacks: 70,  missed: 9,  participation: 88  },
-  { name: 'ACFrontRanger',   level: 70, role: 'Officer',   vp: 665,  intel: 1555,  attacks: 92,  missed: 1,  participation: 98  },
-  { name: 'CRAZYCRAFT',      level: 62, role: 'Co-Leader', vp: 676,  intel: 1539,  attacks: 79,  missed: 0,  participation: 100 },
+  { name: 'keg too',         level: 78, role: 'Officer',   vp: 810,  intel: 1622,  attacks: 70,  missed: 9,  participation: 88,  notesGiver: true },
+  { name: 'ACFrontRanger',   level: 70, role: 'Officer',   vp: 665,  intel: 1555,  attacks: 92,  missed: 1,  participation: 98,  notesGiver: true },
+  { name: 'CRAZYCRAFT',      level: 62, role: 'Co-Leader', vp: 676,  intel: 1539,  attacks: 79,  missed: 0,  participation: 100, notesGiver: true },
   { name: 'lumpy',           level: 63, role: 'Co-Leader', vp: 1051, intel: 1339,  attacks: 37,  missed: 1,  participation: 97  },
   { name: 'Rubberducky',     level: 43, role: 'Officer',   vp: 375,  intel: 1236,  attacks: 53,  missed: 3,  participation: 94  },
   { name: 'Ricky',           level: 62, role: 'Member',    vp: 491,  intel: 944,   attacks: 37,  missed: 7,  participation: 84  },
@@ -212,6 +212,7 @@ function achBadges(m) {
   if (m.creator)                                           out.push('<span class="ach-badge ach-creator">💥 Site Architect</span>');
   if (m.exLeader)                                          out.push('<span class="ach-badge ach-ex-leader">🏛️ Ex-Leader</span>');
   if (m.missed === 0 && m.attacks > 0)                     out.push('<span class="ach-badge ach-never-missed">🎯 Perfect Record</span>');
+  if (m.notesGiver)                                        out.push('<span class="ach-badge ach-notes-giver">📋 Op Notes</span>');
   if (m.sabotagePass)                                      out.push('<span class="ach-badge ach-sabotage-pass">💣 Unlimited Sabotage Pass</span>');
   if (m.role === 'Member' && m.intel >= 500 && m.participation >= 90) out.push('<span class="ach-badge ach-promote-me">⭐ Promote Me</span>');
   if (m.role === 'Member' && m.intel >= 400 && m.intel < 500) out.push(`<span class="ach-badge ach-promo-watch">📈 Promotion Watch · ${500 - m.intel} intel to go</span>`);

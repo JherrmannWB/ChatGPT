@@ -523,6 +523,7 @@ body::after {
 .ach-new-recruit     { background: rgba(102,187,106,0.18); color: #a5d6a7; border: 1px solid rgba(102,187,106,0.42); font-weight: 700; }
 .ach-promoted        { background: rgba(79,195,247,0.18); color: #81d4fa; border: 1px solid rgba(79,195,247,0.42); font-weight: 700; }
 .ach-demoted         { background: rgba(255,183,77,0.18); color: #ffcc80; border: 1px solid rgba(255,183,77,0.42); font-weight: 700; }
+.ach-notes-giver     { background: rgba(149,117,205,0.20); color: #ce93d8; border: 1px solid rgba(149,117,205,0.45); font-weight: 700; }
 .ach-demotion-watch  { background: rgba(239,83,80,0.22); color: #ff8a80; border: 1px solid rgba(239,83,80,0.48); font-weight: 700; }
 
 /* ── PREVIOUS LEADERS ──────────────────────────────── */
