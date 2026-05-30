@@ -1,66 +1,35 @@
-# Human + AI Engineering Showcase
+# OLD MEN Task Force HQ
 
-A positive, practical project that demonstrates what humans and AI can build **together**.
+A GitHub Pages-ready Boom Beach task force showcase for **OLD MEN** (`#PCC00J08`).
 
-## Why this exists
-Most AI projects focus on automation. This project focuses on **collaboration**:
-- Humans provide intent, context, judgment, and taste.
-- AI provides speed, option generation, and iteration support.
-- Together, they produce better outcomes than either could alone.
+The page acts as a lightweight command board: current operation, command structure, previous leaders, player of the week, roster highlights, squad rules, and a sortable full roster.
 
-## What this project showcases
-This repository is a living lab for end-to-end Human + AI workflows:
-- Planning and scoping ideas
-- Co-writing implementation code
-- Generating and refining tests
-- Evaluating quality with clear, practical metrics
-- Producing polished artifacts (docs, demos, and reports)
+## Run Locally
 
-## Collaboration loop
-Each showcase follows a simple pattern:
-1. **Human defines goals** (problem, audience, constraints)
-2. **AI proposes drafts** (approaches, code, tests, copy)
-3. **Human selects and steers** (tradeoffs, direction, standards)
-4. **AI accelerates execution** (implementation, cleanup, iteration)
-5. **Human approves outcomes** (quality, usefulness, readiness)
+```bash
+npm install
+npm run dev
+```
 
-## Success metrics
-We measure collaboration quality, not just output quantity:
-- Time-to-first-working-solution
-- Defect rate after review
-- Test completeness and confidence
-- Readability and maintainability
-- Human satisfaction: “Would we ship this?”
+The dev server serves `docs/` at `http://localhost:3000`.
 
-## First showcase idea (GitHub Pages-ready)
-### **Build Together Studio**
-An interactive GitHub Pages site showing side-by-side project journeys:
-- **Human-only baseline**
-- **AI-first draft**
-- **Human + AI final result**
+## Project Structure
 
-For each mini-project, publish:
-- Prompt and goal
-- Key decisions and reasoning
-- Iteration history
-- Final artifact
-- Metrics delta (speed, quality, confidence)
+- `docs/index.html` - static page shell and content sections
+- `docs/styles.css` - tactical visual system, responsive layout, motion, and roster cards
+- `docs/app.js` - player config, roster data, computed badges, filtering, sorting, and rendering
 
-This creates a compelling public portfolio of what high-quality co-creation looks like in practice.
+## Updating Stats
 
-## Roadmap
-- Add reusable templates for collaboration runs
-- Add automated report generation per run
-- Add benchmark scenarios across coding, docs, and QA
-- Add lightweight dashboard pages for trend tracking
+Most task force data lives near the top of `docs/app.js`.
 
-## Contributing
-Contributions are welcome. If you add a new showcase run, include:
-- The original goal
-- The collaboration steps taken
-- What changed during iteration
-- Final outcomes and lessons learned
+- Update `LAST_UPDATED` and `CURRENT_OP` for each refresh.
+- Update `POTW_DATA` for Player of the Week.
+- Update `MEMBERS` for roster stats, role changes, missed attacks, and participation.
+- Update `PLAYER_CONFIG` for custom avatars, titles, and accent colors.
 
----
+Roster Intel, Attacks, and Participation are treated as grand totals. The activity panel intentionally labels those as roster highlights rather than weekly stats.
 
-If you're exploring the future of software creation, this project is a hands-on demonstration of how humans and AI can build better, together.
+## Deployment
+
+This repository is already shaped for GitHub Pages. Publish the `docs/` directory from the repository settings.

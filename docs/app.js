@@ -124,10 +124,6 @@ const MEMBERS = [
 ];
 
 // ─── COMPUTED ────────────────────────────────────────────────────────────────
-const vpRanking = [...MEMBERS]
-  .sort((a, b) => b.intel - a.intel || b.attacks - a.attacks)
-  .map(m => m.name);
-
 let currentSort   = 'intel';
 let currentRole   = '';
 let currentSearch = '';
@@ -138,7 +134,6 @@ function esc(str) {
 }
 
 function roleCls(role) { return 'role-' + role.replace(' ', '-'); }
-function vpRankOf(name) { return vpRanking.indexOf(name) + 1; }
 
 function medalFor(rank) {
   if (rank === 1) return '🥇';
@@ -263,7 +258,7 @@ function renderPrevLeaders() {
         <div class="prev-stat-div"></div>
         <div class="prev-stat">
           <div class="prev-stat-val">${m.intel}</div>
-          <div class="prev-stat-lbl">🔭 This Week Intel</div>
+          <div class="prev-stat-lbl">🔭 Total Intel</div>
         </div>
         <div class="prev-stat-div"></div>
         <div class="prev-stat">
@@ -327,7 +322,7 @@ function renderActivityHighlights() {
         <div class="act-icon">🏅</div>
         <div class="act-info">
           <div class="act-val">${topVP[0].vp.toLocaleString()}</div>
-          <div class="act-lbl">Top VP This Week</div>
+          <div class="act-lbl">Highest VP</div>
           <div class="act-name">${esc(topVP[0].name)}</div>
         </div>
       </div>
@@ -335,7 +330,7 @@ function renderActivityHighlights() {
         <div class="act-icon">🔭</div>
         <div class="act-info">
           <div class="act-val">${topIntel[0].intel}</div>
-          <div class="act-lbl">Top Intel</div>
+          <div class="act-lbl">Most Total Intel</div>
           <div class="act-name">${esc(topIntel[0].name)}</div>
         </div>
       </div>
@@ -351,8 +346,8 @@ function renderActivityHighlights() {
         <div class="act-icon">⚔️</div>
         <div class="act-info">
           <div class="act-val">${activeRate}%</div>
-          <div class="act-lbl">Active This Week</div>
-          <div class="act-name">${activeCount} commanders attacked</div>
+          <div class="act-lbl">Attackers Logged</div>
+          <div class="act-name">${activeCount} commanders with attacks</div>
         </div>
       </div>
     </div>`;
@@ -372,7 +367,7 @@ function renderActivityHighlights() {
         ${topVP.map((m, i) => lbRow(m, i, m.vp.toLocaleString(), '#ffd700')).join('')}
       </div>
       <div class="lb-panel">
-        <div class="lb-header">🔭 Top Intel</div>
+        <div class="lb-header">🔭 Total Intel</div>
         ${topIntel.map((m, i) => lbRow(m, i, m.intel, '#4fc3f7')).join('')}
       </div>
       <div class="lb-panel">
@@ -437,20 +432,20 @@ function renderRoster() {
     return;
   }
 
-  tbody.innerHTML = filtered.map(m => {
-    const vpRank = vpRankOf(m.name);
-    const medal  = medalFor(vpRank);
+  tbody.innerHTML = filtered.map((m, i) => {
+    const displayRank = i + 1;
+    const medal  = medalFor(displayRank);
     const rankCell   = medal
       ? `<span class="medal">${medal}</span>`
-      : `<span class="rank-num">${vpRank}</span>`;
+      : `<span class="rank-num">${displayRank}</span>`;
     const attacksCell = m.missed > 0
       ? `${m.attacks} <span class="miss-note">(${m.missed}✗)</span>`
       : `${m.attacks}`;
 
     return `
-      <tr class="${vpRank <= 3 ? 'is-top-3' : ''}${m.intel > 5000 ? ' is-veteran' : ''}">
-        <td class="col-rank">${rankCell}</td>
-        <td class="col-name">
+      <tr class="${displayRank <= 3 ? 'is-top-3' : ''}${m.intel > 5000 ? ' is-veteran' : ''}">
+        <td class="col-rank" data-label="Rank">${rankCell}</td>
+        <td class="col-name" data-label="Commander">
           <div class="name-cell">
             ${renderAvatar(m, { size: 'sm' })}
             <div>
@@ -459,12 +454,12 @@ function renderRoster() {
             </div>
           </div>
         </td>
-        <td class="col-level"><span class="level-badge">${m.level}</span></td>
-        <td class="col-role">${roleBadge(m.role)}</td>
-        <td class="col-vp">${m.vp.toLocaleString()}</td>
-        <td class="col-intel">${m.intel}</td>
-        <td class="col-attacks">${attacksCell}</td>
-        <td class="col-part">${renderPart(m.participation)}</td>
+        <td class="col-level" data-label="Level"><span class="level-badge">${m.level}</span></td>
+        <td class="col-role" data-label="Role">${roleBadge(m.role)}</td>
+        <td class="col-vp" data-label="VP">${m.vp.toLocaleString()}</td>
+        <td class="col-intel" data-label="Intel">${m.intel}</td>
+        <td class="col-attacks" data-label="Attacks">${attacksCell}</td>
+        <td class="col-part" data-label="Participation">${renderPart(m.participation)}</td>
       </tr>`;
   }).join('');
 }

@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Teko:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
-
 /* ════════════════════════════════════════════════════════
    OLD MEN · Task Force HQ — Tactical Island Command
 ════════════════════════════════════════════════════════ */
@@ -54,7 +52,22 @@
   --r-xl: 18px;
 }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 76px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 
 /* ── BASE ──────────────────────────────────────────── */
 body {
@@ -64,6 +77,14 @@ body {
   color: var(--t1);
   background-color: var(--bg-base);
   min-height: 100vh;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--teal-light);
+  outline-offset: 3px;
 }
 
 /* Tactical dot-grid + corner depth radials */
@@ -1012,7 +1033,27 @@ body::after {
 }
 
 @media (max-width: 640px) {
-  .page { padding: 66px 14px 64px; }
+  html { scroll-padding-top: 112px; }
+  .site-nav { height: auto; }
+  .nav-inner {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+    padding: 9px 14px 10px;
+  }
+  .nav-links {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: thin;
+  }
+  .nav-link {
+    display: inline-flex;
+    flex: 0 0 auto;
+  }
+  .nav-discord { margin-left: 0; }
+
+  .page { padding: 112px 14px 64px; }
   .tf-header { padding: 18px 18px; }
   .tf-emblem { font-size: 42px; }
   .tf-name { font-size: 42px; letter-spacing: 5px; }
@@ -1028,10 +1069,74 @@ body::after {
   .activity-summary { grid-template-columns: 1fr 1fr; }
   .controls-bar { flex-direction: column; align-items: stretch; }
   .sort-group { justify-content: center; }
-  .nav-link:not(.nav-discord) { display: none; }
 
-  .roster-table thead th.col-intel,
-  .roster-table tbody td.col-intel,
-  .roster-table thead th.col-attacks,
-  .roster-table tbody td.col-attacks { display: none; }
+  .table-wrap { overflow: visible; background: transparent; border: 0; box-shadow: none; }
+  .roster-table,
+  .roster-table tbody,
+  .roster-table tr,
+  .roster-table td { display: block; width: 100%; }
+  .roster-table thead { display: none; }
+  .roster-table tbody {
+    display: grid;
+    gap: 10px;
+  }
+  .roster-table tbody tr {
+    border: 1px solid var(--border-dim);
+    border-radius: var(--r-md);
+    background: var(--bg-panel-2);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+  .roster-table tbody tr.is-top-3 { background: rgba(245,197,24,0.05); }
+  .roster-table tbody tr.is-veteran { box-shadow: inset 4px 0 0 rgba(255,183,77,0.9), var(--shadow-sm); }
+  .roster-table tbody td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.035);
+    text-align: right !important;
+  }
+  .roster-table tbody td:last-child { border-bottom: 0; }
+  .roster-table tbody td::before {
+    content: attr(data-label);
+    flex: 0 0 auto;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+    color: var(--t3);
+  }
+  .roster-table tbody td.col-name {
+    display: block;
+    padding: 12px;
+    text-align: left !important;
+  }
+  .roster-table tbody td.col-name::before { display: none; }
+  .col-rank { width: auto; }
+  .name-cell { align-items: flex-start; }
+  .part-wrap { justify-content: flex-end; }
+  .part-bar { width: 88px; }
+  .empty-row td {
+    display: block;
+    padding: 24px;
+    text-align: center !important;
+  }
+  .empty-row td::before { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .animate-in {
+    opacity: 1;
+    transform: none;
+  }
 }
