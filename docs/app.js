@@ -55,11 +55,12 @@ const PLAYER_CONFIG = {
   'Snopy':           { emoji: '🐾', title: 'Tracker',        color: '#a5d6a7' },
   'Andy':            { emoji: '🔧', title: 'Fixer',          color: '#78909c' },
   'Commander':       { emoji: '📡', title: 'Tactician',      color: '#4fc3f7' },
+  'Ramo19':          { emoji: '🪖', title: 'Recruit',        color: '#66bb6a' },
 };
 
 // ─── PLAYER OF THE WEEK ─────────────────────────────────────────────────────
 // To update: change name, week, vp, and intel here.
-const LAST_UPDATED = 'May 28, 2026';
+const LAST_UPDATED = 'May 30, 2026';
 const CURRENT_OP   = 'Massive Attack'; // Update each operation
 
 const POTW_DATA = {
@@ -73,54 +74,71 @@ const POTW_DATA = {
 // To update stats: edit vp, intel, attacks, missed, participation for any player.
 // participation is a percentage (0–100). missed = attack slots not used.
 const MEMBERS = [
-  { name: 'old man',         level: 65, role: 'Co-Leader', vp: 1307, intel: 15174, attacks: 486, missed: 4,  participation: 99,  exLeader: true },
-  { name: 'FJ Fruitman',     level: 70, role: 'Co-Leader', vp: 1167, intel: 12454, attacks: 421, missed: 0,  participation: 100, neverMissed: true },
-  { name: 'MrBoomBoom',      level: 66, role: 'Leader',    vp: 1228, intel: 11353, attacks: 437, missed: 12, participation: 97  },
-  { name: 'PutteQuick',      level: 64, role: 'Officer',   vp: 1062, intel: 10738, attacks: 283, missed: 74, participation: 79  },
-  { name: 'Boomer',          level: 55, role: 'Co-Leader', vp: 996,  intel: 7708,  attacks: 409, missed: 0,  participation: 100, exLeader: true, neverMissed: true, creator: true },
-  { name: 'Papa Midnite',    level: 56, role: 'Officer',   vp: 929,  intel: 7623,  attacks: 304, missed: 82, participation: 78  },
-  { name: 'Rando Calrisian', level: 63, role: 'Officer',   vp: 1263, intel: 7441,  attacks: 178, missed: 8,  participation: 95  },
-  { name: 'COYG',            level: 70, role: 'Co-Leader', vp: 620,  intel: 5992,  attacks: 255, missed: 1,  participation: 99  },
-  { name: 'th3.sid',         level: 59, role: 'Co-Leader', vp: 780,  intel: 5688,  attacks: 270, missed: 11, participation: 96  },
-  { name: 'MT',              level: 55, role: 'Member',    vp: 1003, intel: 5437,  attacks: 159, missed: 50, participation: 76  },
-  { name: 'Frei_Taz',        level: 59, role: 'Officer',   vp: 609,  intel: 4474,  attacks: 191, missed: 20, participation: 90  },
-  { name: 'gibbyrulz',       level: 64, role: 'Officer',   vp: 1261, intel: 3068,  attacks: 73,  missed: 5,  participation: 93,  sabotagePass: true },
-  { name: 'MRchappel24',     level: 61, role: 'Officer',   vp: 634,  intel: 2635,  attacks: 118, missed: 31, participation: 79  },
-  { name: 'Alexk1728',       level: 64, role: 'Officer',   vp: 1061, intel: 2288,  attacks: 60,  missed: 2,  participation: 96  },
-  { name: 'boomerbeachin',   level: 61, role: 'Officer',   vp: 1158, intel: 2031,  attacks: 86,  missed: 3,  participation: 96  },
-  { name: 'cupidstunt',      level: 52, role: 'Officer',   vp: 165,  intel: 2024,  attacks: 223, missed: 12, participation: 94  },
-  { name: 'papagiorgio',     level: 67, role: 'Officer',   vp: 163,  intel: 2077,  attacks: 216, missed: 16, participation: 93  },
-  { name: 'SpartyOn',        level: 82, role: 'Member',    vp: 8,    intel: 2089,  attacks: 172, missed: 38, participation: 81  },
-  { name: 'jenuine',         level: 63, role: 'Officer',   vp: 980,  intel: 1855,  attacks: 91,  missed: 5,  participation: 94  },
-  { name: 'keg too',         level: 78, role: 'Officer',   vp: 805,  intel: 1569,  attacks: 67,  missed: 9,  participation: 88  },
-  { name: 'ACFrontRanger',   level: 70, role: 'Officer',   vp: 676,  intel: 1548,  attacks: 90,  missed: 1,  participation: 98  },
-  { name: 'CRAZYCRAFT',      level: 62, role: 'Co-Leader', vp: 677,  intel: 1521,  attacks: 76,  missed: 0,  participation: 100 },
-  { name: 'lumpy',           level: 63, role: 'Co-Leader', vp: 1028, intel: 1240,  attacks: 34,  missed: 1,  participation: 97  },
-  { name: 'Rubberducky',     level: 43, role: 'Officer',   vp: 403,  intel: 1224,  attacks: 52,  missed: 2,  participation: 96  },
-  { name: 'Commander',       level: 72, role: 'Officer',   vp: 0,    intel: 897,   attacks: 103, missed: 0,  participation: 100 },
-  { name: 'Dr Faustus',      level: 81, role: 'Officer',   vp: 0,    intel: 875,   attacks: 110, missed: 4,  participation: 96  },
-  { name: 'Ricky',           level: 62, role: 'Member',    vp: 493,  intel: 879,   attacks: 34,  missed: 7,  participation: 82  },
-  { name: 'Zed T Dog',       level: 84, role: 'Officer',   vp: 1446, intel: 820,   attacks: 15,  missed: 0,  participation: 100 },
-  { name: 'Boofoo',          level: 50, role: 'Officer',   vp: 585,  intel: 2420,  attacks: 110, missed: 20, participation: 84  },
-  { name: 'Skyfan113',       level: 50, role: 'Member',    vp: 477,  intel: 681,   attacks: 31,  missed: 4,  participation: 88  },
-  { name: '☆CRAZY DAVE☆',   level: 54, role: 'Member',    vp: 898,  intel: 574,   attacks: 12,  missed: 4,  participation: 75  },
-  { name: 'MrBoomBoomjr',    level: 42, role: 'Member',    vp: 585,  intel: 572,   attacks: 30,  missed: 0,  participation: 100 },
-  { name: 'DaVinceC',        level: 34, role: 'Member',    vp: 528,  intel: 541,   attacks: 9,   missed: 1,  participation: 90  },
-  { name: 'TwistedDonut',    level: 56, role: 'Member',    vp: 219,  intel: 435,   attacks: 62,  missed: 0,  participation: 100 },
-  { name: 'homer459',        level: 27, role: 'Officer',   vp: 189,  intel: 466,   attacks: 30,  missed: 0,  participation: 100 },
-  { name: 'CHARLIES DAD',    level: 74, role: 'Member',    vp: 188,  intel: 490,   attacks: 27,  missed: 1,  participation: 96  },
-  { name: 'Snopy',           level: 49, role: 'Officer',   vp: 0,    intel: 341,   attacks: 76,  missed: 5,  participation: 93  },
-  { name: 'Buda',            level: 78, role: 'Member',    vp: 131,  intel: 358,   attacks: 23,  missed: 5,  participation: 82  },
-  { name: 'split ya lip',    level: 84, role: 'Member',    vp: 1613, intel: 387,   attacks: 5,   missed: 0,  participation: 100 },
-  { name: 'ただん',           level: 81, role: 'Member',    vp: 118,  intel: 269,   attacks: 18,  missed: 5,  participation: 78  },
-  { name: 'el conquestador', level: 81, role: 'Officer',   vp: 9,    intel: 216,   attacks: 26,  missed: 3,  participation: 89  },
-  { name: 'ringoskyblastr3', level: 84, role: 'Member',    vp: 5,    intel: 216,   attacks: 31,  missed: 0,  participation: 100 },
-  { name: 'ميدو الطيار',     level: 69, role: 'Member',    vp: 267,  intel: 212,   attacks: 7,   missed: 0,  participation: 100 },
-  { name: '⛔Tired Bloke⛔',  level: 78, role: 'Officer',   vp: 55,   intel: 119,   attacks: 19,  missed: 1,  participation: 95  },
-  { name: 'Black Naruto89',  level: 62, role: 'Member',    vp: 169,  intel: 40,    attacks: 2,   missed: 0,  participation: 100 },
-  { name: 'Andy',            level: 56, role: 'Member',    vp: 0,    intel: 28,    attacks: 2,   missed: 0,  participation: 100 },
-  { name: 'JASHAN',          level: 48, role: 'Member',    vp: 503,  intel: 24,    attacks: 0,   missed: 0,  participation: 0   },
-  { name: 'BRUNOG',          level: 53, role: 'Member',    vp: 733,  intel: 288,   attacks: 13,  missed: 5,  participation: 72  },
+  { name: 'old man',         level: 65, role: 'Co-Leader', vp: 1304, intel: 15205, attacks: 488, missed: 4,  participation: 99,  exLeader: true },
+  { name: 'FJ Fruitman',     level: 70, role: 'Co-Leader', vp: 1173, intel: 12513, attacks: 424, missed: 0,  participation: 100, neverMissed: true },
+  { name: 'MrBoomBoom',      level: 66, role: 'Leader',    vp: 1229, intel: 11432, attacks: 440, missed: 12, participation: 97  },
+  { name: 'PutteQuick',      level: 64, role: 'Officer',   vp: 1045, intel: 10743, attacks: 283, missed: 76, participation: 78  },
+  { name: 'Boomer',          level: 55, role: 'Co-Leader', vp: 1004, intel: 7749,  attacks: 412, missed: 0,  participation: 100, exLeader: true, neverMissed: true, creator: true },
+  { name: 'Papa Midnite',    level: 56, role: 'Officer',   vp: 929,  intel: 7638,  attacks: 305, missed: 84, participation: 78  },
+  { name: 'Rando Calrisian', level: 63, role: 'Officer',   vp: 1269, intel: 7477,  attacks: 179, missed: 9,  participation: 95  },
+  { name: 'COYG',            level: 70, role: 'Co-Leader', vp: 620,  intel: 6048,  attacks: 258, missed: 1,  participation: 99  },
+  { name: 'th3.sid',         level: 59, role: 'Co-Leader', vp: 780,  intel: 5710,  attacks: 273, missed: 11, participation: 96  },
+  { name: 'MT',              level: 55, role: 'Member',    vp: 1003, intel: 5448,  attacks: 161, missed: 51, participation: 75  },
+  { name: 'Frei_Taz',        level: 59, role: 'Officer',   vp: 609,  intel: 4528,  attacks: 193, missed: 21, participation: 90  },
+  { name: 'gibbyrulz',       level: 64, role: 'Officer',   vp: 1271, intel: 3168,  attacks: 76,  missed: 5,  participation: 93,  sabotagePass: true },
+  { name: 'MRchappel24',     level: 61, role: 'Officer',   vp: 634,  intel: 2673,  attacks: 119, missed: 32, participation: 78  },
+  { name: 'Boofoo',          level: 50, role: 'Officer',   vp: 585,  intel: 2442,  attacks: 111, missed: 21, participation: 84  },
+  { name: 'Alexk1728',       level: 64, role: 'Officer',   vp: 1063, intel: 2316,  attacks: 61,  missed: 3,  participation: 95  },
+  { name: 'SpartyOn',        level: 82, role: 'Member',    vp: 8,    intel: 2089,  attacks: 172, missed: 40, participation: 81  },
+  { name: 'papagiorgio',     level: 67, role: 'Officer',   vp: 163,  intel: 2079,  attacks: 217, missed: 17, participation: 92  },
+  { name: 'boomerbeachin',   level: 61, role: 'Officer',   vp: 1156, intel: 2059,  attacks: 89,  missed: 3,  participation: 96  },
+  { name: 'cupidstunt',      level: 52, role: 'Officer',   vp: 165,  intel: 2024,  attacks: 224, missed: 13, participation: 94  },
+  { name: 'jenuine',         level: 63, role: 'Officer',   vp: 980,  intel: 1866,  attacks: 93,  missed: 6,  participation: 93  },
+  { name: 'keg too',         level: 78, role: 'Officer',   vp: 805,  intel: 1622,  attacks: 70,  missed: 9,  participation: 88  },
+  { name: 'ACFrontRanger',   level: 70, role: 'Officer',   vp: 676,  intel: 1555,  attacks: 92,  missed: 1,  participation: 98  },
+  { name: 'CRAZYCRAFT',      level: 62, role: 'Co-Leader', vp: 677,  intel: 1539,  attacks: 79,  missed: 0,  participation: 100 },
+  { name: 'lumpy',           level: 63, role: 'Co-Leader', vp: 1051, intel: 1339,  attacks: 37,  missed: 1,  participation: 97  },
+  { name: 'Rubberducky',     level: 43, role: 'Officer',   vp: 403,  intel: 1236,  attacks: 53,  missed: 3,  participation: 94  },
+  { name: 'Ricky',           level: 62, role: 'Member',    vp: 493,  intel: 944,   attacks: 37,  missed: 7,  participation: 84  },
+  { name: 'Zed T Dog',       level: 84, role: 'Officer',   vp: 1452, intel: 928,   attacks: 18,  missed: 0,  participation: 100 },
+  { name: 'Commander',       level: 72, role: 'Officer',   vp: 0,    intel: 915,   attacks: 106, missed: 0,  participation: 100 },
+  { name: 'Dr Faustus',      level: 81, role: 'Officer',   vp: 0,    intel: 897,   attacks: 113, missed: 4,  participation: 96  },
+  { name: 'Skyfan113',       level: 50, role: 'Member',    vp: 477,  intel: 733,   attacks: 33,  missed: 4,  participation: 89  },
+  { name: 'DaVinceC',        level: 34, role: 'Member',    vp: 528,  intel: 621,   attacks: 10,  missed: 2,  participation: 83  },
+  { name: 'MrBoomBoomjr',    level: 42, role: 'Member',    vp: 585,  intel: 595,   attacks: 33,  missed: 0,  participation: 100 },
+  { name: '☆CRAZY DAVE☆',   level: 54, role: 'Member',    vp: 898,  intel: 585,   attacks: 12,  missed: 6,  participation: 66  },
+  { name: 'CHARLIES DAD',    level: 74, role: 'Member',    vp: 188,  intel: 515,   attacks: 30,  missed: 1,  participation: 96  },
+  { name: 'homer459',        level: 27, role: 'Officer',   vp: 189,  intel: 503,   attacks: 33,  missed: 0,  participation: 100 },
+  { name: 'split ya lip',    level: 84, role: 'Officer',   vp: 1637, intel: 501,   attacks: 8,   missed: 0,  participation: 100 },
+  { name: 'TwistedDonut',    level: 56, role: 'Member',    vp: 219,  intel: 441,   attacks: 64,  missed: 0,  participation: 100 },
+  { name: 'Buda',            level: 78, role: 'Member',    vp: 131,  intel: 379,   attacks: 25,  missed: 6,  participation: 80  },
+  { name: 'Snopy',           level: 49, role: 'Officer',   vp: 0,    intel: 359,   attacks: 79,  missed: 5,  participation: 94  },
+  { name: 'BRUNOG',          level: 53, role: 'Member',    vp: 733,  intel: 313,   attacks: 15,  missed: 6,  participation: 71  },
+  { name: 'ただん',           level: 81, role: 'Member',    vp: 118,  intel: 283,   attacks: 20,  missed: 5,  participation: 80  },
+  { name: 'ميدو الطيار',     level: 69, role: 'Member',    vp: 267,  intel: 244,   attacks: 9,   missed: 1,  participation: 90  },
+  { name: 'ringoskyblastr3', level: 84, role: 'Member',    vp: 5,    intel: 232,   attacks: 34,  missed: 0,  participation: 100 },
+  { name: 'el conquestador', level: 81, role: 'Officer',   vp: 9,    intel: 227,   attacks: 28,  missed: 4,  participation: 87  },
+  { name: '⛔Tired Bloke⛔',  level: 78, role: 'Officer',   vp: 55,   intel: 128,   attacks: 21,  missed: 2,  participation: 91  },
+  { name: 'Black Naruto89',  level: 62, role: 'Member',    vp: 169,  intel: 40,    attacks: 2,   missed: 2,  participation: 50  },
+  { name: 'Andy',            level: 56, role: 'Member',    vp: 0,    intel: 39,    attacks: 3,   missed: 1,  participation: 75  },
+  { name: 'Ramo19',          level: 45, role: 'Member',    vp: 0,    intel: 7,     attacks: 0,   missed: 0,  participation: 0   },
+];
+
+// ─── GRAVEYARD ───────────────────────────────────────────────────────────────
+// Players who have left or been kicked, with their last recorded stats.
+const GRAVEYARD = [
+  {
+    name: 'JASHAN', departed: 'May 30, 2026', reason: 'Departed',
+    lastRole: 'Member', lastLevel: 48, lastVP: 503,
+    lastIntel: 24, lastAttacks: 0, lastParticipation: 0,
+  },
+];
+
+// ─── ROLE CHANGES ────────────────────────────────────────────────────────────
+// Tracks promotions, demotions, and new joins. Add an entry each update.
+const ROLE_CHANGES = [
+  { date: 'May 30, 2026', name: 'split ya lip', from: 'Member', to: 'Officer', type: 'promotion' },
+  { date: 'May 30, 2026', name: 'Ramo19',        from: null,     to: 'Member',  type: 'joined'    },
 ];
 
 // ─── COMPUTED ────────────────────────────────────────────────────────────────
@@ -185,6 +203,10 @@ function roleBadge(role) {
 
 function achBadges(m) {
   const out = [];
+  const change = ROLE_CHANGES.find(c => c.name === m.name);
+  if (change?.type === 'joined')    out.push('<span class="ach-badge ach-new-recruit">🆕 New Recruit</span>');
+  if (change?.type === 'promotion') out.push(`<span class="ach-badge ach-promoted">⬆️ Promoted to ${change.to}</span>`);
+  if (change?.type === 'demotion')  out.push(`<span class="ach-badge ach-demoted">⬇️ Demoted to ${change.to}</span>`);
   if (m.intel > 5000)                                      out.push('<span class="ach-badge ach-veteran">🎖️ Veteran</span>');
   if (m.creator)                                           out.push('<span class="ach-badge ach-creator">💥 Site Architect</span>');
   if (m.exLeader)                                          out.push('<span class="ach-badge ach-ex-leader">🏛️ Ex-Leader</span>');
@@ -464,6 +486,72 @@ function renderRoster() {
   }).join('');
 }
 
+// ─── RENDER: CHANGELOG ───────────────────────────────────────────────────────
+function renderChangelog() {
+  const el = document.getElementById('changelog-list');
+  if (!el) return;
+  if (!ROLE_CHANGES.length) {
+    el.innerHTML = '<p class="no-changes">No recent changes.</p>';
+    return;
+  }
+  el.innerHTML = ROLE_CHANGES.map(c => {
+    const m = MEMBERS.find(x => x.name === c.name);
+    const avatarHtml = m ? renderAvatar(m, { size: 'sm' }) : '';
+    let icon, cls, desc;
+    if (c.type === 'promotion') { icon = '⬆️'; cls = 'change-promoted'; desc = `${c.from} → ${c.to}`; }
+    else if (c.type === 'demotion') { icon = '⬇️'; cls = 'change-demoted'; desc = `${c.from} → ${c.to}`; }
+    else if (c.type === 'joined') { icon = '🆕'; cls = 'change-joined'; desc = 'Joined the task force'; }
+    else { icon = '📝'; cls = ''; desc = c.note || ''; }
+    return `
+      <div class="change-item ${cls}">
+        <span class="change-icon">${icon}</span>
+        ${avatarHtml}
+        <span class="change-name">${esc(c.name)}</span>
+        <span class="change-desc">${desc}</span>
+        <span class="change-date">${c.date}</span>
+      </div>`;
+  }).join('');
+}
+
+// ─── RENDER: GRAVEYARD ───────────────────────────────────────────────────────
+function renderGraveyard() {
+  const el = document.getElementById('graveyard-grid');
+  if (!el) return;
+  if (!GRAVEYARD.length) {
+    el.innerHTML = '<p class="no-changes">No departed members on record.</p>';
+    return;
+  }
+  el.innerHTML = GRAVEYARD.map(m => {
+    const cfg   = getPlayerConfig(m.name);
+    const emoji = cfg.emoji || '💀';
+    const color = cfg.color || '#78909c';
+    let style = `border-color:${color};`;
+    try { style += `background:rgba(${hexToRgb(color)},0.10);`; } catch (_) {}
+    return `
+      <div class="grave-card">
+        <div class="grave-avatar" style="${style}">
+          <span class="avatar-emoji">${emoji}</span>
+        </div>
+        <div class="grave-info">
+          <div class="grave-name">${esc(m.name)}</div>
+          <div class="grave-meta">
+            ${roleBadge(m.lastRole)}
+            <span class="grave-date">Departed ${m.departed}</span>
+          </div>
+          <div class="grave-stats">
+            <span>Lvl ${m.lastLevel}</span>
+            <span class="grave-sep">·</span>
+            <span>🔭 ${m.lastIntel} intel</span>
+            <span class="grave-sep">·</span>
+            <span>🏅 ${m.lastVP} VP</span>
+            <span class="grave-sep">·</span>
+            <span>${m.lastParticipation}% part.</span>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
 // ─── SCROLL ANIMATIONS ───────────────────────────────────────────────────────
 function initAnimations() {
   const observer = new IntersectionObserver(entries => {
@@ -478,6 +566,8 @@ function init() {
   renderPrevLeaders();
   renderPOTW();
   renderActivityHighlights();
+  renderChangelog();
+  renderGraveyard();
   renderRoster();
   document.getElementById('last-updated').textContent = `Last updated: ${LAST_UPDATED}`;
   document.getElementById('current-op-display').textContent = CURRENT_OP;

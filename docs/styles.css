@@ -519,6 +519,10 @@ body::after {
 .ach-promote-me    { background: rgba(245,197,24,0.20); color: #ffe066; border: 1px solid rgba(245,197,24,0.55); font-weight: 700; }
 .ach-promo-watch   { background: rgba(0,188,212,0.18); color: #4dd0e1; border: 1px solid rgba(0,188,212,0.42); font-weight: 700; }
 .ach-kick-watch      { background: rgba(239,83,80,0.22); color: #ff8a80; border: 1px solid rgba(239,83,80,0.48); font-weight: 700; }
+.ach-demotion-watch  { background: rgba(255,112,67,0.22); color: #ffab91; border: 1px solid rgba(255,112,67,0.48); font-weight: 700; }
+.ach-new-recruit     { background: rgba(102,187,106,0.18); color: #a5d6a7; border: 1px solid rgba(102,187,106,0.42); font-weight: 700; }
+.ach-promoted        { background: rgba(79,195,247,0.18); color: #81d4fa; border: 1px solid rgba(79,195,247,0.42); font-weight: 700; }
+.ach-demoted         { background: rgba(255,183,77,0.18); color: #ffcc80; border: 1px solid rgba(255,183,77,0.42); font-weight: 700; }
 .ach-demotion-watch  { background: rgba(239,83,80,0.22); color: #ff8a80; border: 1px solid rgba(239,83,80,0.48); font-weight: 700; }
 
 /* ── PREVIOUS LEADERS ──────────────────────────────── */
@@ -1125,6 +1129,91 @@ body::after {
   }
   .empty-row td::before { display: none; }
 }
+
+/* ── SECTION SUBTITLE ──────────────────────────────── */
+.section-sub {
+  font-size: 14px;
+  color: var(--t3);
+  font-weight: 400;
+  margin-left: 10px;
+  letter-spacing: 0;
+}
+
+/* ── CHANGELOG SECTION ─────────────────────────────── */
+.changelog-section { margin-bottom: 48px; }
+
+.change-list { display: flex; flex-direction: column; gap: 8px; }
+
+.change-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--r-md);
+  background: var(--bg-panel-2);
+  border: 1px solid var(--border-dim);
+  border-left-width: 3px;
+}
+.change-promoted { border-left-color: #81d4fa; }
+.change-demoted  { border-left-color: #ffcc80; }
+.change-joined   { border-left-color: #a5d6a7; }
+
+.change-icon { font-size: 18px; flex-shrink: 0; }
+.change-name { font-weight: 700; color: var(--t1); white-space: nowrap; }
+.change-desc { color: var(--t2); font-size: 13px; flex: 1; }
+.change-date { color: var(--t3); font-size: 11px; white-space: nowrap; margin-left: auto; }
+
+.no-changes { color: var(--t3); font-size: 14px; padding: 12px 0; }
+
+/* ── GRAVEYARD SECTION ─────────────────────────────── */
+.graveyard-section { margin-bottom: 48px; }
+
+.graveyard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+}
+
+.grave-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--bg-panel-2);
+  border: 1px solid var(--border-dim);
+  border-radius: var(--r-md);
+  opacity: 0.80;
+  position: relative;
+}
+.grave-card::after {
+  content: '†';
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 16px;
+  color: var(--t3);
+  opacity: 0.5;
+}
+
+.grave-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+  filter: grayscale(0.5);
+}
+
+.grave-info { flex: 1; min-width: 0; }
+.grave-name { font-weight: 700; color: var(--t2); font-size: 15px; margin-bottom: 4px; }
+.grave-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.grave-date { font-size: 11px; color: var(--t3); }
+.grave-stats { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--t3); flex-wrap: wrap; }
+.grave-sep  { opacity: 0.35; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
