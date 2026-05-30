@@ -542,16 +542,6 @@ window.TASK_FORCE_DATA = Object.freeze({
       "participation": 84
     },
     {
-      "name": "Zed T Dog",
-      "level": 84,
-      "role": "Officer",
-      "vp": 1449,
-      "intel": 928,
-      "attacks": 18,
-      "missed": 0,
-      "participation": 100
-    },
-    {
       "name": "Commander",
       "level": 72,
       "role": "Officer",
@@ -764,6 +754,17 @@ window.TASK_FORCE_DATA = Object.freeze({
   ],
   "graveyard": [
     {
+      "name": "Zed T Dog",
+      "departed": "May 30, 2026",
+      "reason": "Departed",
+      "lastRole": "Officer",
+      "lastLevel": 84,
+      "lastVP": 1449,
+      "lastIntel": 928,
+      "lastAttacks": 18,
+      "lastParticipation": 100
+    },
+    {
       "name": "JASHAN",
       "departed": "May 30, 2026",
       "reason": "Departed",
@@ -796,6 +797,13 @@ window.TASK_FORCE_DATA = Object.freeze({
       "from": null,
       "to": "Member",
       "type": "joined"
+    },
+    {
+      "date": "May 30, 2026",
+      "name": "Zed T Dog",
+      "from": "Officer",
+      "to": null,
+      "type": "departed"
     }
   ]
 });

@@ -1239,6 +1239,7 @@ body::after {
 .change-promoted { border-left-color: #81d4fa; }
 .change-demoted  { border-left-color: #ffcc80; }
 .change-joined   { border-left-color: #a5d6a7; }
+.change-departed { border-left-color: var(--t3); }
 
 .change-icon { font-size: 18px; flex-shrink: 0; }
 .change-name { font-weight: 700; color: var(--t1); white-space: nowrap; }

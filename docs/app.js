@@ -418,7 +418,8 @@ function renderChangelog() {
     let icon, cls, desc;
     if (c.type === 'promotion') { icon = '⬆️'; cls = 'change-promoted'; desc = `${c.from} → ${c.to}`; }
     else if (c.type === 'demotion') { icon = '⬇️'; cls = 'change-demoted'; desc = `${c.from} → ${c.to}`; }
-    else if (c.type === 'joined') { icon = '🆕'; cls = 'change-joined'; desc = 'Joined the task force'; }
+    else if (c.type === 'joined')   { icon = '🆕'; cls = 'change-joined';   desc = 'Joined the task force'; }
+    else if (c.type === 'departed') { icon = '👋'; cls = 'change-departed'; desc = `Left · last seen as ${c.from}`; }
     else { icon = '📝'; cls = ''; desc = c.note || ''; }
     return `
       <div class="change-item ${cls}">
