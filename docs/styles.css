@@ -989,6 +989,118 @@ body::after {
 
 .table-note { font-size: 12px; color: var(--t3); text-align: right; margin-top: 7px; font-style: italic; }
 
+.roster-cards { display: none; }
+
+.roster-card {
+  background: var(--bg-panel-2);
+  border: 1px solid var(--border-dim);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.roster-card.is-top-3 { background: rgba(245,197,24,0.05); }
+.roster-card.is-veteran { box-shadow: inset 4px 0 0 rgba(255,183,77,0.9), var(--shadow-sm); }
+
+.roster-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px;
+}
+
+.roster-card-rank {
+  width: 38px;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 38px;
+  border-radius: var(--r-sm);
+  background: rgba(0,0,0,0.22);
+  border: 1px solid var(--border-dim);
+  color: var(--gold);
+  font-family: 'Teko', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.roster-card-main { flex: 1; min-width: 0; }
+
+.roster-card-name {
+  font-family: 'Teko', sans-serif;
+  font-size: 25px;
+  font-weight: 600;
+  color: var(--t1);
+  line-height: 1;
+  word-break: break-word;
+}
+
+.roster-card-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 7px;
+}
+
+.roster-card-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid rgba(255,255,255,0.04);
+  background: rgba(0,0,0,0.14);
+}
+
+.roster-card-stat {
+  min-width: 0;
+  padding: 11px 12px;
+  border-right: 1px solid rgba(255,255,255,0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.roster-card-stat:nth-child(3) { border-right: 0; }
+
+.roster-card-stat--full {
+  grid-column: 1 / -1;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  border-right: 0;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.roster-card-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--t3);
+}
+
+.roster-card-value {
+  font-family: 'Teko', sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--t2);
+  line-height: 1;
+}
+
+.roster-card-value--vp { color: var(--rank-leader); }
+.roster-card-value--intel { color: var(--rank-officer); }
+
+.roster-empty-card {
+  padding: 24px;
+  text-align: center;
+  color: var(--t3);
+  border: 1px solid var(--border-dim);
+  border-radius: var(--r-lg);
+  background: var(--bg-panel-2);
+  font-style: italic;
+}
+
 /* ── FOOTER ────────────────────────────────────────── */
 .tf-footer { padding: 20px 0 8px; border-top: 1px solid var(--border-dim); }
 
@@ -1073,62 +1185,31 @@ body::after {
   .potw-stats { align-self: stretch; justify-content: center; }
   .activity-summary { grid-template-columns: 1fr 1fr; }
   .controls-bar { flex-direction: column; align-items: stretch; }
-  .sort-group { justify-content: center; }
-
-  .table-wrap { overflow: visible; background: transparent; border: 0; box-shadow: none; }
-  .roster-table,
-  .roster-table tbody,
-  .roster-table tr,
-  .roster-table td { display: block; width: 100%; }
-  .roster-table thead { display: none; }
-  .roster-table tbody {
+  .search-box,
+  .role-select {
+    width: 100%;
+    min-height: 44px;
+  }
+  .sort-group {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+    width: 100%;
+  }
+  .sort-label { grid-column: 1 / -1; }
+  .sort-btn {
+    min-height: 40px;
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  .table-wrap { display: none; }
+  .roster-cards {
     display: grid;
     gap: 10px;
   }
-  .roster-table tbody tr {
-    border: 1px solid var(--border-dim);
-    border-radius: var(--r-md);
-    background: var(--bg-panel-2);
-    box-shadow: var(--shadow-sm);
-    overflow: hidden;
-  }
-  .roster-table tbody tr.is-top-3 { background: rgba(245,197,24,0.05); }
-  .roster-table tbody tr.is-veteran { box-shadow: inset 4px 0 0 rgba(255,183,77,0.9), var(--shadow-sm); }
-  .roster-table tbody td {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 8px 12px;
-    border-bottom: 1px solid rgba(255,255,255,0.035);
-    text-align: right !important;
-  }
-  .roster-table tbody td:last-child { border-bottom: 0; }
-  .roster-table tbody td::before {
-    content: attr(data-label);
-    flex: 0 0 auto;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1.1px;
-    text-transform: uppercase;
-    color: var(--t3);
-  }
-  .roster-table tbody td.col-name {
-    display: block;
-    padding: 12px;
-    text-align: left !important;
-  }
-  .roster-table tbody td.col-name::before { display: none; }
-  .col-rank { width: auto; }
-  .name-cell { align-items: flex-start; }
-  .part-wrap { justify-content: flex-end; }
-  .part-bar { width: 88px; }
-  .empty-row td {
-    display: block;
-    padding: 24px;
-    text-align: center !important;
-  }
-  .empty-row td::before { display: none; }
+  .roster-card-stat--full .part-wrap { justify-content: flex-end; }
+  .roster-card-stat--full .part-bar { width: 96px; }
+  .table-note { text-align: left; }
 }
 
 /* ── SECTION SUBTITLE ──────────────────────────────── */
