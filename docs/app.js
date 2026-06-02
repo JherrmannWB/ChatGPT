@@ -472,6 +472,30 @@ function renderGraveyard() {
   }).join('');
 }
 
+// ─── RENDER: WATCH ALERTS ────────────────────────────────────────────────────
+function renderWatchAlerts() {
+  const el = document.getElementById('watch-alerts');
+  if (!el) return;
+
+  // Exclude new joins with no attack data yet
+  const demoteWatch = MEMBERS.filter(m => m.participation < 80 && m.role === 'Officer');
+  const kickWatch   = MEMBERS.filter(m => m.participation < 80 && m.role !== 'Officer' && m.attacks > 0);
+
+  if (!demoteWatch.length && !kickWatch.length) { el.innerHTML = ''; return; }
+
+  const row = (icon, cls, label, members) => `
+    <div class="watch-alert watch-alert--${cls}">
+      <span class="watch-icon">${icon}</span>
+      <span class="watch-label">${label}</span>
+      <span class="watch-names">${members.map(m => esc(m.name)).join(' · ')}</span>
+    </div>`;
+
+  el.innerHTML = [
+    demoteWatch.length ? row('⬇️', 'demote', 'Demotion Watch', demoteWatch) : '',
+    kickWatch.length   ? row('⚠️', 'kick',   'Kick Watch',     kickWatch)   : '',
+  ].join('');
+}
+
 // ─── SCROLL ANIMATIONS ───────────────────────────────────────────────────────
 function initAnimations() {
   const animated = document.querySelectorAll('.animate-in');
@@ -493,6 +517,7 @@ function initAnimations() {
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 function init() {
+  renderWatchAlerts();
   renderSpotlight();
   renderPrevLeaders();
   renderPOTW();

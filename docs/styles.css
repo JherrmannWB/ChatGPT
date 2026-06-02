@@ -472,6 +472,45 @@ body::after {
   50%       { box-shadow: 0 0 18px 6px rgba(255,215,0,0.85), 0 0 40px 12px rgba(255,215,0,0.35); }
 }
 
+/* ── WATCH ALERTS ──────────────────────────────────── */
+.watch-alerts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.watch-alert {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: var(--r-md);
+  border-left: 3px solid;
+  font-size: 13px;
+}
+
+.watch-alert--demote {
+  background: rgba(255,112,67,0.12);
+  border-left-color: #ff7043;
+}
+
+.watch-alert--kick {
+  background: rgba(239,83,80,0.14);
+  border-left-color: #ff5252;
+}
+
+.watch-icon  { font-size: 16px; flex-shrink: 0; }
+.watch-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  color: var(--t2);
+}
+.watch-names { color: var(--t1); }
+
 /* ── READABILITY OVER BEACH BACKGROUND ─────────────── */
 
 /* Every content section gets a dark opaque card so panels look consistently
