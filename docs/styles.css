@@ -75,16 +75,7 @@ body {
   font-size: 15px;
   line-height: 1.6;
   color: var(--t1);
-  /* Deep tropical ocean gradient — sky → water column → shallow shore */
-  background:
-    linear-gradient(
-      175deg,
-      #050d1c 0%,
-      #062236 22%,
-      #083a4a 52%,
-      #073428 78%,
-      #162014 100%
-    );
+  background-color: #08091e; /* deep night sky fallback */
   min-height: 100vh;
 }
 
@@ -96,51 +87,74 @@ select:focus-visible {
   outline-offset: 3px;
 }
 
-/* Tropical atmosphere: sun glow, underwater caustic shimmer, sandy shore haze */
+/*
+  Full beach scene — fixed to viewport so it never scrolls away.
+  Layer order (top → bottom):
+    1+2  Palm tree silhouettes — left and right
+    3    Setting sun disc
+    4    Wide horizon halo
+    5    Sun reflection column on water
+    6-14 Stars in night sky
+    15   Sky gradient — night purple → sunset crimson → ocean teal → warm sand
+*/
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background-image:
-    /* Warm tropical sun bleeding in from top-right */
-    radial-gradient(ellipse at 88% 0%,   rgba(255,185,55,0.13) 0%, transparent 46%),
-    /* Cool moonlight / starfield top-left */
-    radial-gradient(ellipse at 6%  2%,   rgba(120,210,255,0.07) 0%, transparent 38%),
-    /* Underwater light shaft from above — mid-left */
-    radial-gradient(ellipse at 22% 38%,  rgba(0,200,225,0.06)  0%, transparent 32%),
-    /* Sandy shore warm ambient glow at very bottom */
-    radial-gradient(ellipse at 50% 102%, rgba(205,148,58,0.16)  0%, transparent 38%),
-    /* Water caustic shimmer — diagonal crossing lines */
-    repeating-linear-gradient(
-      -18deg,
-      transparent 0px, transparent 22px,
-      rgba(0,210,240,0.022) 22px, rgba(0,210,240,0.022) 23px
-    ),
-    repeating-linear-gradient(
-      18deg,
-      transparent 0px, transparent 34px,
-      rgba(0,170,200,0.016) 34px, rgba(0,170,200,0.016) 35px
+  background:
+    /* ── Left palm — tall trunk curving right, 7 fronds ── */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 280 650'%3E%3Cpath d='M40,650 C48,540 62,430 82,330 C94,270 108,195 128,128 C134,108 140,92 148,78' stroke='%231e1008' stroke-width='24' stroke-linecap='round' fill='none'/%3E%3Cpath d='M148,78 C120,60 80,46 38,38' stroke='%230a1806' stroke-width='16' stroke-linecap='round' fill='none'/%3E%3Cpath d='M148,78 C118,70 72,68 24,72' stroke='%230a1806' stroke-width='12' stroke-linecap='round' fill='none'/%3E%3Cpath d='M148,78 C130,52 108,24 88,4' stroke='%230a1806' stroke-width='15' stroke-linecap='round' fill='none'/%3E%3Cpath d='M148,78 C144,48 140,20 136,0' stroke='%230a1806' stroke-width='14' stroke-linecap='round' fill='none'/%3E%3Cpath d='M148,78 C166,52 188,24 210,4' stroke='%230a1806' stroke-width='15' stroke-linecap='round' fill='none'/%3E%3Cpath d='M148,78 C178,62 218,50 260,44' stroke='%230a1806' stroke-width='16' stroke-linecap='round' fill='none'/%3E%3Cpath d='M148,78 C180,72 224,70 276,76' stroke='%230a1806' stroke-width='12' stroke-linecap='round' fill='none'/%3E%3Ccircle cx='148' cy='78' r='14' fill='%231e1008'/%3E%3C/svg%3E")
+      left bottom / 240px auto no-repeat,
+    /* ── Right palm — shorter trunk curving left, 7 fronds ── */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 250 580'%3E%3Cpath d='M200,580 C192,480 178,380 162,290 C152,232 140,162 122,100 C116,82 110,68 105,55' stroke='%231e1008' stroke-width='20' stroke-linecap='round' fill='none'/%3E%3Cpath d='M105,55 C80,38 42,28 8,22' stroke='%230a1806' stroke-width='14' stroke-linecap='round' fill='none'/%3E%3Cpath d='M105,55 C80,46 46,44 8,48' stroke='%230a1806' stroke-width='10' stroke-linecap='round' fill='none'/%3E%3Cpath d='M105,55 C90,30 74,8 58,0' stroke='%230a1806' stroke-width='13' stroke-linecap='round' fill='none'/%3E%3Cpath d='M105,55 C105,26 104,6 102,0' stroke='%230a1806' stroke-width='12' stroke-linecap='round' fill='none'/%3E%3Cpath d='M105,55 C120,30 138,8 158,0' stroke='%230a1806' stroke-width='13' stroke-linecap='round' fill='none'/%3E%3Cpath d='M105,55 C130,40 165,30 205,26' stroke='%230a1806' stroke-width='14' stroke-linecap='round' fill='none'/%3E%3Cpath d='M105,55 C132,48 168,46 210,50' stroke='%230a1806' stroke-width='10' stroke-linecap='round' fill='none'/%3E%3Ccircle cx='105' cy='55' r='12' fill='%231e1008'/%3E%3C/svg%3E")
+      right bottom / 200px auto no-repeat,
+    /* Setting sun disc on the horizon */
+    radial-gradient(ellipse 80px 68px at 62% 50%, rgba(255,225,75,0.96) 0%, rgba(255,165,38,0.82) 18%, rgba(220,88,12,0.40) 44%, transparent 65%),
+    /* Wide warm glow halo around horizon */
+    radial-gradient(ellipse 62% 16% at 62% 50%, rgba(255,140,38,0.20) 0%, transparent 100%),
+    /* Sun reflection column on the water surface */
+    linear-gradient(to bottom, transparent 52%, rgba(255,152,38,0.09) 54%, rgba(255,140,32,0.04) 58%, transparent 65%),
+    /* Stars in the night sky */
+    radial-gradient(1.5px 1.5px at 12%  6%,  rgba(255,255,255,0.90) 0%, transparent 100%),
+    radial-gradient(1px   1px   at 25%  4%,  rgba(255,255,255,0.65) 0%, transparent 100%),
+    radial-gradient(2px   2px   at 38%  2%,  rgba(255,255,255,0.76) 0%, transparent 100%),
+    radial-gradient(1px   1px   at 58%  5%,  rgba(255,255,255,0.55) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 74%  3%,  rgba(255,255,255,0.72) 0%, transparent 100%),
+    radial-gradient(1px   1px   at 88%  7%,  rgba(255,255,255,0.62) 0%, transparent 100%),
+    radial-gradient(1px   1px   at 7%  13%,  rgba(255,255,255,0.44) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 50%  4%,  rgba(255,255,255,0.58) 0%, transparent 100%),
+    radial-gradient(1px   1px   at 84% 10%,  rgba(255,255,255,0.40) 0%, transparent 100%),
+    /* Sky gradient — deep night → crimson sunset → ocean → warm sand */
+    linear-gradient(180deg,
+      #08091e 0%,
+      #1a1038 10%,
+      #381548 20%,
+      #741e16 30%,
+      #b84018 38%,
+      #d86522 44%,
+      #e88030 48%,
+      #d46222 52%,
+      #195878 58%,
+      #0d3e58 68%,
+      #083238 80%,
+      #a07838 88%,
+      #c49848 100%
     );
-  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
   pointer-events: none;
   z-index: 0;
 }
 
-/* Three-layer animated beach waves + warm sandy shore strip */
+/* Sandy beach + three-layer animated waves */
 body::after {
   content: '';
   position: fixed;
   bottom: 0; left: 0; right: 0;
-  height: 160px;
+  height: 180px;
   background:
-    /* Front wave — surf/foam, lightest */
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 58'%3E%3Cpath d='M0,28 C240,54 480,2 720,28 C960,54 1200,2 1440,28 L1440,58 L0,58 Z' fill='%234dd0e1' opacity='0.22'/%3E%3Cpath d='M0,38 C130,24 290,48 510,36 C730,24 960,46 1150,34 C1310,24 1400,38 1440,36 L1440,58 L0,58 Z' fill='white' opacity='0.06'/%3E%3C/svg%3E") repeat-x,
-    /* Middle wave — main ocean */
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 78'%3E%3Cpath d='M0,42 C180,72 420,10 720,42 C1020,74 1260,16 1440,42 L1440,78 L0,78 Z' fill='%2300bcd4' opacity='0.28'/%3E%3C/svg%3E") repeat-x,
-    /* Back wave — deep ocean, slowest */
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 92'%3E%3Cpath d='M0,56 C360,92 720,18 1080,56 C1260,76 1380,42 1440,56 L1440,92 L0,92 Z' fill='%23006080' opacity='0.36'/%3E%3C/svg%3E") repeat-x,
-    /* Sandy shore warm gradient at very bottom */
-    linear-gradient(to top, rgba(195,140,55,0.22) 0%, rgba(195,140,55,0.06) 18%, transparent 36%);
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 58'%3E%3Cpath d='M0,28 C240,54 480,2 720,28 C960,54 1200,2 1440,28 L1440,58 L0,58 Z' fill='%234dd0e1' opacity='0.40'/%3E%3Cpath d='M0,38 C130,24 290,48 510,36 C730,24 960,46 1150,34 C1310,24 1400,38 1440,36 L1440,58 L0,58 Z' fill='white' opacity='0.10'/%3E%3C/svg%3E") repeat-x,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 78'%3E%3Cpath d='M0,42 C180,72 420,10 720,42 C1020,74 1260,16 1440,42 L1440,78 L0,78 Z' fill='%2300acc2' opacity='0.44'/%3E%3C/svg%3E") repeat-x,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 92'%3E%3Cpath d='M0,56 C360,92 720,18 1080,56 C1260,76 1380,42 1440,56 L1440,92 L0,92 Z' fill='%23005f78' opacity='0.50'/%3E%3C/svg%3E") repeat-x,
+    linear-gradient(to top, #b08838 0%, #c09848 6%, #caa452 12%, rgba(185,145,58,0.50) 22%, transparent 38%);
   background-position:
     0px bottom,
     480px bottom 22px,
@@ -161,10 +175,28 @@ body::after {
   }
   to {
     background-position:
-      1440px bottom,          /* front: full speed */
-      1920px bottom 22px,     /* middle: full speed, different phase */
-      1120px bottom 56px,     /* back: 960px — visually slower */
-      0      bottom;          /* shore: static */
+      1440px bottom,
+      1920px bottom 22px,
+      1120px bottom 56px,
+      0      bottom;
+  }
+}
+
+/* Shrink palm trees on narrow screens */
+@media (max-width: 900px) {
+  body::before {
+    background-size:
+      170px auto,    /* left palm */
+      140px auto,    /* right palm */
+      auto, auto, auto, auto, auto, auto, auto, auto, auto, auto, auto, auto, auto;
+  }
+}
+@media (max-width: 480px) {
+  body::before {
+    background-size:
+      110px auto,    /* left palm */
+      90px auto,     /* right palm */
+      auto, auto, auto, auto, auto, auto, auto, auto, auto, auto, auto, auto, auto;
   }
 }
 
