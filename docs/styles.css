@@ -9,9 +9,9 @@
   /* Backgrounds */
   --bg-base:    #060f1e;
   --bg-deep:    #071525;
-  --bg-panel:   rgba(6, 18, 38, 0.94);
-  --bg-panel-2: rgba(8, 22, 46, 0.90);
-  --bg-input:   rgba(8, 20, 42, 0.80);
+  --bg-panel:   rgba(4, 12, 28, 0.97);
+  --bg-panel-2: rgba(5, 16, 36, 0.96);
+  --bg-input:   rgba(4, 14, 34, 0.88);
 
   /* Borders */
   --border-dim:  rgba(255, 255, 255, 0.06);
@@ -129,11 +129,11 @@ body::before {
       #08091e 0%,
       #1a1038 10%,
       #381548 20%,
-      #741e16 30%,
-      #b84018 38%,
-      #d86522 44%,
-      #e88030 48%,
-      #d46222 52%,
+      #5c1810 30%,
+      #8c2e14 38%,
+      #a84818 44%,
+      #bc5c1e 48%,
+      #a04418 52%,
       #195878 58%,
       #0d3e58 68%,
       #083238 80%,
@@ -472,6 +472,31 @@ body::after {
   50%       { box-shadow: 0 0 18px 6px rgba(255,215,0,0.85), 0 0 40px 12px rgba(255,215,0,0.35); }
 }
 
+/* ── READABILITY OVER BEACH BACKGROUND ─────────────── */
+/* The header gets blur so its semi-transparent bg desaturates the sunset */
+.tf-header {
+  backdrop-filter: blur(10px) saturate(0.60);
+  -webkit-backdrop-filter: blur(10px) saturate(0.60);
+}
+
+/* Every content section gets a dark translucent card + blur so panel
+   backgrounds look consistently dark regardless of which sky band is behind them */
+.spotlight-section,
+.prev-leaders-section,
+.potw-section,
+.activity-section,
+.changelog-section,
+.rules-section,
+.roster-section,
+.graveyard-section {
+  background: rgba(3, 8, 20, 0.72);
+  backdrop-filter: blur(12px) saturate(0.55);
+  -webkit-backdrop-filter: blur(12px) saturate(0.55);
+  border-radius: var(--r-xl);
+  border: 1px solid rgba(255,255,255,0.04);
+  padding: 20px 24px 24px;
+}
+
 /* ── COMMAND STRUCTURE ─────────────────────────────── */
 .spotlight-section { margin-bottom: 34px; }
 .cmd-tier { margin-bottom: 20px; }
@@ -610,7 +635,7 @@ body::after {
 .ach-demotion-watch  { background: rgba(239,83,80,0.22); color: #ff8a80; border: 1px solid rgba(239,83,80,0.48); font-weight: 700; }
 
 /* ── PREVIOUS LEADERS ──────────────────────────────── */
-.prev-leaders-section { margin-bottom: 34px; }
+.prev-leaders-section { margin-bottom: 20px; }
 .prev-leaders-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; }
 
 .prev-leader-card {
@@ -689,7 +714,7 @@ body::after {
 .prev-stat-lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--t3); margin-top: 2px; }
 
 /* ── PLAYER OF THE WEEK ────────────────────────────── */
-.potw-section { margin-bottom: 34px; }
+.potw-section { margin-bottom: 20px; }
 
 .potw-card {
   display: flex;
@@ -773,7 +798,7 @@ body::after {
 .potw-stat-lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(245,197,24,0.42); margin-top: 2px; }
 
 /* ── ACTIVITY HIGHLIGHTS ───────────────────────────── */
-.activity-section { margin-bottom: 34px; }
+.activity-section { margin-bottom: 20px; }
 
 .activity-summary {
   display: grid;
@@ -886,7 +911,7 @@ body::after {
 }
 
 /* ── SQUAD RULES ───────────────────────────────────── */
-.rules-section { margin-bottom: 34px; }
+.rules-section { margin-bottom: 20px; }
 .rules-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
 
 .rule-card {
@@ -1305,7 +1330,7 @@ body::after {
 }
 
 /* ── CHANGELOG SECTION ─────────────────────────────── */
-.changelog-section { margin-bottom: 48px; }
+.changelog-section { margin-bottom: 20px; }
 
 .change-list { display: flex; flex-direction: column; gap: 8px; }
 
@@ -1332,7 +1357,7 @@ body::after {
 .no-changes { color: var(--t3); font-size: 14px; padding: 12px 0; }
 
 /* ── GRAVEYARD SECTION ─────────────────────────────── */
-.graveyard-section { margin-bottom: 48px; }
+.graveyard-section { margin-bottom: 20px; }
 
 .graveyard-grid {
   display: grid;
