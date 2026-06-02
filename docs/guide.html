@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="OLD MEN Task Force — Leader's Guide">
+  <title>OLD MEN · Leader's Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .guide-page { max-width: 820px; }
+
+    .guide-hero {
+      background: rgba(3,8,20,0.93);
+      border-radius: var(--r-xl);
+      border: 1px solid var(--border-dim);
+      border-top: 2px solid var(--gold-dim);
+      padding: 32px 36px;
+      margin-bottom: 20px;
+    }
+
+    .guide-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--teal-light);
+      text-decoration: none;
+      margin-bottom: 18px;
+      transition: color 0.15s;
+    }
+    .guide-back:hover { color: var(--t1); }
+
+    .guide-title {
+      font-family: 'Teko', sans-serif;
+      font-size: 52px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .guide-subtitle { color: var(--t3); font-size: 14px; }
+
+    .guide-section {
+      background: rgba(3,8,20,0.93);
+      border-radius: var(--r-xl);
+      border: 1px solid rgba(255,255,255,0.04);
+      padding: 24px 28px;
+      margin-bottom: 20px;
+    }
+
+    .guide-section-title {
+      font-family: 'Teko', sans-serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--teal-light);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-dim);
+    }
+
+    .action-card {
+      background: rgba(0,188,212,0.07);
+      border: 1px solid rgba(0,188,212,0.16);
+      border-radius: var(--r-md);
+      padding: 14px 18px;
+      margin-bottom: 10px;
+    }
+    .action-card:last-child { margin-bottom: 0; }
+    .action-title { font-weight: 700; color: var(--teal-light); margin-bottom: 4px; font-size: 13px; }
+    .action-desc  { font-size: 13px; color: var(--t2); line-height: 1.55; }
+
+    .alert-example {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: var(--r-md);
+      border-left: 3px solid;
+      margin-bottom: 10px;
+      font-size: 13px;
+    }
+    .alert-example--demote { background: rgba(255,112,67,0.12); border-left-color: #ff7043; }
+    .alert-example--kick   { background: rgba(239,83,80,0.14);  border-left-color: #ff5252; }
+    .alert-ex-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--t2); white-space: nowrap; }
+    .alert-ex-names { color: var(--t1); }
+
+    .guide-item {
+      display: flex;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .guide-item:last-child { border-bottom: 0; padding-bottom: 0; }
+    .guide-item-icon { font-size: 20px; flex-shrink: 0; width: 28px; text-align: center; margin-top: 1px; }
+    .guide-item-name { font-weight: 700; color: var(--t1); margin-bottom: 3px; font-size: 14px; }
+    .guide-item-desc { font-size: 13px; color: var(--t2); line-height: 1.55; }
+
+    .badge-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    @media (max-width: 600px) { .badge-grid { grid-template-columns: 1fr; } }
+
+    .badge-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.02);
+      border-radius: var(--r-md);
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    .badge-row-icon { font-size: 18px; flex-shrink: 0; }
+    .badge-row-name { font-size: 12px; font-weight: 700; color: var(--t1); margin-bottom: 2px; }
+    .badge-row-desc { font-size: 11px; color: var(--t3); line-height: 1.4; }
+
+    .step {
+      display: flex;
+      gap: 14px;
+      padding: 10px 0;
+      align-items: flex-start;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .step:last-of-type { border-bottom: 0; }
+    .step-num {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: rgba(0,188,212,0.14);
+      border: 1px solid rgba(0,188,212,0.28);
+      color: var(--teal-light);
+      font-size: 13px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-body { flex: 1; font-size: 13px; color: var(--t2); padding-top: 4px; line-height: 1.55; }
+    .step-body strong { color: var(--t1); }
+
+    .sort-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .sort-table th {
+      text-align: left;
+      padding: 8px 12px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--t3);
+      border-bottom: 1px solid var(--border-dim);
+    }
+    .sort-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      color: var(--t2);
+      vertical-align: top;
+    }
+    .sort-table td:first-child { color: var(--t1); font-weight: 600; white-space: nowrap; }
+    .sort-table tr:last-child td { border-bottom: 0; }
+
+    .tip-box {
+      background: rgba(245,197,24,0.07);
+      border: 1px solid rgba(245,197,24,0.18);
+      border-radius: var(--r-md);
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--t2);
+      margin-top: 14px;
+      line-height: 1.55;
+    }
+    .tip-box strong { color: var(--gold-light); }
+
+    .body-text { font-size: 13px; color: var(--t2); line-height: 1.55; margin-bottom: 14px; }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav" id="site-nav" aria-label="Primary">
+    <div class="nav-inner">
+      <a class="nav-brand" href="index.html">
+        <span class="nav-emblem">🍀</span>
+        <span class="nav-name">OLD MEN</span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html#command"  class="nav-link">Command</a>
+        <a href="index.html#roster"   class="nav-link">Roster</a>
+        <a href="index.html#activity" class="nav-link">Activity</a>
+        <a href="index.html#rules"    class="nav-link">Rules</a>
+        <a href="guide.html"          class="nav-link" style="color:var(--gold-light)">Guide</a>
+        <a href="https://discord.gg/RpMbrRbx6" class="nav-link nav-discord" target="_blank" rel="noopener">Discord ↗</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page guide-page">
+
+    <!-- HERO -->
+    <div class="guide-hero">
+      <a href="index.html" class="guide-back">← Back to HQ</a>
+      <div class="guide-title">Leader's Guide</div>
+      <p class="guide-subtitle">How to read the dashboard, act on alerts, and keep the roster up to date.</p>
+    </div>
+
+    <!-- QUICK REFERENCE -->
+    <section class="guide-section">
+      <div class="guide-section-title">Quick Reference</div>
+      <div class="action-card">
+        <div class="action-title">⚠️ Someone is on Kick Watch or Demotion Watch</div>
+        <div class="action-desc">The alert strip at the top of the HQ page lists who's at risk. Take action in-game, then message Boomer so the roster reflects the change.</div>
+      </div>
+      <div class="action-card">
+        <div class="action-title">📊 Stats need updating after an operation</div>
+        <div class="action-desc">Screenshot the Grand Total screen (all pages) and the My Task Force member list (all pages), then send them to Boomer on Discord.</div>
+      </div>
+      <div class="action-card">
+        <div class="action-title">👤 Someone joined, left, or changed rank</div>
+        <div class="action-desc">Message Boomer with the player's name and what happened. He'll update the roster, log it in Recent Changes, and move kicked members to the Graveyard.</div>
+      </div>
+    </section>
+
+    <!-- WATCH ALERTS -->
+    <section class="guide-section">
+      <div class="guide-section-title">Watch Alerts</div>
+      <p class="body-text">The alert strip below the header stats auto-computes from participation data every time the page loads. If nobody is at risk, the strip is hidden entirely.</p>
+      <div class="alert-example alert-example--demote">
+        <span>⬇️</span>
+        <span class="alert-ex-label">Demotion Watch</span>
+        <span class="alert-ex-names">PutteQuick · MRchappel24 · Papa Midnite</span>
+      </div>
+      <div class="alert-example alert-example--kick">
+        <span>⚠️</span>
+        <span class="alert-ex-label">Kick Watch</span>
+        <span class="alert-ex-names">MT · BRUNOG</span>
+      </div>
+      <div style="margin-top:16px">
+        <div class="guide-item">
+          <div class="guide-item-icon">⬇️</div>
+          <div>
+            <div class="guide-item-name">Demotion Watch</div>
+            <div class="guide-item-desc">An Officer whose participation has fallen below 80%. Give one warning. If it doesn't improve by the next stats refresh, demote them to Member in-game and notify Boomer.</div>
+          </div>
+        </div>
+        <div class="guide-item">
+          <div class="guide-item-icon">⚠️</div>
+          <div>
+            <div class="guide-item-name">Kick Watch</div>
+            <div class="guide-item-desc">A Member whose participation has fallen below 80%. Per squad rules, 3+ missed attacks in a single week is an automatic kick. Check their recent activity before acting.</div>
+          </div>
+        </div>
+      </div>
+      <div class="tip-box">
+        <strong>Note:</strong> New recruits with zero recorded attacks are excluded from watch alerts — they don't have enough history for the stat to be meaningful yet.
+      </div>
+    </section>
+
+    <!-- BADGE REFERENCE -->
+    <section class="guide-section">
+      <div class="guide-section-title">Badge Reference</div>
+      <p class="body-text">Badges appear on roster cards and on Command Structure cards. Here's what each one means.</p>
+      <div class="badge-grid">
+        <div class="badge-row">
+          <span class="badge-row-icon">🎖️</span>
+          <div><div class="badge-row-name">Veteran</div><div class="badge-row-desc">5,000+ all-time intel collected</div></div>
+        </div>
+        <div class="badge-row">
+          <span class="badge-row-icon">🎯</span>
+          <div><div class="badge-row-name">Perfect Record</div><div class="badge-row-desc">Zero missed attacks with attacks recorded</div></div>
+        </div>
+        <div class="badge-row">
+          <span class="badge-row-icon">📋</span>
+          <div><div class="badge-row-name">Op Notes</div><div class="badge-row-desc">Regularly writes attack coordination notes</div></div>
+        </div>
+        <div class="badge-row">
+          <span class="badge-row-icon">🧟</span>
+          <div><div class="badge-row-name">Zombie</div><div class="badge-row-desc">Left and came back — returned member</div></div>
+        </div>
+        <div class="badge-row">
+          <span class="badge-row-icon">⭐</span>
+          <div><div class="badge-row-name">Promote Me</div><div class="badge-row-desc">Member with 500+ intel and 90%+ participation — ready for Officer</div></div>
+        </div>
+        <div class="badge-row">
+          <span class="badge-row-icon">📈</span>
+          <div><div class="badge-row-name">Promotion Watch</div><div class="badge-row-desc">Member at 400–499 intel, approaching the 500 threshold</div></div>
+        </div>
+        <div class="badge-row">
+          <span class="badge-row-icon">⚠️</span>
+          <div><div class="badge-row-name">Demotion Watch</div><div class="badge-row-desc">Officer below 80% participation — needs attention</div></div>
+        </div>
+        <div class="badge-row">
+          <span class="badge-row-icon">⚠️</span>
+          <div><div class="badge-row-name">Kick Watch</div><div class="badge-row-desc">Member below 80% participation — at risk of removal</div></div>
+        </div>
+        <div class="badge-row">
+          <span class="badge-row-icon">🆕</span>
+          <div><div class="badge-row-name">New Recruit</div><div class="badge-row-desc">Recently joined the task force</div></div>
+        </div>
+        <div class="badge-row">
+          <span class="badge-row-icon">⬆️</span>
+          <div><div class="badge-row-name">Promoted</div><div class="badge-row-desc">Recently promoted to a higher role</div></div>
+        </div>
+        <div class="badge-row">
+          <span class="badge-row-icon">🏛️</span>
+          <div><div class="badge-row-name">Ex-Leader</div><div class="badge-row-desc">Former task force Leader</div></div>
+        </div>
+        <div class="badge-row">
+          <span class="badge-row-icon">💥</span>
+          <div><div class="badge-row-name">Site Architect</div><div class="badge-row-desc">Built and maintains this dashboard</div></div>
+        </div>
+        <div class="badge-row">
+          <span class="badge-row-icon">💣</span>
+          <div><div class="badge-row-name">Unlimited Sabotage Pass</div><div class="badge-row-desc">Special exemption from the 5-sabotage limit</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ROSTER GUIDE -->
+    <section class="guide-section">
+      <div class="guide-section-title">Using the Roster</div>
+      <p class="body-text">Intel, Attacks, and Participation are all-time Grand Totals — not this week's numbers. Use the sort buttons to surface the most useful view for your current task.</p>
+      <table class="sort-table">
+        <thead>
+          <tr><th>Sort</th><th>Best used when…</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Intel</td><td>Default view. Shows overall long-term contribution ranked highest to lowest.</td></tr>
+          <tr><td>VP</td><td>Checking who's climbing the Victory Points leaderboard.</td></tr>
+          <tr><td>Part.</td><td>Quickly spotting who's been consistently active vs. coasting.</td></tr>
+          <tr><td>Level</td><td>Checking player levels against entry requirements.</td></tr>
+          <tr><td>⭐ Promote</td><td>Seeing who has earned an Officer promotion (500+ intel, 90%+ participation).</td></tr>
+          <tr><td>📈 Promo Soon</td><td>Identifying Members approaching the 500 intel promotion threshold.</td></tr>
+          <tr><td>⚠️ Watch</td><td>Reviewing everyone below 80% participation sorted to the top.</td></tr>
+        </tbody>
+      </table>
+      <div class="tip-box">
+        <strong>Tip:</strong> Combine the Role filter (Officers / Members) with the ⚠️ Watch sort to zero in on a specific rank without scrolling the full 44-person roster.
+      </div>
+    </section>
+
+    <!-- SUBMITTING STATS -->
+    <section class="guide-section">
+      <div class="guide-section-title">Submitting a Stats Update</div>
+      <p class="body-text">Stats are refreshed manually after operations or when significant events happen. Here's how to kick one off:</p>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">Open <strong>Task Force Command → High Scores → Grand Total</strong>. Screenshot every page of the list (usually 4 screenshots).</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">Open <strong>Task Force Command → My Task Force</strong>. Screenshot every page of the member list — this captures VP, level, and role.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">Send all screenshots to <strong>Boomer on Discord</strong>. He'll extract the numbers and push the update.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">The site updates within minutes. Do a hard refresh (<strong>Ctrl + Shift + R</strong> on desktop, pull-to-refresh on mobile) if you don't see changes right away.</div>
+      </div>
+      <div class="tip-box">
+        <strong>What gets updated:</strong> VP, level, intel, attacks, participation, missed attacks, member count, force points, and weekly intel. Role changes, new joins, and graveyard additions are logged separately.
+      </div>
+    </section>
+
+    <!-- ROSTER EVENTS -->
+    <section class="guide-section">
+      <div class="guide-section-title">Logging Roster Events</div>
+      <div class="guide-item">
+        <div class="guide-item-icon">🆕</div>
+        <div>
+          <div class="guide-item-name">New member joined</div>
+          <div class="guide-item-desc">Tell Boomer the player name. They'll be added to the roster with a New Recruit badge and logged in Recent Changes at the bottom of the page.</div>
+        </div>
+      </div>
+      <div class="guide-item">
+        <div class="guide-item-icon">👋</div>
+        <div>
+          <div class="guide-item-name">Member left or was kicked</div>
+          <div class="guide-item-desc">Tell Boomer the name and reason (left / kicked). Their final stats are preserved permanently in the Graveyard section and logged in Recent Changes.</div>
+        </div>
+      </div>
+      <div class="guide-item">
+        <div class="guide-item-icon">⬆️</div>
+        <div>
+          <div class="guide-item-name">Promotion or demotion</div>
+          <div class="guide-item-desc">Make the change in-game first, then tell Boomer the name and new role. A Promoted or Demoted badge will appear on their roster card and the event is logged.</div>
+        </div>
+      </div>
+      <div class="guide-item">
+        <div class="guide-item-icon">🧟</div>
+        <div>
+          <div class="guide-item-name">Someone came back (Zombie)</div>
+          <div class="guide-item-desc">Let Boomer know. They're re-added to the active roster with the Zombie badge to mark that they've returned from the dead.</div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="tf-footer">
+      <div class="footer-inner">
+        <span class="footer-logo">🍀 OLD MEN</span>
+        <span class="footer-sep">·</span>
+        <a href="index.html" class="footer-link">← Back to HQ</a>
+        <span class="footer-sep">·</span>
+        <a href="https://discord.gg/RpMbrRbx6" class="footer-link" target="_blank" rel="noopener">Join Discord</a>
+      </div>
+    </footer>
+
+  </div>
+
+</body>
+</html>
