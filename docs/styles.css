@@ -473,14 +473,10 @@ body::after {
 }
 
 /* ── READABILITY OVER BEACH BACKGROUND ─────────────── */
-/* The header gets blur so its semi-transparent bg desaturates the sunset */
-.tf-header {
-  backdrop-filter: blur(10px) saturate(0.60);
-  -webkit-backdrop-filter: blur(10px) saturate(0.60);
-}
 
-/* Every content section gets a dark translucent card + blur so panel
-   backgrounds look consistently dark regardless of which sky band is behind them */
+/* Every content section gets a dark opaque card so panels look consistently
+   dark regardless of which part of the beach scene is behind them.
+   No backdrop-filter here — running it on 8+ elements simultaneously tanks framerate. */
 .spotlight-section,
 .prev-leaders-section,
 .potw-section,
@@ -489,9 +485,7 @@ body::after {
 .rules-section,
 .roster-section,
 .graveyard-section {
-  background: rgba(3, 8, 20, 0.72);
-  backdrop-filter: blur(12px) saturate(0.55);
-  -webkit-backdrop-filter: blur(12px) saturate(0.55);
+  background: rgba(3, 8, 20, 0.93);
   border-radius: var(--r-xl);
   border: 1px solid rgba(255,255,255,0.04);
   padding: 20px 24px 24px;
