@@ -283,7 +283,7 @@ window.TASK_FORCE_DATA = Object.freeze({
     { "name": "PutteQuick", "level": 65, "role": "Officer", "vp": 1151, "weeklyIntel": 92, "intel": 12034, "attacks": 317, "missed": 82, "participation": 79 },
     { "name": "Rando Calrisian", "level": 65, "role": "Officer", "vp": 1301, "weeklyIntel": 122, "intel": 8551, "attacks": 210, "missed": 12, "participation": 94 },
     { "name": "Papa Midnite", "level": 69, "role": "Officer", "vp": 969, "weeklyIntel": 90, "intel": 8267, "attacks": 342, "missed": 88, "participation": 79 },
-    { "name": "Boomer", "level": 56, "role": "Member", "vp": 991, "weeklyIntel": 49, "intel": 8151, "attacks": 452, "missed": 1, "participation": 99, "exLeader": true, "notesGiver": true, "creator": true },
+    { "name": "Boomer", "level": 56, "role": "Co-Leader", "vp": 991, "weeklyIntel": 49, "intel": 8151, "attacks": 452, "missed": 1, "participation": 99, "exLeader": true, "notesGiver": true, "creator": true },
     { "name": "COYG", "level": 73, "role": "Co-Leader", "vp": 619, "weeklyIntel": 95, "intel": 7133, "attacks": 299, "missed": 2, "participation": 99 },
     { "name": "th3.sid", "level": 61, "role": "Co-Leader", "vp": 782, "weeklyIntel": 65, "intel": 6422, "attacks": 305, "missed": 13, "participation": 95 },
     { "name": "Frei_Taz", "level": 62, "role": "Co-Leader", "vp": 670, "weeklyIntel": 171, "intel": 5664, "attacks": 231, "missed": 22, "participation": 91 },
