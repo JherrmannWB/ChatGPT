@@ -599,7 +599,7 @@ body::after {
    No backdrop-filter here — running it on 8+ elements simultaneously tanks framerate. */
 .spotlight-section,
 .prev-leaders-section,
-.potw-section,
+.spotlighted-section,
 .activity-section,
 .changelog-section,
 .rules-section,
@@ -828,9 +828,9 @@ body::after {
 .prev-stat-lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--t3); margin-top: 2px; }
 
 /* ── PLAYER OF THE WEEK ────────────────────────────── */
-.potw-section { margin-bottom: 20px; }
+.spotlighted-section { margin-bottom: 20px; }
 
-.potw-card {
+.spotlighted-card {
   display: flex;
   align-items: center;
   gap: 24px;
@@ -844,7 +844,7 @@ body::after {
   overflow: hidden;
 }
 
-.potw-card::before {
+.spotlighted-card::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -852,7 +852,7 @@ body::after {
   pointer-events: none;
 }
 
-.potw-left {
+.spotlighted-left {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -860,15 +860,15 @@ body::after {
   position: relative;
 }
 
-.potw-trophy {
+.spotlighted-trophy {
   font-size: 50px;
   filter: drop-shadow(0 0 14px rgba(245,197,24,0.55));
   flex-shrink: 0;
 }
 
-.potw-body { flex: 1; }
+.spotlighted-body { flex: 1; }
 
-.potw-week {
+.spotlighted-week {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 2.2px;
@@ -876,7 +876,7 @@ body::after {
   margin-bottom: 4px;
 }
 
-.potw-name {
+.spotlighted-name {
   font-family: 'Teko', sans-serif;
   font-size: 50px;
   font-weight: 700;
@@ -886,9 +886,9 @@ body::after {
   margin-bottom: 10px;
 }
 
-.potw-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+.spotlighted-badges { display: flex; gap: 6px; flex-wrap: wrap; }
 
-.potw-stats {
+.spotlighted-stats {
   display: flex;
   align-items: center;
   background: rgba(0,0,0,0.22);
@@ -898,10 +898,10 @@ body::after {
   flex-shrink: 0;
 }
 
-.potw-stat { padding: 13px 20px; text-align: center; }
-.potw-stat-divider { width: 1px; height: 42px; background: rgba(245,197,24,0.1); flex-shrink: 0; }
+.spotlighted-stat { padding: 13px 20px; text-align: center; }
+.spotlighted-stat-divider { width: 1px; height: 42px; background: rgba(245,197,24,0.1); flex-shrink: 0; }
 
-.potw-stat-val {
+.spotlighted-stat-val {
   font-family: 'Teko', sans-serif;
   font-size: 38px;
   font-weight: 600;
@@ -909,7 +909,7 @@ body::after {
   line-height: 1;
 }
 
-.potw-stat-lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(245,197,24,0.42); margin-top: 2px; }
+.spotlighted-stat-lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(245,197,24,0.42); margin-top: 2px; }
 
 /* ── ACTIVITY HIGHLIGHTS ───────────────────────────── */
 .activity-section { margin-bottom: 20px; }
@@ -1401,10 +1401,10 @@ body::after {
   .stat-card { padding: 10px 18px; }
   .prev-leaders-grid { grid-template-columns: 1fr; }
   .rules-grid { grid-template-columns: 1fr; }
-  .potw-card { flex-direction: column; padding: 20px 18px; }
-  .potw-left { justify-content: center; }
-  .potw-name { font-size: 34px; }
-  .potw-stats { align-self: stretch; justify-content: center; }
+  .spotlighted-card { flex-direction: column; padding: 20px 18px; }
+  .spotlighted-left { justify-content: center; }
+  .spotlighted-name { font-size: 34px; }
+  .spotlighted-stats { align-self: stretch; justify-content: center; }
   .activity-summary { grid-template-columns: 1fr 1fr; }
   .controls-bar { flex-direction: column; align-items: stretch; }
   .search-box,

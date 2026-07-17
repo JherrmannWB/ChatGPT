@@ -2,7 +2,7 @@
 
 A GitHub Pages-ready Boom Beach task force showcase for **OLD MEN** (`#PCC00J08`).
 
-The page acts as a lightweight command board: current operation, command structure, previous leaders, player of the week, roster highlights, squad rules, and a sortable full roster.
+The page acts as a lightweight command board: current operation, command structure, previous leaders, spotlighted player, roster highlights, squad rules, and a sortable full roster.
 
 ## Run Locally
 
@@ -25,7 +25,7 @@ The dev server serves `docs/` at `http://localhost:3000`.
 Most task force data lives in `docs/data.js`.
 
 - Update `lastUpdated` and `currentOperation` for each refresh.
-- Update `playerOfTheWeek` for Player of the Week.
+- Update `spotlightedPlayer` to change the Spotlighted Player (just set `name` to a current roster member).
 - Update `members` for roster stats, role changes, missed attacks, and participation.
 - Update `playerConfig` for custom avatars, titles, and accent colors.
 - Update `roleChanges` and `graveyard` when players join, are promoted/demoted, or leave.

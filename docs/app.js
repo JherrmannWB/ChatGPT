@@ -6,7 +6,7 @@ const TASK_FORCE_DATA = window.TASK_FORCE_DATA || {};
 const PLAYER_CONFIG = TASK_FORCE_DATA.playerConfig || {};
 const LAST_UPDATED = TASK_FORCE_DATA.lastUpdated || '';
 const CURRENT_OP = TASK_FORCE_DATA.currentOperation || '';
-const POTW_DATA = TASK_FORCE_DATA.playerOfTheWeek || {};
+const SPOTLIGHT_DATA = TASK_FORCE_DATA.spotlightedPlayer || {};
 const MEMBERS = TASK_FORCE_DATA.members || [];
 const GRAVEYARD = TASK_FORCE_DATA.graveyard || [];
 const ROLE_CHANGES = TASK_FORCE_DATA.roleChanges || [];
@@ -163,40 +163,40 @@ function renderPrevLeaders() {
     </div>`).join('');
 }
 
-// ─── RENDER: PLAYER OF THE WEEK ──────────────────────────────────────────────
-function renderPOTW() {
-  const p = POTW_DATA;
+// ─── RENDER: SPOTLIGHTED PLAYER ──────────────────────────────────────────────
+function renderSpotlightedPlayer() {
+  const p = SPOTLIGHT_DATA;
   const m = MEMBERS.find(x => x.name === p.name);
   if (!m) return;
 
-  document.getElementById('potw-card').innerHTML = `
-    <div class="potw-card">
-      <div class="potw-left">
-        <div class="potw-trophy">🏆</div>
+  document.getElementById('spotlighted-card').innerHTML = `
+    <div class="spotlighted-card">
+      <div class="spotlighted-left">
+        <div class="spotlighted-trophy">🏆</div>
         ${renderAvatar(m, { size: 'xl' })}
       </div>
-      <div class="potw-body">
-        <div class="potw-week">${esc(p.week)}</div>
-        <div class="potw-name">${esc(p.name)}</div>
-        <div class="potw-badges">
+      <div class="spotlighted-body">
+        <div class="spotlighted-week">Task Force Spotlight</div>
+        <div class="spotlighted-name">${esc(m.name)}</div>
+        <div class="spotlighted-badges">
           <span class="level-badge">Lvl ${m.level}</span>
           ${roleBadge(m.role)}
         </div>
       </div>
-      <div class="potw-stats">
-        <div class="potw-stat">
-          <div class="potw-stat-val">${p.vp.toLocaleString()}</div>
-          <div class="potw-stat-lbl">🏅 Victory Points</div>
+      <div class="spotlighted-stats">
+        <div class="spotlighted-stat">
+          <div class="spotlighted-stat-val">${m.vp.toLocaleString()}</div>
+          <div class="spotlighted-stat-lbl">🏅 Victory Points</div>
         </div>
-        <div class="potw-stat-divider"></div>
-        <div class="potw-stat">
-          <div class="potw-stat-val">${p.intel}</div>
-          <div class="potw-stat-lbl">🔭 Intel</div>
+        <div class="spotlighted-stat-divider"></div>
+        <div class="spotlighted-stat">
+          <div class="spotlighted-stat-val">${m.intel.toLocaleString()}</div>
+          <div class="spotlighted-stat-lbl">🔭 Intel</div>
         </div>
-        <div class="potw-stat-divider"></div>
-        <div class="potw-stat">
-          <div class="potw-stat-val">${m.participation}%</div>
-          <div class="potw-stat-lbl">📊 Participation</div>
+        <div class="spotlighted-stat-divider"></div>
+        <div class="spotlighted-stat">
+          <div class="spotlighted-stat-val">${m.participation}%</div>
+          <div class="spotlighted-stat-lbl">📊 Participation</div>
         </div>
       </div>
     </div>`;
@@ -520,7 +520,7 @@ function init() {
   renderWatchAlerts();
   renderSpotlight();
   renderPrevLeaders();
-  renderPOTW();
+  renderSpotlightedPlayer();
   renderActivityHighlights();
   renderChangelog();
   renderGraveyard();
