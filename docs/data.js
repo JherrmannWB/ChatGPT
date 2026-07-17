@@ -298,7 +298,7 @@ window.TASK_FORCE_DATA = Object.freeze({
     { "name": "CRAZYCRAFT", "level": 63, "role": "Co-Leader", "vp": 722, "weeklyIntel": 25, "intel": 2091, "attacks": 120, "missed": 1, "participation": 99, "notesGiver": true },
     { "name": "ACFrontRanger", "level": 71, "role": "Officer", "vp": 659, "weeklyIntel": 39, "intel": 2048, "attacks": 136, "missed": 3, "participation": 97, "notesGiver": true },
     { "name": "DaVinceC", "level": 44, "role": "Member", "vp": 943, "weeklyIntel": 89, "intel": 1996, "attacks": 32, "missed": 10, "participation": 76 },
-    { "name": "jenuine", "level": 65, "role": "Officer", "vp": 967, "weeklyIntel": 95, "intel": 1866, "attacks": 93, "missed": 6, "participation": 93 },
+    { "name": "jenuine", "level": 65, "role": "Officer", "vp": 967, "weeklyIntel": 95, "intel": 2433, "attacks": 130, "missed": 9, "participation": 93 },
     { "name": "Commander", "level": 73, "role": "Officer", "vp": 0, "weeklyIntel": 33, "intel": 1229, "attacks": 150, "missed": 0, "participation": 100 },
     { "name": "ميدو الطيارات", "level": 69, "role": "Officer", "vp": 272, "weeklyIntel": 99, "intel": 1213, "attacks": 40, "missed": 5, "participation": 88 },
     { "name": "MrBoomBoomjr", "level": 45, "role": "Member", "vp": 552, "weeklyIntel": 46, "intel": 1175, "attacks": 66, "missed": 3, "participation": 95 },
@@ -310,7 +310,7 @@ window.TASK_FORCE_DATA = Object.freeze({
     { "name": "Nova", "level": 32, "role": "Officer", "vp": 262, "weeklyIntel": 72, "intel": 621, "attacks": 35, "missed": 0, "participation": 100 },
     { "name": "el conquestador", "level": 81, "role": "Officer", "vp": 4, "weeklyIntel": 20, "intel": 544, "attacks": 60, "missed": 10, "participation": 85 },
     { "name": "ringoskyblastr3", "level": 84, "role": "Officer", "vp": 3, "weeklyIntel": 30, "intel": 536, "attacks": 68, "missed": 0, "participation": 100 },
-    { "name": "CHARLIES DAD", "level": 75, "role": "Officer", "vp": 175, "weeklyIntel": 88, "intel": 515, "attacks": 30, "missed": 1, "participation": 96 },
+    { "name": "CHARLIES DAD", "level": 75, "role": "Officer", "vp": 175, "weeklyIntel": 88, "intel": 1276, "attacks": 73, "missed": 2, "participation": 97 },
     { "name": "Snopy", "level": 50, "role": "Officer", "vp": 9, "weeklyIntel": 13, "intel": 507, "attacks": 118, "missed": 6, "participation": 95 },
     { "name": "⛔Tired Bloke⛔", "level": 78, "role": "Member", "vp": 30, "weeklyIntel": 43, "intel": 398, "attacks": 49, "missed": 12, "participation": 80 },
     { "name": "Krew2do", "level": 84, "role": "Member", "vp": 32, "weeklyIntel": 30, "intel": 393, "attacks": 32, "missed": 0, "participation": 100 },
@@ -325,7 +325,8 @@ window.TASK_FORCE_DATA = Object.freeze({
     { "name": "Commander II", "level": 38, "role": "Member", "vp": 82, "weeklyIntel": 19, "intel": 19, "attacks": 0, "missed": 0, "participation": 0 },
     { "name": "Captain Jerm", "level": 39, "role": "Member", "vp": 4, "weeklyIntel": 7, "intel": 7, "attacks": 1, "missed": 0, "participation": 100 },
     { "name": "polga", "level": 56, "role": "Member", "vp": 1062, "weeklyIntel": 2, "intel": 2, "attacks": 0, "missed": 0, "participation": 0 },
-    { "name": "Dxbadge", "level": 39, "role": "Member", "vp": 372, "weeklyIntel": 89, "intel": 0, "attacks": 0, "missed": 0, "participation": 0 }
+    { "name": "Dxbadge", "level": 39, "role": "Member", "vp": 372, "weeklyIntel": 89, "intel": 468, "attacks": 17, "missed": 3, "participation": 85 },
+    { "name": "xCiyuu", "level": 14, "role": "Member", "vp": 57, "weeklyIntel": 4, "intel": 4, "attacks": 0, "missed": 0, "participation": 0 }
   ],
   "graveyard": [
     { "name": "Zed T Dog", "departed": "May 30, 2026", "reason": "Departed", "lastRole": "Officer", "lastLevel": 84, "lastVP": 1449, "lastIntel": 928, "lastAttacks": 18, "lastParticipation": 100 },
@@ -382,6 +383,7 @@ window.TASK_FORCE_DATA = Object.freeze({
   { "date": "July 17, 2026", "name": "Captain Jerm", "from": null, "to": "Member", "type": "joined" },
   { "date": "July 17, 2026", "name": "polga", "from": null, "to": "Member", "type": "joined" },
   { "date": "July 17, 2026", "name": "جبريل", "from": null, "to": "Member", "type": "joined" },
-  { "date": "July 17, 2026", "name": "Dxbadge", "from": null, "to": "Member", "type": "joined" }
+  { "date": "July 17, 2026", "name": "Dxbadge", "from": null, "to": "Member", "type": "joined" },
+  { "date": "July 17, 2026", "name": "xCiyuu", "from": null, "to": "Member", "type": "joined" }
   ]
 });
