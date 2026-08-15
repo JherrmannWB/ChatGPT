@@ -10,6 +10,7 @@ const SPOTLIGHT_DATA = TASK_FORCE_DATA.spotlightedPlayer || {};
 const MEMBERS = TASK_FORCE_DATA.members || [];
 const GRAVEYARD = TASK_FORCE_DATA.graveyard || [];
 const ROLE_CHANGES = TASK_FORCE_DATA.roleChanges || [];
+const STATUS_NOTICES = TASK_FORCE_DATA.statusNotices || [];
 
 // ─── COMPUTED ────────────────────────────────────────────────────────────────
 let currentSort   = 'intel';
@@ -32,6 +33,12 @@ function medalFor(rank) {
 
 function getPlayerConfig(name) {
   return PLAYER_CONFIG[name] || {};
+}
+
+// An active status notice means the absence was reported ahead of time, so the
+// squad rules protect that member from Demotion/Kick Watch while it stands.
+function noticeFor(name) {
+  return STATUS_NOTICES.find(n => n.name === name) || null;
 }
 
 function roleDefaultEmoji(role) {
@@ -73,6 +80,8 @@ function roleBadge(role) {
 
 function achBadges(m) {
   const out = [];
+  const notice = noticeFor(m.name);
+  if (notice) out.push(`<span class="ach-badge ach-on-notice">${notice.icon || '🕒'} ${esc(notice.status)}</span>`);
   const change = ROLE_CHANGES.find(c => c.name === m.name);
   if (change?.type === 'joined')    out.push('<span class="ach-badge ach-new-recruit">🆕 New Recruit</span>');
   if (change?.type === 'promotion') out.push(`<span class="ach-badge ach-promoted">⬆️ Promoted to ${change.to}</span>`);
@@ -86,7 +95,8 @@ function achBadges(m) {
   if (m.sabotagePass)                                      out.push('<span class="ach-badge ach-sabotage-pass">💣 Unlimited Sabotage Pass</span>');
   if (m.role === 'Member' && m.intel >= 500 && m.participation >= 90) out.push('<span class="ach-badge ach-promote-me">⭐ Promote Me</span>');
   if (m.role === 'Member' && m.intel >= 400 && m.intel < 500) out.push(`<span class="ach-badge ach-promo-watch">📈 Promotion Watch · ${500 - m.intel} intel to go</span>`);
-  if (m.participation < 80 && m.role === 'Officer')        out.push('<span class="ach-badge ach-demotion-watch">⚠️ Demotion Watch</span>');
+  if (notice)                                              { /* reported absence — exempt from watch */ }
+  else if (m.participation < 80 && m.role === 'Officer')   out.push('<span class="ach-badge ach-demotion-watch">⚠️ Demotion Watch</span>');
   else if (m.participation < 80)                           out.push('<span class="ach-badge ach-kick-watch">⚠️ Kick Watch</span>');
   return out.length ? `<div class="ach-wrap">${out.join('')}</div>` : '';
 }
@@ -472,14 +482,33 @@ function renderGraveyard() {
   }).join('');
 }
 
+// ─── RENDER: STATUS NOTICES ──────────────────────────────────────────────────
+function renderStatusNotices() {
+  const el = document.getElementById('status-notices');
+  if (!el) return;
+
+  if (!STATUS_NOTICES.length) { el.innerHTML = ''; return; }
+
+  el.innerHTML = STATUS_NOTICES.map(n => {
+    const windowLabel = n.until ? `${n.since || ''} → ${n.until}` : `Since ${n.since || 'further notice'}`;
+    return `
+    <div class="watch-alert watch-alert--notice">
+      <span class="watch-icon">${n.icon || '🕒'}</span>
+      <span class="watch-label">${esc(n.status)}</span>
+      <span class="watch-names"><strong>${esc(n.name)}</strong>${n.note ? ` — ${esc(n.note)}` : ''}</span>
+      <span class="notice-window">${esc(windowLabel)}</span>
+    </div>`;
+  }).join('');
+}
+
 // ─── RENDER: WATCH ALERTS ────────────────────────────────────────────────────
 function renderWatchAlerts() {
   const el = document.getElementById('watch-alerts');
   if (!el) return;
 
-  // Exclude new joins with no attack data yet
-  const demoteWatch = MEMBERS.filter(m => m.participation < 80 && m.role === 'Officer');
-  const kickWatch   = MEMBERS.filter(m => m.participation < 80 && m.role !== 'Officer' && m.attacks > 0);
+  // Exclude new joins with no attack data yet, and anyone who reported an absence
+  const demoteWatch = MEMBERS.filter(m => m.participation < 80 && m.role === 'Officer' && !noticeFor(m.name));
+  const kickWatch   = MEMBERS.filter(m => m.participation < 80 && m.role !== 'Officer' && m.attacks > 0 && !noticeFor(m.name));
 
   if (!demoteWatch.length && !kickWatch.length) { el.innerHTML = ''; return; }
 
@@ -517,6 +546,7 @@ function initAnimations() {
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 function init() {
+  renderStatusNotices();
   renderWatchAlerts();
   renderSpotlight();
   renderPrevLeaders();

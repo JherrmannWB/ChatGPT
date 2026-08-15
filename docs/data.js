@@ -9,6 +9,9 @@ window.TASK_FORCE_DATA = Object.freeze({
   "spotlightedPlayer": {
     "name": "Frei_Taz"
   },
+  "statusNotices": [
+    { "name": "Rando Calrisian", "status": "Limited Participation", "icon": "🚚", "note": "Moving — attacks will be spotty until he's settled in.", "since": "August 15, 2026", "until": null }
+  ],
   "playerConfig": {
     "MrBoomBoom": {
       "emoji": "👑",
