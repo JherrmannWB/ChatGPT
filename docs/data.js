@@ -283,7 +283,7 @@ window.TASK_FORCE_DATA = Object.freeze({
   },
   "members": [
     { "name": "old man", "level": 67, "role": "Co-Leader", "vp": 1427, "weeklyIntel": 128, "intel": 16897, "attacks": 531, "missed": 6, "participation": 98, "exLeader": true },
-    { "name": "FJ Fruitman", "level": 72, "role": "Co-Leader", "vp": 1152, "weeklyIntel": 142, "intel": 13786, "attacks": 467, "missed": 0, "participation": 100, "neverMissed": true },
+    { "name": "FJ Fruitman", "level": 72, "role": "Co-Leader", "vp": 1152, "weeklyIntel": 142, "intel": 13786, "attacks": 497, "missed": 0, "participation": 100, "neverMissed": true },
     { "name": "MrBoomBoom", "level": 68, "role": "Leader", "vp": 1233, "weeklyIntel": 139, "intel": 12564, "attacks": 477, "missed": 13, "participation": 97, "notesGiver": true },
     { "name": "PutteQuick", "level": 65, "role": "Officer", "vp": 1151, "weeklyIntel": 92, "intel": 12034, "attacks": 317, "missed": 82, "participation": 79 },
     { "name": "Rando Calrisian", "level": 65, "role": "Officer", "vp": 1301, "weeklyIntel": 122, "intel": 8551, "attacks": 210, "missed": 12, "participation": 94 },
