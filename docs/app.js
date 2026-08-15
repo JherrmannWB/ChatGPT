@@ -179,6 +179,23 @@ function renderSpotlightedPlayer() {
   const m = MEMBERS.find(x => x.name === p.name);
   if (!m) return;
 
+  // A clean streak is the headline stat when there is one, so it replaces
+  // Participation — which says the same thing less vividly — on the card.
+  const onStreak = m.missed === 0 && m.attacks > 0;
+  const toGoal   = p.streakGoal ? p.streakGoal - m.attacks : 0;
+
+  const streakChip = onStreak && toGoal > 0
+    ? `<span class="streak-chip">🔥 ${toGoal} to a ${p.streakGoal.toLocaleString()}-day streak</span>`
+    : onStreak && p.streakGoal
+      ? `<span class="streak-chip streak-chip--hit">🔥 ${p.streakGoal.toLocaleString()}-day streak reached</span>`
+      : '';
+
+  const headlineStat = onStreak
+    ? `<div class="spotlighted-stat-val">${m.attacks.toLocaleString()}</div>
+       <div class="spotlighted-stat-lbl">🔥 Attack Streak</div>`
+    : `<div class="spotlighted-stat-val">${m.participation}%</div>
+       <div class="spotlighted-stat-lbl">📊 Participation</div>`;
+
   document.getElementById('spotlighted-card').innerHTML = `
     <div class="spotlighted-card">
       <div class="spotlighted-left">
@@ -191,7 +208,9 @@ function renderSpotlightedPlayer() {
         <div class="spotlighted-badges">
           <span class="level-badge">Lvl ${m.level}</span>
           ${roleBadge(m.role)}
+          ${streakChip}
         </div>
+        ${p.note ? `<div class="spotlighted-note">${esc(p.note)}</div>` : ''}
       </div>
       <div class="spotlighted-stats">
         <div class="spotlighted-stat">
@@ -205,8 +224,7 @@ function renderSpotlightedPlayer() {
         </div>
         <div class="spotlighted-stat-divider"></div>
         <div class="spotlighted-stat">
-          <div class="spotlighted-stat-val">${m.participation}%</div>
-          <div class="spotlighted-stat-lbl">📊 Participation</div>
+          ${headlineStat}
         </div>
       </div>
     </div>`;

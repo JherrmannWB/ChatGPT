@@ -899,7 +899,36 @@ body::after {
   margin-bottom: 10px;
 }
 
-.spotlighted-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+.spotlighted-badges { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+
+.streak-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  background: rgba(255,112,67,0.18);
+  color: #ffab91;
+  border: 1px solid rgba(255,112,67,0.45);
+  white-space: nowrap;
+}
+
+.streak-chip--hit {
+  background: rgba(245,197,24,0.20);
+  color: #ffe066;
+  border-color: rgba(245,197,24,0.55);
+}
+
+.spotlighted-note {
+  margin-top: 10px;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--t2);
+  max-width: 46ch;
+}
 
 .spotlighted-stats {
   display: flex;
@@ -1418,6 +1447,10 @@ body::after {
   .spotlighted-left { justify-content: center; }
   .spotlighted-name { font-size: 34px; }
   .spotlighted-stats { align-self: stretch; justify-content: center; }
+  .spotlighted-stat { padding: 13px 12px; }
+  .spotlighted-note { max-width: none; }
+  .watch-alert { flex-wrap: wrap; }
+  .notice-window { margin-left: 0; flex-basis: 100%; }
   .activity-summary { grid-template-columns: 1fr 1fr; }
   .controls-bar { flex-direction: column; align-items: stretch; }
   .search-box,

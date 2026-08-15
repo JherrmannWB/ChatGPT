@@ -7,7 +7,9 @@ window.TASK_FORCE_DATA = Object.freeze({
   "lastUpdated": "July 17, 2026",
   "currentOperation": "Massive Attack",
   "spotlightedPlayer": {
-    "name": "Frei_Taz"
+    "name": "FJ Fruitman",
+    "note": "Not one missed attack. Every operation, every day.",
+    "streakGoal": 500
   },
   "statusNotices": [
     { "name": "Rando Calrisian", "status": "Limited Participation", "icon": "🚚", "note": "Moving — attacks will be spotty until he's settled in.", "since": "August 15, 2026", "until": null }
